@@ -1,11 +1,10 @@
-<h1>Customer</h1>
-<pre>
-{{ customers | json }}
-</pre>
-<br />
-<br />
+<h1>Customers</h1>
 <button (click)="addCustomer()" class="btn btn-primary">Add Customer</button>
 &nbsp;&nbsp;
 <button (click)="removeCustomer()" class="btn btn-danger">Remove Customer</button>
 &nbsp;&nbsp;
 <button (click)="sortCustomers()" class="btn btn-secondary">Sort Customers</button>
+<br /><br />
+<pre>
+{{ customers | json }}
+</pre>

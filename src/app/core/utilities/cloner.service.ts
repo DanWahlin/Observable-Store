@@ -1,8 +1,5 @@
-import { Injectable } from '@angular/core';
-
 // https://github.com/codeandcats/fast-clone/blob/master/index.js
 
-@Injectable()
 export class ClonerService {
 
     deepClone(value) {

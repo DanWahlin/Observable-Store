@@ -26,7 +26,16 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   addCustomer() {
-    const cust = { id: Date.now(), name: 'Fred', city: 'Raleigh' };
+    const cust = { 
+      id: Date.now(), 
+      name: 'Fred', 
+      address: {
+        street: Date.now() + ' Main St.',
+        city: 'Phoenix',
+        state: 'AZ',
+        zip: '85258'
+      }
+    };
     this.customersStore.addCustomer(cust);
   }
 

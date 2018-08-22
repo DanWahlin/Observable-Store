@@ -1,27 +1,25 @@
-import { ReflectiveInjector } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ClonerService } from './utilities/cloner.service';
 
 export class ObservableStore<T> {
-    private state: T;
+    private state: Readonly<T>;
     private stateDispatcher: BehaviorSubject<T>;
     private clonerService: ClonerService;
+    private trackStateHistory: boolean;
     stateChanged: Observable<T>;
-    isDirty:boolean;
+    stateHistory = [];
 
-    constructor(initialState?: T) {
+    constructor(initialState: T, trackStateHistory: boolean = false) {
+        this.trackStateHistory = trackStateHistory;
         this.initStore(initialState);
     }
 
     private initStore(initialState) {
-        const injector = ReflectiveInjector.resolveAndCreate([ClonerService]);
-        this.clonerService = injector.get(ClonerService);
-
+        //Not injecting service since we want to use ObservableStore outside of Angular
+        this.clonerService = new ClonerService();
         this.stateDispatcher = new BehaviorSubject<T>(initialState);
         this.stateChanged = this.stateDispatcher.asObservable();
-        this.isDirty = false;
-
-        this.setState(initialState);
+        this.setState('init', initialState);
     }
 
     private dispatchState() {
@@ -29,11 +27,13 @@ export class ObservableStore<T> {
         this.stateDispatcher.next(clone);
     }
 
-    protected setState(state: T) {
+    protected setState(action: string, state: T) {
         // console.log(this, state);
         this.state = state;
-        this.isDirty = true;
         this.dispatchState();
+        if (this.trackStateHistory) {
+            this.stateHistory.push({ action, state});
+        }
     }
 
     protected getState() {

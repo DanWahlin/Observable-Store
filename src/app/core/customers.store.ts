@@ -12,9 +12,14 @@ export class CustomersStore extends ObservableStore<Customer[]> {
     let customer = {
       id: Date.now(),
       name: 'Jane Doe',
-      city: 'Seattle'
+      address: {
+        street: '1234 Main St.',
+        city: 'Phoenix',
+        state: 'AZ',
+        zip: '85258'
+      }
     }
-    super([customer]);
+    super([customer], true);
     this.sorterService = sorterService;
   }
 
@@ -23,18 +28,19 @@ export class CustomersStore extends ObservableStore<Customer[]> {
     // if successful update store state
     let custs = this.getState();
     custs.push(cust);
-    this.setState(custs);
+    this.setState('add', custs);
   }
 
   removeCustomer() {
     let custs = this.getState();
     custs.splice(custs.length - 1, 1);
-    this.setState(custs);
+    this.setState('remove', custs);
   }
   
   sortCustomers(property: string) {
     const sortedState = this.sorterService.sort(this.getState(), 'id');
-    this.setState(sortedState);
+    this.setState('sort', sortedState);
+    console.log(this.stateHistory);
   }
 
 }
