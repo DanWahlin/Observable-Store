@@ -47,7 +47,7 @@ export class SorterService {
         });
     }
 
-    isString(val: any): boolean {
+    private isString(val: any): boolean {
         return (val && (typeof val === 'string' || val instanceof String));
     }
 

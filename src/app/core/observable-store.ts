@@ -1,26 +1,25 @@
 import { ReflectiveInjector } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ClonerService } from './utilities/cloner.service';
-import { SorterService } from './utilities/sorter.service';
 
 export class ObservableStore<T> {
     private state: T;
     private stateDispatcher: BehaviorSubject<T>;
     private clonerService: ClonerService;
-    private sorterService: SorterService;
     stateChanged: Observable<T>;
+    isDirty:boolean;
 
     constructor(initialState?: T) {
         this.initStore(initialState);
     }
 
     private initStore(initialState) {
-        const injector = ReflectiveInjector.resolveAndCreate([ClonerService, SorterService]);
+        const injector = ReflectiveInjector.resolveAndCreate([ClonerService]);
         this.clonerService = injector.get(ClonerService);
-        this.sorterService = injector.get(SorterService);
 
         this.stateDispatcher = new BehaviorSubject<T>(initialState);
         this.stateChanged = this.stateDispatcher.asObservable();
+        this.isDirty = false;
 
         this.setState(initialState);
     }
@@ -33,11 +32,16 @@ export class ObservableStore<T> {
     protected setState(state: T) {
         // console.log(this, state);
         this.state = state;
+        this.isDirty = true;
         this.dispatchState();
     }
 
     protected getState() {
-        return this.state;
+        return this.clonerService.deepClone(this.state);
+    }
+
+    protected resetState(initialState) {
+        this.initStore(initialState);
     }
 
     protected getNestedProp(p) {
@@ -49,16 +53,6 @@ export class ObservableStore<T> {
                 return xs[x];
             }
         }, this.state);
-    }
-
-    protected sortState(property: string) {
-        // if (Array.isArray(this.state)) {
-        //     const sortedState = this.sorterService.sort<T>(this.state, property);
-        //     this.setState(sortedState);
-        // }
-        // else {
-        //     throw new Error('No collection to sort.');
-        // }
     }
 
 }

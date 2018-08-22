@@ -2,17 +2,20 @@ import { Injectable } from '@angular/core';
 
 import { ObservableStore } from './observable-store';
 import { Customer } from './customer';
+import { SorterService } from './utilities/sorter.service';
 
 @Injectable()
 export class CustomersStore extends ObservableStore<Customer[]> {
+  sorterService: SorterService;
 
-  constructor() { 
+  constructor(sorterService: SorterService) { 
     let customer = {
       id: Date.now(),
       name: 'Jane Doe',
       city: 'Seattle'
     }
     super([customer]);
+    this.sorterService = sorterService;
   }
 
   addCustomer(cust: Customer) {
@@ -30,7 +33,8 @@ export class CustomersStore extends ObservableStore<Customer[]> {
   }
   
   sortCustomers(property: string) {
-    this.sortState(property);
+    const sortedState = this.sorterService.sort(this.getState(), 'id');
+    this.setState(sortedState);
   }
 
 }
