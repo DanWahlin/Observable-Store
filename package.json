@@ -3,11 +3,9 @@
     "version": "0.0.1",
     "scripts": {
         "tsc": "tsc",
-        "build": "tsc src/observable-store"
+        "build": "tsc"
     },
     "devDependencies": {
-        "@types/node": "^10.7.1",
-        "core-js": "^2.5.7",
         "rxjs": "^6.2.2",
         "typescript": "^3.0.1"
     }

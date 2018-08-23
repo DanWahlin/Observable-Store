@@ -1,6 +1,6 @@
 ## Observable Store for State Management
 
-A work in progress...
+A work in progress... 
 
 Goals:
 1. Single source of truth

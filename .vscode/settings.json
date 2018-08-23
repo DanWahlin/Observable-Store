@@ -4,7 +4,7 @@
       "**/angular/src/**/*.js.map": true,
       "**/angular/src/**/*.js": true,
 
-      "src/**/*.js.map": true,
-      "src/**/*.js": true,
+      // "src/**/*.js.map": true,
+      // "src/**/*.js": true,
     }
 }
