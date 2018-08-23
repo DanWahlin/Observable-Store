@@ -5,6 +5,9 @@ dist
 tmp
 out-tsc
 
+samples/angular/src/app/**/*.js
+samples/angular/src/app/**/*.js.map
+
 # dependencies
 node_modules
 
