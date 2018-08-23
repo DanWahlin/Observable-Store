@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ObservableStore } from './observable-store';
+import { ObservableStore } from '../../../../../src/observable-store';
 import { Customer } from './customer';
 import { SorterService } from './utilities/sorter.service';
 

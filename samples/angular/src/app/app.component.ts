@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CustomersStore } from './core/customers.store';
 import { AutoUnsubscribe } from './shared/auto-unsubscribe.decorator';
 import { Customer } from './core/customer';
-import { Observable } from 'rxjs';
 
 @AutoUnsubscribe()
 @Component({

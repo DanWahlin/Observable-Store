@@ -7,14 +7,14 @@ export class ObservableStore<T> {
     private clonerService: ClonerService;
     private trackStateHistory: boolean;
     stateChanged: Observable<T>;
-    stateHistory = [];
+    stateHistory: any[] = [];
 
     constructor(initialState: T, trackStateHistory: boolean = false) {
         this.trackStateHistory = trackStateHistory;
         this.initStore(initialState);
     }
 
-    private initStore(initialState) {
+    private initStore(initialState: T) {
         //Not injecting service since we want to use ObservableStore outside of Angular
         this.clonerService = new ClonerService();
         this.stateDispatcher = new BehaviorSubject<T>(initialState);
@@ -40,7 +40,7 @@ export class ObservableStore<T> {
         return this.clonerService.deepClone(this.state);
     }
 
-    protected resetState(initialState) {
+    protected resetState(initialState: T) {
         this.initStore(initialState);
     }
 
