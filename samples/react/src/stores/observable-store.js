@@ -18,8 +18,7 @@ export class ObservableStore {
         this.stateDispatcher.next(clone);
     }
     setState(action, state) {
-        // console.log(this, state);
-        this.state = state;
+        this.state = Object.assign({}, this.state, state);
         this.dispatchState();
         if (this.trackStateHistory) {
             this.stateHistory.push({ action, state });
