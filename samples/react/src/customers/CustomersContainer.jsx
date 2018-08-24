@@ -1,6 +1,9 @@
 // React
 import React, { Component } from 'react';
 
+//Store
+import { CustomersStore } from '../stores/CustomersStore';
+
 // Components
 import CustomersList from './CustomersList';
 
@@ -9,14 +12,28 @@ class CustomersContainer extends Component {
     customers: []
   };
 
+  constructor() {
+    super();
+    this.storeSub = null;
+  }
+
   componentDidMount() {
-    fetch('./customers.json')
-      .then(response => response.json())
-      .then(customers => {
-        this.setState({
-          customers
-        });
-      });
+    // Get store instance
+    let store = CustomersStore.instance;
+
+    // Subscribe to store changes
+    this.storeSub = store.stateChanged.subscribe(customers => {
+      if (customers) {
+        this.setState({customers});
+      }
+    });
+
+    // Call function to modify store
+    store.getCustomers();
+  }
+
+  componentWillUnmount() {
+    this.storeSub.unsubscribe();
   }
 
   render() {
