@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { ObservableStore } from '../../../../../src/observable-store';
 import { Customer } from './customer';
 import { SorterService } from './utilities/sorter.service';
+import { ICustomerStoreState } from './interfaces';
 
 @Injectable()
-export class CustomersStore extends ObservableStore<Customer[]> {
+export class CustomersStore extends ObservableStore<ICustomerStoreState> {
   sorterService: SorterService;
 
   constructor(sorterService: SorterService) { 
-    let customer = {
+    const customer = {
       id: Date.now(),
       name: 'Jane Doe',
       address: {
@@ -18,28 +19,39 @@ export class CustomersStore extends ObservableStore<Customer[]> {
         state: 'AZ',
         zip: '85258'
       }
+    };
+    const initialState = {
+      customers: [customer],
+      customer: null
     }
-    super([customer], true);
+    super(initialState, true);
     this.sorterService = sorterService;
   }
 
-  addCustomer(cust: Customer) {
+  addCustomer(customer: Customer) {
     // insert via server API
     // if successful update store state
-    let custs = this.getState();
-    custs.push(cust);
-    this.setState('add', custs);
+    let state = this.getState();
+    state.customers.push(customer);
+    this.setState('add', {
+      customers: state.customers
+    });
   }
 
   removeCustomer() {
-    let custs = this.getState();
-    custs.splice(custs.length - 1, 1);
-    this.setState('remove', custs);
+    let state = this.getState();
+    state.customers.splice(state.customers.length - 1, 1);
+    this.setState('remove', {
+      customers: state.customers
+    });
   }
   
   sortCustomers(property: string) {
-    const sortedState = this.sorterService.sort(this.getState(), 'id');
-    this.setState('sort', sortedState);
+    let state = this.getState();
+    const sortedState = this.sorterService.sort(state.customers, 'id');
+    this.setState('sort', {
+      customers: sortedState
+    });
     console.log(this.stateHistory);
   }
 

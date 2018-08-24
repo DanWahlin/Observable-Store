@@ -22,9 +22,9 @@ class CustomersContainer extends Component {
     let store = CustomersStore.instance;
 
     // Subscribe to store changes
-    this.storeSub = store.stateChanged.subscribe(customers => {
-      if (customers) {
-        this.setState({customers});
+    this.storeSub = store.stateChanged.subscribe(state => {
+      if (state && state.customers) {
+        this.setState({customers: state.customers});
       }
     });
 

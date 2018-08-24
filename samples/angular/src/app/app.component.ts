@@ -19,8 +19,8 @@ export class AppComponent implements OnInit, OnDestroy {
     // Use Observable<Customer> if desired
     // this.customers = this.customersService.storeStateChanged;
 
-    this.customersStore.stateChanged.subscribe(custs => {
-      this.customers = custs;
+    this.customersStore.stateChanged.subscribe(state => {
+      this.customers = state.customers;
     });
   }
 

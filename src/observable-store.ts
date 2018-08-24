@@ -27,16 +27,15 @@ export class ObservableStore<T> {
         this.stateDispatcher.next(clone);
     }
 
-    protected setState(action: string, state: T) {
-        // console.log(this, state);
-        this.state = state;
+    protected setState(action: string, state: any) {
+        this.state = Object.assign({}, this.state, state);
         this.dispatchState();
         if (this.trackStateHistory) {
             this.stateHistory.push({ action, state});
         }
     }
 
-    protected getState() {
+    protected getState() : T {
         return this.clonerService.deepClone(this.state);
     }
 
