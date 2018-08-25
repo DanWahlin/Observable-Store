@@ -12,6 +12,8 @@ import { Subscription, Observable } from 'rxjs';
 })
 export class AppComponent implements OnInit, OnDestroy {
   customers: Customer[] | Observable<Customer[]>;
+  stateHistory = null;
+  isHistoryVisible = false;
   storeSub: Subscription;
 
   constructor(private customersStore: CustomersStore) { }
@@ -45,6 +47,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   sortCustomers() {
     this.customersStore.sort('id');
+  }
+
+  viewStateHistory() {
+    this.isHistoryVisible = !this.isHistoryVisible;
+    this.stateHistory = this.customersStore.stateHistory;
   }
 
   ngOnDestroy() {

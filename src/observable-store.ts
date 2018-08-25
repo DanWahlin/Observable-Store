@@ -1,7 +1,8 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ClonerService } from './utilities/cloner.service';
+import { ObservableStoreSettings } from './interfaces';
 
-export class ObservableStore<T,TActions> {
+export class ObservableStore<T> {
     private state: Readonly<T>;
     private stateDispatcher: BehaviorSubject<T>;
     private clonerService: ClonerService;
@@ -9,8 +10,8 @@ export class ObservableStore<T,TActions> {
     stateChanged: Observable<T>;
     stateHistory: any[] = [];
 
-    constructor(initialState: T, trackStateHistory: boolean = false) {
-        this.trackStateHistory = trackStateHistory;
+    constructor(initialState: T, settings: ObservableStoreSettings) {
+        this.trackStateHistory = settings.trackStateHistory;
         this.initStore(initialState);
     }
 
@@ -27,7 +28,7 @@ export class ObservableStore<T,TActions> {
         this.stateDispatcher.next(clone);
     }
 
-    protected setState(action: TActions | string, state: any) { 
+    protected setState(action: string, state: any) { 
         this.state = Object.assign({}, this.state, state);
         this.dispatchState();
         if (this.trackStateHistory) {

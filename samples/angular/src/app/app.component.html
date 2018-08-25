@@ -4,7 +4,14 @@
 <button (click)="removeCustomer()" class="btn btn-danger">Remove Customer</button>
 &nbsp;&nbsp;
 <button (click)="sortCustomers()" class="btn btn-secondary">Sort Customers</button>
+&nbsp;&nbsp;
+<button (click)="viewStateHistory()" class="btn btn-secondary">Toggle State History</button>
 <br /><br />
 <pre>
 {{ customers | json }}
+</pre>
+<br />
+<br />
+<pre *ngIf="isHistoryVisible">
+{{ stateHistory | json }}
 </pre>

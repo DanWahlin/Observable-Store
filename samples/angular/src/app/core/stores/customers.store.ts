@@ -5,25 +5,24 @@ import { Customer } from './customer.model';
 import { SorterService } from '..//utilities/sorter.service';
 
 @Injectable()
-export class CustomersStore extends ObservableStore<ICustomerStoreState, CustomersStoreActions> {
+export class CustomersStore extends ObservableStore<ICustomerStoreState> {
   sorterService: SorterService;
 
   constructor(sorterService: SorterService) { 
-    const customer = {
-      id: Date.now(),
-      name: 'Jane Doe',
-      address: {
-        street: '1234 Main St.',
-        city: 'Phoenix',
-        state: 'AZ',
-        zip: '85258'
-      }
-    };
     const initialState = {
-      customers: [customer],
+      customers: [{
+        id: Date.now(),
+        name: 'Jane Doe',
+        address: {
+          street: '1234 Main St.',
+          city: 'Phoenix',
+          state: 'AZ',
+          zip: '85258'
+        }
+      }],
       customer: null
     }
-    super(initialState, true);
+    super(initialState, { trackStateHistory: true });
     this.sorterService = sorterService;
   }
 

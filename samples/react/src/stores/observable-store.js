@@ -1,9 +1,9 @@
 import { BehaviorSubject } from 'rxjs';
 import { ClonerService } from './utilities/cloner.service';
 export class ObservableStore {
-    constructor(initialState, trackStateHistory = false) {
+    constructor(initialState, settings) {
         this.stateHistory = [];
-        this.trackStateHistory = trackStateHistory;
+        this.trackStateHistory = settings.trackStateHistory;
         this.initStore(initialState);
     }
     initStore(initialState) {
