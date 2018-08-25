@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CustomersStore } from './core/customers.store';
+import { CustomersStore } from './core/stores/customers.store';
 import { AutoUnsubscribe } from './shared/auto-unsubscribe.decorator';
-import { Customer } from './core/customer';
+import { Customer } from './core/stores/customer.model';
+import { Subscription, Observable } from 'rxjs';
 
 @AutoUnsubscribe()
 @Component({
@@ -10,8 +11,8 @@ import { Customer } from './core/customer';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  // customers: Observable<Customer[]>;
-  customers: Customer[];
+  customers: Customer[] | Observable<Customer[]>;
+  storeSub: Subscription;
 
   constructor(private customersStore: CustomersStore) { }
 
@@ -19,7 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Use Observable<Customer> if desired
     // this.customers = this.customersService.storeStateChanged;
 
-    this.customersStore.stateChanged.subscribe(state => {
+    this.storeSub = this.customersStore.stateChanged.subscribe(state => {
       this.customers = state.customers;
     });
   }
@@ -35,15 +36,15 @@ export class AppComponent implements OnInit, OnDestroy {
         zip: '85258'
       }
     };
-    this.customersStore.addCustomer(cust);
+    this.customersStore.add(cust);
   }
 
   removeCustomer() {
-    this.customersStore.removeCustomer();
+    this.customersStore.remove();
   }
 
   sortCustomers() {
-    this.customersStore.sortCustomers('id');
+    this.customersStore.sort('id');
   }
 
   ngOnDestroy() {
