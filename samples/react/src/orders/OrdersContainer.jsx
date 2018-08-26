@@ -40,10 +40,11 @@ class OrdersContainer extends Component {
     let customersStore = CustomersStore.instance;
     let ordersStore = OrdersStore.instance;
 
+    // ###### CustomersStore ########
     // ## Customer Option 1: Subscribe to store changes
     this.customersStoreSub = customersStore.stateChanged.subscribe(state => {
-      if (state) {
-        this.setState({customer: state.customer});
+      if (state && state.customer) {
+        this.setState( {customer: state.customer} );
       }
     });
     customersStore.getCustomer(customerId);
@@ -51,13 +52,14 @@ class OrdersContainer extends Component {
     // ## Customer Option 2: Get data directly from store
     // customersStore.getCustomer(customerId)
     //     .then(customer => {
-    //       this.setState({customer: customer});
+    //       this.setState({ customer: customer });
     //     });
 
+    // ###### OrdersStore ########
     // ## Orders Option 1: Subscribe to store changes
     this.ordersStoreSub = ordersStore.stateChanged.subscribe(state => {
       if (state && state.orderItems) {
-        this.setState({orderItems: state.orderItems});
+        this.setState({ orderItems: state.orderItems });
       }
     });
     ordersStore.getOrderItems(customerId);
@@ -65,7 +67,7 @@ class OrdersContainer extends Component {
     // ## Orders Option 2: Get data directly from store
     // ordersStore.getOrderItems(customerId)
     //     .then(orderItems => {
-    //       this.setState({orderItems: orderItems});
+    //       this.setState( {orderItems: orderItems} );
     //     });
   }
 
