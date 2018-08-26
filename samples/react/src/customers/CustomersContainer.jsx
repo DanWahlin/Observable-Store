@@ -21,6 +21,7 @@ class CustomersContainer extends Component {
     // Get store instance
     let store = CustomersStore.instance;
 
+    // ###### CustomersStore ########
     // Option 1: Subscribe to store changes
     this.storeSub = store.stateChanged.subscribe(state => {
       if (state) {
