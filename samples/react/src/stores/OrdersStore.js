@@ -11,12 +11,7 @@ export class OrdersStore extends ObservableStore {
     fetchOrders() {
         return fetch('/orders.json')
             .then(response => response.json())
-            .then(orders => {
-                this.setState('fetch_orders', {
-                    orders: orders
-                });
-                return this.getState();
-            });
+            .then(orders => orders);
     }
 
     getOrderItems(id) {
@@ -28,14 +23,17 @@ export class OrdersStore extends ObservableStore {
         // doesn't exist in store so fetch from server
         else {
             return this.fetchOrders()
-                       .then(state => {
-                           return this.filterOrders(id, state.orders);
+                       .then(orders => {
+                            this.setState('get_orders', {
+                                orders: orders
+                            });
+                           return this.filterOrders(id);
                        });
         }
     }
 
-    filterOrders(id, orders) {
-        let filteredOrders = orders.filter(order => order.customerId === id);
+    filterOrders(id) {
+        let filteredOrders = this.getState().orders.filter(order => order.customerId === id);
         const orderItems = (filteredOrders && filteredOrders.length)
             ? filteredOrders[0].orderItems : null;
         this.setState('filter_orders', {

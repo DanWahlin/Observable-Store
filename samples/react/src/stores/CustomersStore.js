@@ -8,15 +8,10 @@ export class CustomersStore extends ObservableStore {
         super(null, true);
     }
 
-    fetchState() {
+    fetchCustomers() {
         return fetch('/customers.json')
             .then(response => response.json())
-            .then(customers => {
-                this.setState('fetch_customers', {
-                    customers: customers
-                });
-                return this.getState();
-            });
+            .then(customers => customers);
     }
 
     getCustomers() {
@@ -27,9 +22,12 @@ export class CustomersStore extends ObservableStore {
         }
         // doesn't exist in store so fetch from server
         else {
-            return this.fetchState()
-                       .then(state => {
-                           return state.customers;
+            return this.fetchCustomers()
+                       .then(customers => {
+                            this.setState('get_customers', {
+                                customers: customers
+                            });
+                            return this.getState().customers;
                        })
         }
     }
