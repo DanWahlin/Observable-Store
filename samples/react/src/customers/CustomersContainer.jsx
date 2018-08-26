@@ -1,7 +1,7 @@
 // React
 import React, { Component } from 'react';
 
-//Store
+// Store
 import { CustomersStore } from '../stores/CustomersStore';
 
 // Components
@@ -21,19 +21,25 @@ class CustomersContainer extends Component {
     // Get store instance
     let store = CustomersStore.instance;
 
-    // Subscribe to store changes
+    // Option 1: Subscribe to store changes
     this.storeSub = store.stateChanged.subscribe(state => {
-      if (state && state.customers) {
+      if (state) {
         this.setState({customers: state.customers});
       }
     });
-
-    // Call function to modify store
     store.getCustomers();
+
+    // Option 2: Get data directly from store
+    // store.getCustomers()
+    //     .then(customers => {
+    //       this.setState({customers: customers});
+    //     });
   }
 
   componentWillUnmount() {
-    this.storeSub.unsubscribe();
+    if (this.storeSub) {
+      this.storeSub.unsubscribe();
+    }
   }
 
   render() {

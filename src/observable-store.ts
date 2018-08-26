@@ -9,6 +9,7 @@ export class ObservableStore<T> {
     private trackStateHistory: boolean;
     stateChanged: Observable<T>;
     stateHistory: any[] = [];
+    static instance = null;
 
     constructor(initialState: T, settings: ObservableStoreSettings) {
         this.trackStateHistory = settings.trackStateHistory;
@@ -16,11 +17,11 @@ export class ObservableStore<T> {
     }
 
     private initStore(initialState: T) {
-        //Not injecting service since we want to use ObservableStore outside of Angular
+        // Not injecting service since we want to use ObservableStore outside of Angular
         this.clonerService = new ClonerService();
         this.stateDispatcher = new BehaviorSubject<T>(initialState);
         this.stateChanged = this.stateDispatcher.asObservable();
-        this.setState('init', initialState);
+        this.setState('init_state', initialState);
     }
 
     private dispatchState() {
@@ -29,7 +30,7 @@ export class ObservableStore<T> {
     }
 
     protected setState(action: string, state: any) { 
-        this.state = Object.assign({}, this.state, state);
+        this.state = (state) ? Object.assign({}, this.state, state) : null;
         this.dispatchState();
         if (this.trackStateHistory) {
             this.stateHistory.push({ action, state});

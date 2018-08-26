@@ -7,18 +7,18 @@ export class ObservableStore {
         this.initStore(initialState);
     }
     initStore(initialState) {
-        //Not injecting service since we want to use ObservableStore outside of Angular
+        // Not injecting service since we want to use ObservableStore outside of Angular
         this.clonerService = new ClonerService();
         this.stateDispatcher = new BehaviorSubject(initialState);
         this.stateChanged = this.stateDispatcher.asObservable();
-        this.setState('init', initialState);
+        this.setState('init_state', initialState);
     }
     dispatchState() {
         const clone = this.clonerService.deepClone(this.state);
         this.stateDispatcher.next(clone);
     }
     setState(action, state) {
-        this.state = Object.assign({}, this.state, state);
+        this.state = (state) ? Object.assign({}, this.state, state) : null;
         this.dispatchState();
         if (this.trackStateHistory) {
             this.stateHistory.push({ action, state });
@@ -41,4 +41,5 @@ export class ObservableStore {
         }, this.state);
     }
 }
+ObservableStore.instance = null;
 //# sourceMappingURL=observable-store.js.map
