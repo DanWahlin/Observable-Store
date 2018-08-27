@@ -1,0 +1,17 @@
+<div *ngIf="customer">
+    <h1>Orders for {{ customer.name | capitalize }}</h1>
+
+    <table class="table table-hover orders-table" 
+           *ngFor="let order of orders">
+        <tr *ngFor="let orderItem of order.orderItems">
+            <td>{{ orderItem.productName }}</td>
+            <td>{{ orderItem.itemCost | currency:'USD':'symbol' }}</td>    
+        </tr>
+    </table>
+</div>
+<div *ngIf="!customer">
+   No customer found
+</div>  
+<br />
+<a routerLink="/customers">View All Customers</a>
+

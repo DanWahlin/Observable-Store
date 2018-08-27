@@ -1,10 +1,22 @@
-## Observable Store for State Management
+# Angular Core Concepts
 
-Still a work in progress...
+This project shows several core features of Angular including:
 
-Goals:
-1. Single source of truth
-1. State is read-only
-1. Provide state change notifications
-1. Track state change history (opt-in)
-1. Plan to make it work with Angular (current demo), React, and Vue.js
+* Components
+* Data Binding
+* Communication between components
+* Services
+* Routing
+
+<a href="https://stackblitz.com/github/DanWahlin/Angular-Core-Concepts" target="_blank">Run and edit the app on Stackblitz</a>
+
+## Running the Project Locally
+
+1. Install the Angular CLI
+
+    `npm install -g @angular/cli`
+
+1. Run `npm install`
+
+1. Run `ng serve -o`
+

@@ -42,6 +42,8 @@ class OrdersContainer extends Component {
 
     // ###### CustomersStore ########
     // ## Customer Option 1: Subscribe to store changes
+    // Useful when a component needs to be notified of changes but won't always
+    // call store directly.
     this.customersStoreSub = customersStore.stateChanged.subscribe(state => {
       if (state && state.customer) {
         this.setState( {customer: state.customer} );

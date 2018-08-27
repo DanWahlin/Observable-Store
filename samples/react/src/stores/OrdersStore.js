@@ -5,7 +5,7 @@ export class OrdersStore extends ObservableStore {
     static instance = new OrdersStore();
 
     constructor() {
-        super(null, true);
+        super(null, { trackStateHistory: true });
     }
 
     fetchOrders() {
