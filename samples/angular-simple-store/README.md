@@ -1,10 +1,13 @@
-## Observable Store for State Management
+## Observable Store for Angular
 
-Still a work in progress...
+Open the `src/app/core/stores` folder for examples.
 
-Goals:
-1. Single source of truth
-1. State is read-only
-1. Provide state change notifications
-1. Track state change history (opt-in)
-1. Plan to make it work with Angular (current demo), React, and Vue.js
+## Running the Project
+
+1. Install the Angular CLI
+
+    `npm install -g @angular/cli`
+
+1. Run `npm install`
+
+1. Run `ng serve -o`

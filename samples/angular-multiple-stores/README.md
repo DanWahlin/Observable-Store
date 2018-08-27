@@ -1,16 +1,8 @@
-# Angular Core Concepts
+## Observable Store for Angular
 
-This project shows several core features of Angular including:
+Open the `src/app/core/stores` folder for examples.
 
-* Components
-* Data Binding
-* Communication between components
-* Services
-* Routing
-
-<a href="https://stackblitz.com/github/DanWahlin/Angular-Core-Concepts" target="_blank">Run and edit the app on Stackblitz</a>
-
-## Running the Project Locally
+## Running the Project
 
 1. Install the Angular CLI
 
