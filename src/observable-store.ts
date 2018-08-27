@@ -3,46 +3,46 @@ import { ClonerService } from './utilities/cloner.service';
 import { ObservableStoreSettings } from './interfaces';
 
 export class ObservableStore<T> {
-    private state: Readonly<T>;
-    private stateDispatcher: BehaviorSubject<T>;
-    private clonerService: ClonerService;
-    private trackStateHistory: boolean;
+    private _state: Readonly<T>;
+    private _stateDispatcher: BehaviorSubject<T>;
+    private _clonerService: ClonerService;
+    private _trackStateHistory: boolean;
     stateChanged: Observable<T>;
     stateHistory: any[] = [];
     static instance = null;
 
     constructor(initialState: T, settings: ObservableStoreSettings) {
-        this.trackStateHistory = settings.trackStateHistory;
-        this.initStore(initialState);
+        this._trackStateHistory = settings.trackStateHistory;
+        this._initStore(initialState);
     }
 
-    private initStore(initialState: T) {
+    private _initStore(initialState: T) {
         // Not injecting service since we want to use ObservableStore outside of Angular
-        this.clonerService = new ClonerService();
-        this.stateDispatcher = new BehaviorSubject<T>(initialState);
-        this.stateChanged = this.stateDispatcher.asObservable();
+        this._clonerService = new ClonerService();
+        this._stateDispatcher = new BehaviorSubject<T>(initialState);
+        this.stateChanged = this._stateDispatcher.asObservable();
         this.setState('init_state', initialState);
     }
 
-    private dispatchState() {
-        const clone = this.clonerService.deepClone(this.state);
-        this.stateDispatcher.next(clone);
+    private _dispatchState() {
+        const clone = this._clonerService.deepClone(this._state);
+        this._stateDispatcher.next(clone);
     }
 
     protected setState(action: string, state: any) { 
-        this.state = (state) ? Object.assign({}, this.state, state) : null;
-        this.dispatchState();
-        if (this.trackStateHistory) {
+        this._state = (state) ? Object.assign({}, this._state, state) : null;
+        this._dispatchState();
+        if (this._trackStateHistory) {
             this.stateHistory.push({ action, state});
         }
     }
 
     protected getState() : T {
-        return this.clonerService.deepClone(this.state);
+        return this._clonerService.deepClone(this._state);
     }
 
     protected resetState(initialState: T) {
-        this.initStore(initialState);
+        this._initStore(initialState);
     }
 
     protected getNestedProp(p) {
@@ -53,7 +53,7 @@ export class ObservableStore<T> {
             else {
                 return xs[x];
             }
-        }, this.state);
+        }, this._state);
     }
 
 }

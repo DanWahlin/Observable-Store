@@ -3,32 +3,32 @@ import { ClonerService } from './utilities/cloner.service';
 export class ObservableStore {
     constructor(initialState, settings) {
         this.stateHistory = [];
-        this.trackStateHistory = settings.trackStateHistory;
-        this.initStore(initialState);
+        this._trackStateHistory = settings.trackStateHistory;
+        this._initStore(initialState);
     }
-    initStore(initialState) {
+    _initStore(initialState) {
         // Not injecting service since we want to use ObservableStore outside of Angular
-        this.clonerService = new ClonerService();
-        this.stateDispatcher = new BehaviorSubject(initialState);
-        this.stateChanged = this.stateDispatcher.asObservable();
+        this._clonerService = new ClonerService();
+        this._stateDispatcher = new BehaviorSubject(initialState);
+        this.stateChanged = this._stateDispatcher.asObservable();
         this.setState('init_state', initialState);
     }
-    dispatchState() {
-        const clone = this.clonerService.deepClone(this.state);
-        this.stateDispatcher.next(clone);
+    _dispatchState() {
+        const clone = this._clonerService.deepClone(this._state);
+        this._stateDispatcher.next(clone);
     }
     setState(action, state) {
-        this.state = (state) ? Object.assign({}, this.state, state) : null;
-        this.dispatchState();
-        if (this.trackStateHistory) {
+        this._state = (state) ? Object.assign({}, this._state, state) : null;
+        this._dispatchState();
+        if (this._trackStateHistory) {
             this.stateHistory.push({ action, state });
         }
     }
     getState() {
-        return this.clonerService.deepClone(this.state);
+        return this._clonerService.deepClone(this._state);
     }
     resetState(initialState) {
-        this.initStore(initialState);
+        this._initStore(initialState);
     }
     getNestedProp(p) {
         return p.reduce((xs, x) => {
@@ -38,7 +38,7 @@ export class ObservableStore {
             else {
                 return xs[x];
             }
-        }, this.state);
+        }, this._state);
     }
 }
 ObservableStore.instance = null;
