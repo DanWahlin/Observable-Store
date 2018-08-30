@@ -35,7 +35,7 @@ export class CustomersStore extends ObservableStore<ICustomersStoreState> {
             return this.fetchCustomers()
                 .pipe(
                     map(customers => {
-                        this.setState('get_customers', {
+                        this.setState(CustomersStoreActions.GetCustomers, {
                             customers: customers
                         });
                         return this.getState().customers;
@@ -50,7 +50,7 @@ export class CustomersStore extends ObservableStore<ICustomersStoreState> {
                 map(custs => {
                     let filteredCusts = custs.filter(cust => cust.id === id);
                     const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
-                    this.setState('get_customer', {
+                    this.setState(CustomersStoreActions.GetCustomer, {
                         customer: customer
                     });
                     return customer;
@@ -66,4 +66,9 @@ export class CustomersStore extends ObservableStore<ICustomersStoreState> {
         }
         return Observable.throw(error || 'Server error');
       }
+}
+
+export enum CustomersStoreActions {
+    GetCustomers = 'get_customers',
+    GetCustomer = 'get_customer'
 }

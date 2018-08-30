@@ -24,7 +24,7 @@ export class CustomersStore extends ObservableStore {
         else {
             return this.fetchCustomers()
                        .then(customers => {
-                            this.setState('get_customers', {
+                            this.setState(CustomersStoreActions.GetCustomers, {
                                 customers: customers
                             });
                             return this.getState().customers;
@@ -37,7 +37,7 @@ export class CustomersStore extends ObservableStore {
             .then(custs => {
                 let filteredCusts = custs.filter(cust => cust.id === id);
                 const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
-                this.setState('get_customer', {
+                this.setState(CustomersStoreActions.GetCustomer, {
                     customer: customer
                 });
                 return customer;
@@ -50,3 +50,8 @@ export class CustomersStore extends ObservableStore {
         });
     }
 }
+
+const CustomersStoreActions = {
+    GetCustomers: 'get_customers',
+    GetCustomers: 'get_customer'
+};

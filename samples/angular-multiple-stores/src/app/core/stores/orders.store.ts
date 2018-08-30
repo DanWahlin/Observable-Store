@@ -35,7 +35,7 @@ export class OrdersStore extends ObservableStore<IOrdersStoreState> {
             return this.fetchOrders()
                 .pipe(
                     map(orders => {
-                        this.setState('get_orders', {
+                        this.setState(OrdersStoreActions.GetOrders, {
                             orders: orders
                         });
                         return this.filterOrders(id);
@@ -57,4 +57,8 @@ export class OrdersStore extends ObservableStore<IOrdersStoreState> {
         }
         return Observable.throw(error || 'Server error');
       }
+}
+
+export enum OrdersStoreActions {
+    GetOrders = 'get_orders'
 }
