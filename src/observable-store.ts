@@ -37,7 +37,7 @@ export class ObservableStore<T> {
         }
 
         if (this._trackStateHistory) {
-            this.stateHistory.push({ action, state});
+            this.stateHistory.push({ action, state: this._clonerService.deepClone(this._state) });
         }
     }
 

@@ -50,7 +50,7 @@ export class CustomersStore extends ObservableStore<ICustomerStoreState> {
     let state = this.getState();
     state.customers.push(customer);
     this.setState(CustomersStoreActions.AddCustomer, {
-      customers: state.customers
+      customers: state.customers,
     });
   }
 

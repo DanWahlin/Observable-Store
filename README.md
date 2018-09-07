@@ -112,13 +112,101 @@ Open the `samples` folder and follow the instructions provided in the readme fil
     }
     ```
 
+    While strings are used for actions in the prior examples, you can use string enums as well if you want to have a set list of actions to choose from:
+
+    ``` typescript
+        export enum CustomersStoreActions {
+            AddCustomer = 'add_customer',
+            RemoveCustomer = 'remove_customer',
+            GetCustomers = 'get_customers',
+            SortCustomers = 'sort_customers'
+        }
+
+        // Example of using the enum in a store
+        add(customer: Customer) {
+            let state = this.getState();
+            state.customers.push(customer);
+            this.setState(CustomersStoreActions.AddCustomer, {
+                customers: state.customers
+            });
+        }
+    ```
+
 1. If you want to view all of the changes to the store you can access the `stateHistory` property:
 
     ``` typescript
     console.log(this.stateHistory);
+
+    // example stateHistory output
+    [
+        {
+            "action": "init_state",
+            "state": {
+                "customers": [
+                    {
+                    "id": 1536354269413,
+                    "name": "Jane Doe",
+                    "address": {
+                        "street": "1234 Main St.",
+                        "city": "Phoenix",
+                        "state": "AZ",
+                        "zip": "85258"
+                    }
+                    }
+                ],
+                "customer": null
+            }
+        },
+        {
+            "action": "add_customer",
+            "state": {
+                "customers": [
+                    {
+                        "id": 1536354269413,
+                        "name": "Jane Doe",
+                        "address": {
+                            "street": "1234 Main St.",
+                            "city": "Phoenix",
+                            "state": "AZ",
+                            "zip": "85258"
+                        }
+                    },
+                    {
+                        "id": 1536354272461,
+                        "name": "Fred",
+                        "address": {
+                            "street": "1536354272461 Main St.",
+                            "city": "Phoenix",
+                            "state": "AZ",
+                            "zip": "85258"
+                        }
+                    }
+                ],
+                "customer": null
+            }
+        },
+        {
+            "action": "remove_customer",
+            "state": {
+                "customers": [
+                    {
+                        "id": 1536354269413,
+                        "name": "Jane Doe",
+                        "address": {
+                            "street": "1234 Main St.",
+                            "city": "Phoenix",
+                            "state": "AZ",
+                            "zip": "85258"
+                        }
+                    }
+                ],
+                "customer": null
+            }
+        }
+    ]
     ```
 
-1. Any component can be notified of changes to the store by injecting the store and then subscribing to the `stateChanged` observable:
+1. Any component can be notified of changes to the store state by injecting the store and then subscribing to the `stateChanged` observable:
 
     ``` typescript
     customers: Customer[];
