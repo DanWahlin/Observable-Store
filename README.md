@@ -50,8 +50,8 @@ Open the `samples` folder and follow the instructions provided in the readme fil
     ``` typescript
     constructor() { 
         const initialState = {
-        customers: [],
-        customer: null
+            customers: [],
+            customer: null
         }
         super(initialState, { trackStateHistory: true });
     }
