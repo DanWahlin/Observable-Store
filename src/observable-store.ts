@@ -29,9 +29,13 @@ export class ObservableStore<T> {
         this._stateDispatcher.next(clone);
     }
 
-    protected setState(action: string, state: any) { 
+    protected setState(action: string, state: any, dispatchState: boolean = true) { 
         this._state = (state) ? Object.assign({}, this._state, state) : null;
-        this._dispatchState();
+        
+        if (this._dispatchState) {
+            this._dispatchState();
+        }
+
         if (this._trackStateHistory) {
             this.stateHistory.push({ action, state});
         }
