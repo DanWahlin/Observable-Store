@@ -87,7 +87,7 @@ Open the `samples` folder and follow the instructions provided in the readme fil
             let state = this.getState();
             state.customers.push(customer);
             this.setState('add_customer', {
-            customers: state.customers
+                customers: state.customers
             });
         }
 
@@ -95,7 +95,7 @@ Open the `samples` folder and follow the instructions provided in the readme fil
             let state = this.getState();
             state.customers.splice(state.customers.length - 1, 1);
             this.setState('remove_customer', {
-            customers: state.customers
+                customers: state.customers
             });
         }
         
@@ -103,7 +103,7 @@ Open the `samples` folder and follow the instructions provided in the readme fil
             let state = this.getState();
             const sortedState = this.sorterService.sort(state.customers, property);
             this.setState('sort_customers', {
-            customers: sortedState
+                customers: sortedState
             });
         }
 
