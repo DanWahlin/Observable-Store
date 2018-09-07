@@ -113,7 +113,7 @@ Open the `samples` folder and follow the instructions provided in the readme fil
 1. If you want to view all of the changes to the store you can access the stateHistory property:
 
     ``` typescript
-        console.log(this.stateHistory);
+    console.log(this.stateHistory);
     ```
 
 1. Any component can be notified of changes to the store by injecting the store and then subscribing to the stateChanged observable:
