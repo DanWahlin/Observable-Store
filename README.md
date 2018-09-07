@@ -148,5 +148,10 @@ Open the `samples` folder and follow the instructions provided in the readme fil
     }
     ```
 
-    ### Using Observable Store with React
+### Using Observable Store with React
 
+See the `samples` folder. More details coming soon.
+
+### Using Observable Store with Vue.js
+
+Coming Soon
