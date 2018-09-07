@@ -23,9 +23,11 @@ Open the `samples` folder and follow the instructions provided in the readme fil
 4. Retrieve from the store using getState()
 5. Subscribe to store changes using the store.stateChanged observable
 
-### Using Observable Store with Angular
+## Using Observable Store with Angular
 
-1. Create an Angular application using the Angular CLI or another option
+See the `samples` folder for examples of using Observable Store with Angular.
+
+1. Create an Angular application using the Angular CLI or another option.
 
 1. Add an interface or model object that represents the shape of the data you'd like to add to your store. Here's an example of an interface to store customer state:
 
@@ -228,7 +230,7 @@ Open the `samples` folder and follow the instructions provided in the readme fil
     }
     ```
 
-    You'll of course want to unsubscribe in ngOnDestroy():
+    You'll of course want to unsubscribe in `ngOnDestroy()`:
 
     ``` typescript
     ngOnDestroy() {
@@ -238,9 +240,232 @@ Open the `samples` folder and follow the instructions provided in the readme fil
     }
     ```
 
-### Using Observable Store with React
+## Using Observable Store with React
 
-See the `samples` folder. More details coming soon.
+See the `samples` folder for examples of using Observable Store with React.
+
+1. Create a React application using the `create-react-app` or another option.
+
+1. Add `rxjs` into the `package.json` dependencies and run `npm install`.
+
+1. Add a service class (you can call it a store if you'd like) that extends ObservableStore<T>. Pass the interface or model class that represents the shape of your store data in for T.
+
+    ``` javascript
+    export class CustomersStore extends ObservableStore {
+
+    }
+    ```
+
+1. Add a static property named `instance` (you can optionally add a static function named `getInstance()` that returns `instance` if preferred):
+
+    ``` javascript
+    export class CustomersStore extends ObservableStore {
+        static instance = new CustomersStore();
+    }
+    ```
+
+1. In the constructor add a call to `super()` and pass the initial store state as well as any Observable Store settings. Currently the store will allow you to turn tracking of store state changes on and off using the `trackStateHistory` property.
+
+    ``` javascript
+    export class CustomersStore extends ObservableStore {
+        constructor() {
+            const initialState = {
+                customers: [],
+                customer: null
+            }
+            super(initialState, { trackStateHistory: true });
+        }
+    }
+    ```
+
+1. Add functions into your service/store to retrieve, store, sort, filter, or perform any actions you'd like. To update the store call `setState()` and pass the action that is occuring as well as the store state. To get the state out of the store call `getState()`. Note that store data is immutable and `getState()` always returns a clone of the store data. Here's a simple example:
+
+    ``` javascript
+    export class CustomersStore extends ObservableStore {
+
+        static instance = new CustomersStore();
+
+        constructor() {
+            super(null, { trackStateHistory: true });
+        }
+
+        fetchCustomers() {
+            // using fetch api here to keep it simple, but any other
+            // 3rd party option will work (Axios, Ky, etc.)
+            return fetch('/customers')
+                .then(response => response.json())
+                .then(customers => customers);
+        }
+
+        getCustomers() {
+            let state = this.getState();
+            // pull from store cache
+            if (state && state.customers) {
+                return this.createPromise(null, state.customers);
+            }
+            // doesn't exist in store so fetch from server
+            else {
+                return this.fetchCustomers()
+                    .then(customers => {
+                            this.setState('get_customers', {
+                                customers: customers
+                            });
+                            return this.getState().customers;
+                    });
+            }
+        }
+
+        getCustomer(id) {
+            return this.getCustomers()
+                .then(custs => {
+                    let filteredCusts = custs.filter(cust => cust.id === id);
+                    const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
+                    this.setState('get_customer', {
+                        customer: customer
+                    });
+                    return customer;
+                });
+        }
+
+        createPromise(err, result) {
+            return new Promise((resolve, reject) => {
+                return err ? reject(err) : resolve(result);
+            });
+        }
+    }
+    ```
+
+    While strings are used for actions in the prior example, you can use an object as well if you want to have a set list of actions to choose from:
+
+    ``` javascript
+    const CustomersStoreActions = {
+        GetCustomers: 'get_customers',
+        GetCustomer: 'get_customer'
+    };
+
+        // Example of using the enum in a store
+    getCustomer(id) {
+        return this.getCustomers()
+            .then(custs => {
+                let filteredCusts = custs.filter(cust => cust.id === id);
+                const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
+                this.setState(CustomersStoreActions.GetCustomer, {
+                    customer: customer
+                });
+                return customer;
+            });
+    }
+    ```
+
+1. If you want to view all of the changes to the store you can access the `stateHistory` property:
+
+    ``` javascript
+    console.log(this.stateHistory);
+
+    // example stateHistory output
+    [
+        {
+            "action": "init_state",
+            "state": {
+                "customers": [
+                    {
+                    "id": 1536354269413,
+                    "name": "Jane Doe",
+                    "address": {
+                        "street": "1234 Main St.",
+                        "city": "Phoenix",
+                        "state": "AZ",
+                        "zip": "85258"
+                    }
+                    }
+                ],
+                "customer": null
+            }
+        },
+        {
+            "action": "add_customer",
+            "state": {
+                "customers": [
+                    {
+                        "id": 1536354269413,
+                        "name": "Jane Doe",
+                        "address": {
+                            "street": "1234 Main St.",
+                            "city": "Phoenix",
+                            "state": "AZ",
+                            "zip": "85258"
+                        }
+                    },
+                    {
+                        "id": 1536354272461,
+                        "name": "Fred",
+                        "address": {
+                            "street": "1536354272461 Main St.",
+                            "city": "Phoenix",
+                            "state": "AZ",
+                            "zip": "85258"
+                        }
+                    }
+                ],
+                "customer": null
+            }
+        },
+        {
+            "action": "remove_customer",
+            "state": {
+                "customers": [
+                    {
+                        "id": 1536354269413,
+                        "name": "Jane Doe",
+                        "address": {
+                            "street": "1234 Main St.",
+                            "city": "Phoenix",
+                            "state": "AZ",
+                            "zip": "85258"
+                        }
+                    }
+                ],
+                "customer": null
+            }
+        }
+    ]
+    ```
+
+1. Any component can be notified of changes to the store state by subscribing to the `stateChanged` observable:
+
+    ``` javascript
+    componentDidMount() {
+        // Get store instance (or may call getInstance() if available in store)
+        let store = CustomersStore.instance;
+
+        // ###### CustomersStore ########
+        // Option 1: Subscribe to store changes
+        // Useful when a component needs to be notified of changes but won't always
+        // call store directly.
+        this.storeSub = store.stateChanged.subscribe(state => {
+        if (state) {
+            this.setState({customers: state.customers});
+        }
+        });
+        store.getCustomers();
+
+        // Option 2: Get data directly from store
+        // store.getCustomers()
+        //     .then(customers => {
+        //       this.setState({customers: customers});
+        //     });
+    }
+    ```
+
+    You'll of course want to unsubscribe in `componentWillUnmount()`:
+
+    ``` javascript
+    componentWillUnmount() {
+        if (this.storeSub) {
+        this.storeSub.unsubscribe();
+        }
+    }
+    ```
 
 ### Using Observable Store with Vue.js
 

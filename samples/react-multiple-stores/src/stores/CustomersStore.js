@@ -23,12 +23,12 @@ export class CustomersStore extends ObservableStore {
         // doesn't exist in store so fetch from server
         else {
             return this.fetchCustomers()
-                       .then(customers => {
-                            this.setState(CustomersStoreActions.GetCustomers, {
-                                customers: customers
-                            });
-                            return this.getState().customers;
-                       })
+                .then(customers => {
+                    this.setState(CustomersStoreActions.GetCustomers, {
+                        customers: customers
+                    });
+                    return this.getState().customers;
+                });
         }
     }
 
@@ -53,5 +53,5 @@ export class CustomersStore extends ObservableStore {
 
 const CustomersStoreActions = {
     GetCustomers: 'get_customers',
-    GetCustomers: 'get_customer'
+    GetCustomer: 'get_customer'
 };
