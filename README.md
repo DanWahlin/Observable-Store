@@ -110,13 +110,13 @@ Open the `samples` folder and follow the instructions provided in the readme fil
     }
     ```
 
-1. If you want to view all of the changes to the store you can access the stateHistory property:
+1. If you want to view all of the changes to the store you can access the `stateHistory` property:
 
     ``` typescript
     console.log(this.stateHistory);
     ```
 
-1. Any component can be notified of changes to the store by injecting the store and then subscribing to the stateChanged observable:
+1. Any component can be notified of changes to the store by injecting the store and then subscribing to the `stateChanged` observable:
 
     ``` typescript
     customers: Customer[];
@@ -133,12 +133,12 @@ Open the `samples` folder and follow the instructions provided in the readme fil
         });
 
         // Can call service/store to get data directly 
-        // (won't fire when the store state changes)
+        // It won't fire when the store state changes though in this case
         //this.storeSub = this.customersStore.get().subscribe(custs => this.customers = custs);
     }
     ```
 
-    You'll of course want to unsubscribe in ngOnDestroy() as well:
+    You'll of course want to unsubscribe in ngOnDestroy():
 
     ``` typescript
     ngOnDestroy() {
