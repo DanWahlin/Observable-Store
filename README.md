@@ -55,7 +55,7 @@ Open the `samples` folder and follow the instructions provided in the readme fil
     }
     ```
 
-1. Add functions into your service/store to retrieve, store, sort, filter, or perform any actions you'd like. To update the store you'll call `setState()` and pass the action that is occuring as well as the store state. To get the state out of the store you'll call `getState()`. Note that store data is immutable and `getState()` always returns a clone of the store data.
+1. Add functions into your service/store to retrieve, store, sort, filter, or perform any actions you'd like. To update the store call `setState()` and pass the action that is occuring as well as the store state. To get the state out of the store call `getState()`. Note that store data is immutable and `getState()` always returns a clone of the store data.
 
     ``` typescript
     @Injectable()
