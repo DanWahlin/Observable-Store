@@ -25,7 +25,9 @@ Open the `samples` folder and follow the instructions provided in the readme fil
 
 ### Using Observable Store with Angular
 
-1. Create an interface or model object that represents the shape of the data you'd like to add to your store. Here's an example of an interface to store customer state:
+1. Create an Angular application using the Angular CLI or another option
+
+1. Add an interface or model object that represents the shape of the data you'd like to add to your store. Here's an example of an interface to store customer state:
 
     ``` typescript
     export interface ICustomerStoreState {
@@ -34,7 +36,7 @@ Open the `samples` folder and follow the instructions provided in the readme fil
     }
     ```
 
-1. Create a service (you can call it a store if you'd like) that extends ObservableStore<T>. Pass the interface or model class that represents the shape of your store data in for T.
+1. Add a service (you can call it a store if you'd like) that extends ObservableStore<T>. Pass the interface or model class that represents the shape of your store data in for T.
 
     ``` typescript
     @Injectable()
