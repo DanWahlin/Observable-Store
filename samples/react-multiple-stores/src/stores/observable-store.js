@@ -17,9 +17,11 @@ export class ObservableStore {
         const clone = this._clonerService.deepClone(this._state);
         this._stateDispatcher.next(clone);
     }
-    setState(action, state) {
+    setState(action, state, dispatchState = true) {
         this._state = (state) ? Object.assign({}, this._state, state) : null;
-        this._dispatchState();
+        if (dispatchState) {
+            this._dispatchState();
+        }
         if (this._trackStateHistory) {
             this.stateHistory.push({ action, state });
         }

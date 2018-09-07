@@ -1,8 +1,14 @@
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 
 import { ObservableStore } from '../../../../../../src/observable-store';
 import { Customer } from './customer.model';
 import { SorterService } from '..//utilities/sorter.service';
+
+export interface ICustomerStoreState {
+  customers: Customer[];
+  customer: Customer;
+}
 
 @Injectable()
 export class CustomersStore extends ObservableStore<ICustomerStoreState> {
@@ -25,6 +31,18 @@ export class CustomersStore extends ObservableStore<ICustomerStoreState> {
     super(initialState, { trackStateHistory: true });
     this.sorterService = sorterService;
   }
+
+  get() {
+    const customers = this.getState().customers;
+    if (customers) {
+        return of(customers);
+    }
+    else {
+        // call server and get data
+        // assume async call here that returns observable
+        return of(null);
+    }
+}
 
   add(customer: Customer) {
     // insert via server API

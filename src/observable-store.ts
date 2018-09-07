@@ -32,7 +32,7 @@ export class ObservableStore<T> {
     protected setState(action: string, state: any, dispatchState: boolean = true) { 
         this._state = (state) ? Object.assign({}, this._state, state) : null;
         
-        if (this._dispatchState) {
+        if (dispatchState) {
             this._dispatchState();
         }
 

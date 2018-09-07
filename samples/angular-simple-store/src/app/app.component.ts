@@ -22,9 +22,13 @@ export class AppComponent implements OnInit, OnDestroy {
     // Use Observable<Customer> if desired
     // this.customers = this.customersService.storeStateChanged;
 
+    // Can subscribe to stateChanged of store
     this.storeSub = this.customersStore.stateChanged.subscribe(state => {
       this.customers = state.customers;
     });
+
+    // Can call service/store to get data directly (won't fire when the store state changes)
+    //this.storeSub = this.customersStore.get().subscribe(custs => this.customers = custs);
   }
 
   addCustomer() {
@@ -55,6 +59,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-
+    // Not needed since we're using the AutoUnsubscribe decorator above the class
+    // if (this.storeSub) {
+    //   this.storeSub.unsubscribe();
+    // }
   }
 }
