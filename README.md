@@ -23,7 +23,13 @@ Open the `samples` folder and follow the instructions provided in the readme fil
 4. Retrieve from the store using getState()
 5. Subscribe to store changes using the store.stateChanged observable
 
-## Using Observable Store with Angular
+### Walk-Throughs
+
+* [Using Observable Store with Angular](#angular)
+* [Using Observable Store with React](#react)
+* [Using Observable Store with Vue.js](#vue)
+
+## <a name="angular"></a>Using Observable Store with Angular
 
 See the `samples` folder for examples of using Observable Store with Angular.
 
@@ -240,7 +246,7 @@ See the `samples` folder for examples of using Observable Store with Angular.
     }
     ```
 
-## Using Observable Store with React
+## <a name="react"></a>Using Observable Store with React
 
 See the `samples` folder for examples of using Observable Store with React.
 
@@ -467,6 +473,6 @@ See the `samples` folder for examples of using Observable Store with React.
     }
     ```
 
-### Using Observable Store with Vue.js
+### <a name="vue"></a>Using Observable Store with Vue.js
 
 Coming Soon
