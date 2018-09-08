@@ -8,7 +8,7 @@ The goal of the Observable Store is to provide an extremely simple way to store 
 1. Single source of truth
 1. State is read-only/immutable
 1. Provide state change notifications
-1. Track state change history (can be turned off)
+1. Track state change history
 1. Works with Angular (demo included), React (demo included), Vue.js (coming soon), or any front-end library/framework
 
 ### Running the Samples
