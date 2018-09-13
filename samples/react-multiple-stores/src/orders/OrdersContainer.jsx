@@ -22,16 +22,12 @@ class OrdersContainer extends Component {
       }).isRequired
     }).isRequired
   };
-
-  constructor() {
-    super();
-    this.customersStoreSub = null;
-    this.ordersStoreSub = null;
-  }
+  customersStoreSub = null;
+  ordersStoreSub = null;
 
   state = {
     customer: null,
-    orderItems: []
+    orders: []
   };
 
   componentDidMount() {
@@ -57,20 +53,10 @@ class OrdersContainer extends Component {
     //       this.setState({ customer: customer });
     //     });
 
-    // ###### OrdersStore ########
-    // ## Orders Option 1: Subscribe to store changes
-    this.ordersStoreSub = ordersStore.stateChanged.subscribe(state => {
-      if (state && state.orderItems) {
-        this.setState({ orderItems: state.orderItems });
-      }
-    });
-    ordersStore.getOrderItems(customerId);
-
-    // ## Orders Option 2: Get data directly from store
-    // ordersStore.getOrderItems(customerId)
-    //     .then(orderItems => {
-    //       this.setState( {orderItems: orderItems} );
-    //     });
+    ordersStore.getOrders(customerId)
+        .then(orders => {
+          this.setState( {orders} );
+        });
   }
 
   componentWillUnmount() {
@@ -90,7 +76,7 @@ class OrdersContainer extends Component {
           <div>
             <h1>Orders for {capitalize(this.state.customer.name)}</h1>
             <br />
-            <OrdersList orderItems={this.state.orderItems} />
+            <OrdersList orders={this.state.orders} />
           </div>
         ) : (
           <div className="row">No customer found</div>

@@ -14,7 +14,7 @@ export class OrdersStore extends ObservableStore {
             .then(orders => orders);
     }
 
-    getOrderItems(id) {
+    getOrders(id) {
         let state = this.getState();
         // pull from store cache
         if (state && state.orders) {
@@ -24,22 +24,14 @@ export class OrdersStore extends ObservableStore {
         else {
             return this.fetchOrders()
                        .then(orders => {
-                            this.setState('get_orders', {
-                                orders: orders
-                            });
-                           return this.filterOrders(id);
+                            this.setState({ orders }, 'set_orders');
+                            return this.filterOrders(id, orders);
                        });
         }
     }
 
-    filterOrders(id) {
-        let filteredOrders = this.getState().orders.filter(order => order.customerId === id);
-        const orderItems = (filteredOrders && filteredOrders.length)
-            ? filteredOrders[0].orderItems : null;
-        this.setState('filter_orders', {
-            orderItems: orderItems
-        });
-        return orderItems;
+    filterOrders(id, orders) {
+        return orders.filter(order => order.customerId === id);
     }
 
     createPromise(err, result) {

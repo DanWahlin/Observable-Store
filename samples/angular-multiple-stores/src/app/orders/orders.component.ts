@@ -28,7 +28,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
     const id = +this.route.snapshot.paramMap.get('id');
 
     // Option 1: Access data directly from store
-    this.customersSub = this.customersStore.getCustomer(id).subscribe((customer: ICustomer) => {
+    this.customersSub = this.customersStore.getCustomer(id).subscribe(customer => {
       this.customer = customer;
     });
 

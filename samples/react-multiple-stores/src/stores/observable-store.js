@@ -11,20 +11,32 @@ export class ObservableStore {
         this._clonerService = new ClonerService();
         this._stateDispatcher = new BehaviorSubject(initialState);
         this.stateChanged = this._stateDispatcher.asObservable();
-        this.setState('init_state', initialState);
+        this.setState(initialState, 'init_state');
     }
     _dispatchState() {
         const clone = this._clonerService.deepClone(this._state);
         this._stateDispatcher.next(clone);
     }
-    setState(action, state, dispatchState = true) {
-        this._state = (state) ? Object.assign({}, this._state, state) : null;
+    setState(state, action, dispatchState = true) {
+        if (typeof state === 'function') {
+            const newState = state(this.getState());
+            this.updateState(newState);
+        }
+        else if (typeof state === 'object') {
+            this.updateState(state);
+        }
+        else {
+            throw Error('Pass an object or a function for the state parameter when calling setState().');
+        }
         if (dispatchState) {
             this._dispatchState();
         }
         if (this._trackStateHistory) {
-            this.stateHistory.push({ action, state });
+            this.stateHistory.push({ action, state: this._clonerService.deepClone(this._state) });
         }
+    }
+    updateState(state) {
+        this._state = (state) ? Object.assign({}, this._state, state) : null;
     }
     getState() {
         return this._clonerService.deepClone(this._state);

@@ -11,11 +11,7 @@ class CustomersContainer extends Component {
   state = {
     customers: []
   };
-
-  constructor() {
-    super();
-    this.storeSub = null;
-  }
+  storeSub = null;
 
   componentDidMount() {
     // Get store instance

@@ -49,25 +49,26 @@ export class CustomersStore extends ObservableStore<ICustomerStoreState> {
     // if successful update store state
     let state = this.getState();
     state.customers.push(customer);
-    this.setState(CustomersStoreActions.AddCustomer, {
-      customers: state.customers,
-    });
+    this.setState({ customers: state.customers }, CustomersStoreActions.AddCustomer);
   }
 
   remove() {
     let state = this.getState();
     state.customers.splice(state.customers.length - 1, 1);
-    this.setState(CustomersStoreActions.RemoveCustomer, {
-      customers: state.customers
-    });
+    this.setState({ customers: state.customers }, CustomersStoreActions.RemoveCustomer);
   }
   
   sort(property: string = 'id') {
-    let state = this.getState();
-    const sortedState = this.sorterService.sort(state.customers, property);
-    this.setState(CustomersStoreActions.SortCustomers, {
-      customers: sortedState
-    });
+    // let state = this.getState();
+    // const sortedState = this.sorterService.sort(state.customers, property);
+    // this.setState({ customers: sortedState }, CustomersStoreActions.SortCustomers);
+
+    // could also pass a function to setState to grab the previous state 
+    // and then update the current state
+    this.setState(prevState => { 
+      return { customers: this.sorterService.sort(prevState.customers, property) };
+    }, CustomersStoreActions.SortCustomers);
+
     console.log(this.stateHistory);
   }
 

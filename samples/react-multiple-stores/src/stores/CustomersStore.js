@@ -14,6 +14,10 @@ export class CustomersStore extends ObservableStore {
             .then(customers => customers);
     }
 
+    // Set state in the store by calling setState(stateObject, action). 
+    // If you want to access the previous state you can also call 
+    // setState((prevState) => stateObject, action) rather than calling getState()
+    // first before calling setState().
     getCustomers() {
         let state = this.getState();
         // pull from store cache
@@ -24,9 +28,7 @@ export class CustomersStore extends ObservableStore {
         else {
             return this.fetchCustomers()
                 .then(customers => {
-                    this.setState(CustomersStoreActions.GetCustomers, {
-                        customers: customers
-                    });
+                    this.setState({ customers }, CustomersStoreActions.GetCustomers);
                     return this.getState().customers;
                 });
         }
@@ -37,9 +39,7 @@ export class CustomersStore extends ObservableStore {
             .then(custs => {
                 let filteredCusts = custs.filter(cust => cust.id === id);
                 const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
-                this.setState(CustomersStoreActions.GetCustomer, {
-                    customer: customer
-                });
+                this.setState({ customer }, CustomersStoreActions.GetCustomer);
                 return customer;
             });
     }

@@ -28,26 +28,24 @@ export class OrdersStore extends ObservableStore<IOrdersStoreState> {
         let state = this.getState();
         // pull from store cache
         if (state && state.orders) {
-            return of(this.filterOrders(id));
+            return of(this.filterOrders(id, state.orders));
         }
         // doesn't exist in store so fetch from server
         else {
             return this.fetchOrders()
                 .pipe(
                     map(orders => {
-                        this.setState(OrdersStoreActions.GetOrders, {
-                            orders: orders
-                        });
-                        return this.filterOrders(id);
+                        this.setState({ orders }, OrdersStoreActions.GetOrders);
+                        return this.filterOrders(id, orders);
                     })
                 );
         }
     }
 
-    filterOrders(id: number) {
-        let filteredOrders = this.getState().orders.filter(order => +order.customerId === id);
-        return filteredOrders;
+    filterOrders(id: number, orders) {
+       return orders.filter(order => +order.customerId === id);
     }
+    
 
     private handleError(error: any) {
         console.error('server error:', error);

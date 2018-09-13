@@ -5,23 +5,30 @@ import Currency from 'react-currency-formatter';
 
 class OrdersList extends Component {
   static propTypes = {
-    orderItems: PropTypes.array.isRequired
+    orders: PropTypes.array.isRequired
   };
 
   render() {
     return (
-      <table className="table table-hover orders-table">
-        <tbody>
-          {this.props.orderItems.map(orderItem => {
-            return <tr key={orderItem.id}>
-              <td>{orderItem.productName}</td>
-              <td>
-                <Currency quantity={orderItem.itemCost} />
-              </td>
-            </tr>
-          })}
-        </tbody>
-      </table>
+      <div>
+        {this.props.orders.map(order => {
+          return <div>
+              <table className="table table-hover orders-table" key={order.customerId}>
+              <tbody>
+                {order.orderItems.map(orderItem => {
+                  return <tr key={orderItem.id}>
+                    <td>{orderItem.productName}</td>
+                    <td>
+                      <Currency quantity={orderItem.itemCost} />
+                    </td>
+                  </tr>
+                })}
+              </tbody>
+            </table>
+              <br />
+          </div>
+        })}
+      </div>
     );
   }
 
