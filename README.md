@@ -96,25 +96,19 @@ See the `samples` folder for examples of using Observable Store with Angular.
         add(customer: Customer) {
             let state = this.getState();
             state.customers.push(customer);
-            this.setState('add_customer', {
-                customers: state.customers
-            });
+            this.setState({ customers: state.customers }, 'add_customer');
         }
 
         remove() {
             let state = this.getState();
             state.customers.splice(state.customers.length - 1, 1);
-            this.setState('remove_customer', {
-                customers: state.customers
-            });
+            this.setState({ customers: state.customers } 'remove_customer');
         }
         
         sort(property: string = 'id') {
             let state = this.getState();
             const sortedState = this.sorterService.sort(state.customers, property);
-            this.setState('sort_customers', {
-                customers: sortedState
-            });
+            this.setState({ customers: sortedState } 'sort_customers');
         }
 
     }
@@ -134,9 +128,7 @@ See the `samples` folder for examples of using Observable Store with Angular.
         add(customer: Customer) {
             let state = this.getState();
             state.customers.push(customer);
-            this.setState(CustomersStoreActions.AddCustomer, {
-                customers: state.customers
-            });
+            this.setState({ customers: state.customers }, CustomersStoreActions.AddCustomer);
         }
     ```
 
@@ -313,9 +305,7 @@ See the `samples` folder for examples of using Observable Store with React.
             else {
                 return this.fetchCustomers()
                     .then(customers => {
-                            this.setState('get_customers', {
-                                customers: customers
-                            });
+                            this.setState({ customers }, 'get_customers');
                             return this.getState().customers;
                     });
             }
@@ -326,9 +316,7 @@ See the `samples` folder for examples of using Observable Store with React.
                 .then(custs => {
                     let filteredCusts = custs.filter(cust => cust.id === id);
                     const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
-                    this.setState('get_customer', {
-                        customer: customer
-                    });
+                    this.setState({ customer }, 'get_customer');
                     return customer;
                 });
         }
@@ -355,9 +343,7 @@ See the `samples` folder for examples of using Observable Store with React.
             .then(custs => {
                 let filteredCusts = custs.filter(cust => cust.id === id);
                 const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
-                this.setState(CustomersStoreActions.GetCustomer, {
-                    customer: customer
-                });
+                this.setState({ customer }, CustomersStoreActions.GetCustomer);
                 return customer;
             });
     }
@@ -450,7 +436,7 @@ See the `samples` folder for examples of using Observable Store with React.
         // call store directly.
         this.storeSub = store.stateChanged.subscribe(state => {
         if (state) {
-            this.setState({customers: state.customers});
+            this.setState({ customers: state.customers });
         }
         });
         store.getCustomers();
@@ -458,7 +444,7 @@ See the `samples` folder for examples of using Observable Store with React.
         // Option 2: Get data directly from store
         // store.getCustomers()
         //     .then(customers => {
-        //       this.setState({customers: customers});
+        //       this.setState({ customers: customers });
         //     });
     }
     ```
