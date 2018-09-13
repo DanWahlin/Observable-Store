@@ -25,7 +25,7 @@ class OrdersList extends Component {
                 })}
               </tbody>
             </table>
-              <br />
+            <br />
           </div>
         })}
       </div>
