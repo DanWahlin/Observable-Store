@@ -1,8 +1,10 @@
-## Observable Store for State Management (Angular, React, Vue.js)
+## Chiwawa Observable Store State Management (Angular, React, Vue.js)
 
-Front-end state management has become so complex that many of us spend more hours working on the front-end code then on our back-end code. Something's wrong with that!
+Chiwawa is a small front-end state management library (little dog) that provides a lot of functionality (big bite). Front-end state management has become so complex that many of us spend more hours working on the state management code then on the rest of the code. Something's wrong with that!
 
-The goal of the Observable Store is to provide an extremely simple way to store state in a front-end application (Angular, React, Vue.js or any other) while achieving key goals offered by more complex state management options.  
+The goal of the Chiwawa observable store is to provide an extremely small and simple way to store state in a front-end application (Angular, React, Vue.js or any other) while achieving many of the key goals offered by more complex state management options.  
+
+Thanks for Ward Bell for suggesting the name! I decided to spell it "Chiwawa" rather than "Chihuahua" since the latter is hard to spell. 
 
 ### Key Goals:
 1. Single source of truth
