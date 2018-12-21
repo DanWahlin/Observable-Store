@@ -1,6 +1,9 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ClonerService } from './utilities/cloner.service';
-import { ObservableStoreSettings } from './interfaces';
+
+export interface ObservableStoreSettings {
+    trackStateHistory: boolean;
+}
 
 export class ObservableStore<T> {
     // Not a fan of using _ for private fields in TypeScript, but since 

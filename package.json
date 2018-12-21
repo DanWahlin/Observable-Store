@@ -1,10 +1,23 @@
 {
     "name": "observable-store",
+    "version": "0.2.0",
     "author": "Dan Wahlin",
-    "version": "0.4.0",
+    "main": "dist/index.js",
+    "license": "MIT",
+    "description": "Observable Store provides a simple way to store and retrieve state in Angular, React, Vue.js and other front-end applications.",
+    "repository": {
+        "url": "https://github.com/danwahlin/observable-store"
+    },
+    "keywords": [
+        "store",
+        "Angular store",
+        "React store",
+        "Vue.js store",
+        "Front-end store"
+    ],
     "scripts": {
         "tsc": "tsc",
-        "build": "tsc"
+        "build": "rm -rf ./dist && tsc"
     },
     "devDependencies": {
         "rxjs": "^6.3.3",

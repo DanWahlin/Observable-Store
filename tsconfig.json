@@ -4,12 +4,14 @@
       "module": "es2015",
       "moduleResolution": "node",
       "baseUrl": "./",
-      "outDir": "./samples/react-multiple-stores/src/stores",
+      // "outDir": "./samples/react-multiple-stores/src/stores",
+      "outDir": "dist/",
       "sourceMap": true,
       "experimentalDecorators": true,
       "lib": [
-        "es2017",
-        "dom"
+        "dom",
+        "es2015",
+        "es2017"
       ]
   },
   "include": [
