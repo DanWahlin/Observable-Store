@@ -1,12 +1,13 @@
 {
     "name": "observable-store",
-    "version": "0.0.1",
+    "author": "Dan Wahlin",
+    "version": "0.4.0",
     "scripts": {
         "tsc": "tsc",
         "build": "tsc"
     },
     "devDependencies": {
-        "rxjs": "^6.2.2",
-        "typescript": "^3.0.1"
+        "rxjs": "^6.3.3",
+        "typescript": "^3.2.2"
     }
 }

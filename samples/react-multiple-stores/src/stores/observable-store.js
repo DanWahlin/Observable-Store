@@ -44,16 +44,8 @@ export class ObservableStore {
     resetState(initialState) {
         this._initStore(initialState);
     }
-    getNestedProp(p) {
-        return p.reduce((xs, x) => {
-            if (xs === null || xs === undefined) {
-                return null;
-            }
-            else {
-                return xs[x];
-            }
-        }, this._state);
-    }
 }
+// Not a fan of using _ for private fields in TypeScript, but since 
+// some may use this as pure ES6 I'm going with _ for the private fields.
 ObservableStore.instance = null;
 //# sourceMappingURL=observable-store.js.map
