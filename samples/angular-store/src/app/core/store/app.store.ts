@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 
 import { ObservableStore } from '../../../../../../src/observable-store';
 import { Customer, Order } from "../../shared/interfaces";
-import { environment } from "../../../environments/environment.prod";
+import { environment } from "../../../environments/environment";
 
 export interface StoreState {
     customers: Customer[];

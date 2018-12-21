@@ -15,7 +15,7 @@ export class ObservableStore<T> {
     private _trackStateHistory: boolean;
 
     constructor(initialState: T, settings: ObservableStoreSettings) {
-        this._trackStateHistory = settings.trackStateHistory;
+        this._trackStateHistory = (settings) ? settings.trackStateHistory : false;
         this._initStore(initialState);
     }
 
@@ -64,16 +64,5 @@ export class ObservableStore<T> {
         const clone = this._clonerService.deepClone(this._state);
         this._stateDispatcher.next(clone);
     }
-
-    // protected getNestedProp(p) {
-    //     return p.reduce((xs, x) => {
-    //         if (xs === null || xs === undefined) {
-    //             return null;
-    //         }
-    //         else {
-    //             return xs[x];
-    //         }
-    //     }, this._state);
-    // }
 
 }

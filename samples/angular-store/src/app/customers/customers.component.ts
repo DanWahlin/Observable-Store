@@ -24,6 +24,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
       // call store directly.
       this.subsink.sink = this.store.stateChanged.subscribe(state => {
         if (state) {
+            // console.log(this.store.stateHistory);
             this.customers = state.customers;
         }
       });

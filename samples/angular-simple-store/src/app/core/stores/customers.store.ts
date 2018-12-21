@@ -2,16 +2,16 @@ import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 
 import { ObservableStore } from '../../../../../../src/observable-store';
-import { Customer } from './customer.model';
+import { Customer } from './customer';
 import { SorterService } from '..//utilities/sorter.service';
 
-export interface ICustomerStoreState {
+export interface StoreState {
   customers: Customer[];
   customer: Customer;
 }
 
 @Injectable()
-export class CustomersStore extends ObservableStore<ICustomerStoreState> {
+export class CustomersStore extends ObservableStore<StoreState> {
   sorterService: SorterService;
 
   constructor(sorterService: SorterService) { 
@@ -42,7 +42,7 @@ export class CustomersStore extends ObservableStore<ICustomerStoreState> {
         // assume async call here that returns observable
         return of(null);
     }
-}
+  }
 
   add(customer: Customer) {
     // insert via server API
@@ -74,7 +74,7 @@ export class CustomersStore extends ObservableStore<ICustomerStoreState> {
 
 }
 
-export interface ICustomerStoreState {
+export interface StoreState {
   customers: Customer[];
   customer: Customer;
 }

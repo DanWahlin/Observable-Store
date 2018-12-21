@@ -1,10 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CustomersStore } from './core/stores/customers.store';
-import { AutoUnsubscribe } from './shared/auto-unsubscribe.decorator';
-import { Customer } from './core/stores/customer.model';
-import { Subscription, Observable } from 'rxjs';
+import { Customer } from './core/stores/customer';
+import { Observable } from 'rxjs';
+import { SubSink } from 'subsink';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -14,16 +13,16 @@ export class AppComponent implements OnInit, OnDestroy {
   customers: Customer[] | Observable<Customer[]>;
   stateHistory = null;
   isHistoryVisible = false;
-  storeSub: Subscription;
+  subsink = new SubSink();
 
   constructor(private customersStore: CustomersStore) { }
 
   ngOnInit() {
     // Use Observable<Customer> if desired
-    // this.customers = this.customersStore.stateChanged;
+    // this.customers$ = this.customersStore.stateChanged;
 
     // Can subscribe to stateChanged of store
-    this.storeSub = this.customersStore.stateChanged.subscribe(state => {
+    this.subsink.sink = this.customersStore.stateChanged.subscribe(state => {
       this.customers = state.customers;
     });
 
@@ -59,9 +58,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Not needed since we're using the AutoUnsubscribe decorator above the class
-    // if (this.storeSub) {
-    //   this.storeSub.unsubscribe();
-    // }
+    this.subsink.unsubscribe();
   }
 }
