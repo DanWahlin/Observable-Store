@@ -10,7 +10,9 @@ export interface StoreState {
   customer: Customer;
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class CustomersStore extends ObservableStore<StoreState> {
   sorterService: SorterService;
 

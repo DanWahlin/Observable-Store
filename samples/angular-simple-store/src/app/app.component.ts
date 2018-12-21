@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CustomersStore } from './core/stores/customers.store';
-import { Customer } from './core/stores/customer';
+import { CustomersStore } from './core/store/customers.store';
+import { Customer } from './core/store/customer';
 import { Observable } from 'rxjs';
 import { SubSink } from 'subsink';
 
