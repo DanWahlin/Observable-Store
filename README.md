@@ -1,11 +1,11 @@
-## Observable Store State Management (Angular, React, Vue.js)
+## Observable Store - State Management for Front-End Applications (Angular, React, Vue.js)
 
 Observable Store is a small front-end state management library that provides a lot of functionality. Front-end state management has become so complex that many of us spend more hours working on the state management code then on the rest of the code. Something's wrong with that!
 
 The goal of observable store is to provide an extremely small and simple way to store state in a front-end application (Angular, React, Vue.js or any other) while achieving many of the key goals offered by more complex state management options.  
 
 ### Key Goals:
-1. Single source of truth
+1. Single source of truth (or create multiple stores if desired)
 1. State is read-only/immutable
 1. Provide state change notifications to any subscriber
 1. Track state change history
@@ -35,10 +35,14 @@ See the `samples` folder for examples of using Observable Store with Angular.
 
 1. Create an Angular application using the Angular CLI or another option.
 
+1. Install @codewithdan/observable-store:
+
+`npm install @codewithdan/observable-store`
+
 1. Add an interface or model object that represents the shape of the data you'd like to add to your store. Here's an example of an interface to store customer state:
 
     ``` typescript
-    export interface ICustomerStoreState {
+    export interface StoreState {
         customers: Customer[];
         customer: Customer;
     }
@@ -48,7 +52,7 @@ See the `samples` folder for examples of using Observable Store with Angular.
 
     ``` typescript
     @Injectable()
-    export class CustomersStore extends ObservableStore<ICustomerStoreState> {
+    export class CustomersStore extends ObservableStore<StoreState> {
 
     }
     ```
@@ -69,7 +73,7 @@ See the `samples` folder for examples of using Observable Store with Angular.
 
     ``` typescript
     @Injectable()
-    export class CustomersStore extends ObservableStore<ICustomerStoreState> {
+    export class CustomersStore extends ObservableStore<StoreState> {
         sorterService: SorterService;
 
         constructor(sorterService: SorterService) { 

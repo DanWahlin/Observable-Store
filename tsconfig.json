@@ -7,6 +7,7 @@
       // "outDir": "./samples/react-multiple-stores/src/stores",
       "outDir": "dist/",
       "sourceMap": true,
+      "declaration": true,
       "experimentalDecorators": true,
       "lib": [
         "dom",
