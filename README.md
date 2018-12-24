@@ -57,15 +57,11 @@ See the `samples` folder for examples of using Observable Store with Angular.
     }
     ```
 
-1. In the constructor add a call to `super()` and pass the initial store state as well as any Observable Store settings. Currently the store will allow you to turn tracking of store state changes on and off using the `trackStateHistory` property.
+1. In the constructor add a call to `super()`. Currently the store will allow you to turn tracking of store state changes on and off using the `trackStateHistory` property.
 
     ``` typescript
     constructor() { 
-        const initialState = {
-            customers: [],
-            customer: null
-        }
-        super(initialState, { trackStateHistory: true });
+        super({ trackStateHistory: true });
     }
     ```
 
@@ -232,7 +228,7 @@ See the `samples` folder for examples of using Observable Store with Angular.
     }
     ```
 
-    You'll of course want to unsubscribe in `ngOnDestroy()`:
+    You'll of course want to unsubscribe in `ngOnDestroy()` (check out SubSink on npm for a nice way to easily subscribe/unsubscribe):
 
     ``` typescript
     ngOnDestroy() {
@@ -258,24 +254,12 @@ See the `samples` folder for examples of using Observable Store with React.
     }
     ```
 
-1. Add a static property named `instance` (you can optionally add a static function named `getInstance()` that returns `instance` if preferred):
-
-    ``` javascript
-    export class CustomersStore extends ObservableStore {
-        static instance = new CustomersStore();
-    }
-    ```
-
-1. In the constructor add a call to `super()` and pass the initial store state as well as any Observable Store settings. Currently the store will allow you to turn tracking of store state changes on and off using the `trackStateHistory` property.
+1. In the constructor add a call to `super()`. Currently the store will allow you to turn tracking of store state changes on and off using the `trackStateHistory` property.
 
     ``` javascript
     export class CustomersStore extends ObservableStore {
         constructor() {
-            const initialState = {
-                customers: [],
-                customer: null
-            }
-            super(initialState, { trackStateHistory: true });
+            super({ trackStateHistory: true });
         }
     }
     ```
@@ -285,10 +269,8 @@ See the `samples` folder for examples of using Observable Store with React.
     ``` javascript
     export class CustomersStore extends ObservableStore {
 
-        static instance = new CustomersStore();
-
         constructor() {
-            super(null, { trackStateHistory: true });
+            super({ trackStateHistory: true });
         }
 
         fetchCustomers() {
@@ -296,7 +278,10 @@ See the `samples` folder for examples of using Observable Store with React.
             // 3rd party option will work (Axios, Ky, etc.)
             return fetch('/customers')
                 .then(response => response.json())
-                .then(customers => customers);
+                .then(customers => {
+                    this.setState({ customers }, 'get_customers');
+                    return customers;
+                });
         }
 
         getCustomers() {
@@ -307,11 +292,7 @@ See the `samples` folder for examples of using Observable Store with React.
             }
             // doesn't exist in store so fetch from server
             else {
-                return this.fetchCustomers()
-                    .then(customers => {
-                            this.setState({ customers }, 'get_customers');
-                            return this.getState().customers;
-                    });
+                return this.fetchCustomers();
             }
         }
 
@@ -431,17 +412,18 @@ See the `samples` folder for examples of using Observable Store with React.
 
     ``` javascript
     componentDidMount() {
-        // Get store instance (or may call getInstance() if available in store)
-        let store = CustomersStore.instance;
+        // Get store
+        // Note that all store instances share the same data (a single storage location)
+        let store = new CustomersStore();
 
         // ###### CustomersStore ########
         // Option 1: Subscribe to store changes
         // Useful when a component needs to be notified of changes but won't always
         // call store directly.
         this.storeSub = store.stateChanged.subscribe(state => {
-        if (state) {
+          if (state) {
             this.setState({ customers: state.customers });
-        }
+          }
         });
         store.getCustomers();
 
@@ -458,7 +440,7 @@ See the `samples` folder for examples of using Observable Store with React.
     ``` javascript
     componentWillUnmount() {
         if (this.storeSub) {
-        this.storeSub.unsubscribe();
+          this.storeSub.unsubscribe();
         }
     }
     ```
