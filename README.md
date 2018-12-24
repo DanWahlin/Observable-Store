@@ -210,6 +210,7 @@ See the `samples` folder for examples of using Observable Store with Angular.
 
     ``` typescript
     customers: Customer[];
+    storeSub: Subscription;
 
     constructor(private customersStore: CustomersStore) { }
 
@@ -430,7 +431,7 @@ See the `samples` folder for examples of using Observable Store with React.
         // Option 2: Get data directly from store
         // store.getCustomers()
         //     .then(customers => {
-        //       this.setState({ customers: customers });
+        //       ....
         //     });
     }
     ```
