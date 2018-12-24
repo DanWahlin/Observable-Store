@@ -2,27 +2,36 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { ClonerService } from './utilities/cloner.service';
 
 export interface ObservableStoreSettings {
-    trackStateHistory: boolean;
+    trackStateHistory?: boolean;
 }
+
+// static objects
+const stateDispatcher = new BehaviorSubject<any>(null);
+const stateChanged = stateDispatcher.asObservable();
+const clonerService = new ClonerService();
+let storeState: Readonly<any> =  null;
+let stateHistory: any[] = [];
 
 export class ObservableStore<T> {
     // Not a fan of using _ for private fields in TypeScript, but since 
     // some may use this as pure ES6 I'm going with _ for the private fields.
-    public static instance = null;
     public stateChanged: Observable<T>;
-    public stateHistory: any[] = [];
+    public stateHistory: any[];
 
-    private _state: Readonly<T>;
     private _stateDispatcher: BehaviorSubject<T>;
     private _clonerService: ClonerService;
-    private _trackStateHistory: boolean;
+    private _settings: ObservableStoreSettings
 
-    constructor(initialState: T, settings: ObservableStoreSettings) {
-        this._trackStateHistory = (settings) ? settings.trackStateHistory : false;
-        this._initStore(initialState);
+    constructor(settings: ObservableStoreSettings = { trackStateHistory: false }) {
+        this._settings = settings;
+        this._stateDispatcher = stateDispatcher;
+        this._clonerService = clonerService;
+
+        this.stateChanged = stateChanged;
+        this.stateHistory = stateHistory;        
     }
 
-    public setState(state: any, action?: string, dispatchState: boolean = true) { 
+    protected setState(state: any, action?: string, dispatchState: boolean = true) { 
         if (typeof state === 'function') {
             const newState = state(this.getState());
             this.updateState(newState);
@@ -38,33 +47,27 @@ export class ObservableStore<T> {
             this._dispatchState();
         }
 
-        if (this._trackStateHistory) {
-            this.stateHistory.push({ action, state: this._clonerService.deepClone(this._state) });
+        if (this._settings.trackStateHistory) {
+            this.stateHistory.push({ action, state: this._clonerService.deepClone(state) });
         }
     }
 
-    public getState() : T {
-        return this._clonerService.deepClone(this._state) as T;
+    protected getState() : T {
+        return this._clonerService.deepClone(storeState) as T;
     }
 
-    public resetState(initialState: T) {
-        this._initStore(initialState);
+    protected logStateAction(state: any, action: string) {
+        if (this._settings.trackStateHistory) {
+            this.stateHistory.push({ action, state: this._clonerService.deepClone(state) });
+        }
     }
 
     private updateState(state: any) {
-        this._state = (state) ? Object.assign({}, this._state, state) : null;
-    }
-
-    private _initStore(initialState: T) {
-        // Not injecting service (as with Angular) since we want to allow use of ObservableStore anywhere
-        this._clonerService = new ClonerService();
-        this._stateDispatcher = new BehaviorSubject<T>(initialState);
-        this.stateChanged = this._stateDispatcher.asObservable();
-        this.setState(initialState, 'init_state');
+        storeState = (state) ? Object.assign({}, storeState, state) : null;
     }
 
     private _dispatchState() {
-        const clone = this._clonerService.deepClone(this._state);
+        const clone = this._clonerService.deepClone(storeState);
         this._stateDispatcher.next(clone);
     }
 

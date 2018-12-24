@@ -33,8 +33,8 @@ class OrdersContainer extends Component {
   componentDidMount() {
     const customerId = parseInt(this.props.match.params.id, 10);
     // Get store instance
-    let customersStore = CustomersStore.instance;
-    let ordersStore = OrdersStore.instance;
+    let customersStore = new CustomersStore();
+    let ordersStore = new OrdersStore();
 
     // ###### CustomersStore ########
     // ## Customer Option 1: Subscribe to store changes

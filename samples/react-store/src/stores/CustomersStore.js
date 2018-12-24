@@ -2,16 +2,18 @@ import { ObservableStore } from '../stores/observable-store';
 
 export class CustomersStore extends ObservableStore {
 
-    static instance = new CustomersStore();
-
     constructor() {
-        super(null, { trackStateHistory: true });
+        super({ trackStateHistory: true });
     }
 
     fetchCustomers() {
         return fetch('/customers.json')
             .then(response => response.json())
-            .then(customers => customers);
+            .then(customers => {
+                console.log(customers);
+                this.setState({ customers }, CustomersStoreActions.GetCustomers);
+                return customers;
+            });
     }
 
     // Set state in the store by calling setState(stateObject, action). 
@@ -26,11 +28,7 @@ export class CustomersStore extends ObservableStore {
         }
         // doesn't exist in store so fetch from server
         else {
-            return this.fetchCustomers()
-                .then(customers => {
-                    this.setState({ customers }, CustomersStoreActions.GetCustomers);
-                    return this.getState().customers;
-                });
+            return this.fetchCustomers();
         }
     }
 

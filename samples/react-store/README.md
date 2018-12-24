@@ -6,6 +6,10 @@ This shows how to use Observable Stores to maintain state in a React application
 
 1. Install Node.js (https://nodejs.org)
 
+1. Install create-react-app:
+
+    `npx install -g create-react-app`
+
 1. If you want to use Yarn then install it for your OS:
 
     Mac:      https://yarnpkg.com/en/docs/install#mac-tab
@@ -18,7 +22,7 @@ This shows how to use Observable Stores to maintain state in a React application
 
 1. If using npm, run the following to install the applicaiton dependencies:
 
-    `npm`
+    `npm install`
 
 1. Run the application:
 

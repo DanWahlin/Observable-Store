@@ -15,7 +15,7 @@ class CustomersContainer extends Component {
 
   componentDidMount() {
     // Get store instance
-    let store = CustomersStore.instance;
+    let store = new CustomersStore();
 
     // ###### CustomersStore ########
     // Option 1: Subscribe to store changes
@@ -26,6 +26,7 @@ class CustomersContainer extends Component {
         this.setState({customers: state.customers});
       }
     });
+    
     store.getCustomers();
 
     // Option 2: Get data directly from store

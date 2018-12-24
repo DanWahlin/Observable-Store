@@ -30,7 +30,8 @@ export class CustomersStore extends ObservableStore<StoreState> {
       }],
       customer: null
     }
-    super(initialState, { trackStateHistory: true });
+    super({ trackStateHistory: true });
+    this.setState(initialState);
     this.sorterService = sorterService;
   }
 

@@ -2,16 +2,17 @@ import { ObservableStore } from '../stores/observable-store';
 
 export class OrdersStore extends ObservableStore {
 
-    static instance = new OrdersStore();
-
     constructor() {
-        super(null, { trackStateHistory: true });
+        super({ trackStateHistory: true });
     }
 
     fetchOrders() {
         return fetch('/orders.json')
             .then(response => response.json())
-            .then(orders => orders);
+            .then(orders => {
+                this.setState({ orders }, 'set_orders');
+                return orders;
+            });
     }
 
     getOrders(id) {
@@ -24,7 +25,6 @@ export class OrdersStore extends ObservableStore {
         else {
             return this.fetchOrders()
                        .then(orders => {
-                            this.setState({ orders }, 'set_orders');
                             return this.filterOrders(id, orders);
                        });
         }

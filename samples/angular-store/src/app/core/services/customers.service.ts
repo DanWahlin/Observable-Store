@@ -3,48 +3,51 @@ import { of, Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Customer } from '../../shared/interfaces';
 import { Injectable } from '@angular/core';
-import { AppStore } from '../store/app.store';
+import { StoreState } from '../store/store-state';
+import { ObservableStore } from '../../../../../../src/observable-store';
 
 @Injectable({
     providedIn: 'root'
 })
-export class CustomersService {
+export class CustomersService extends ObservableStore<StoreState> {
+
     customersUrl = 'assets/customers.json';
 
-    constructor(private http: HttpClient, private store: AppStore) {  }
+    constructor(private http: HttpClient) {  
+        super({ trackStateHistory: true });
+    }
 
     private fetchCustomers() {
         return this.http.get<Customer[]>(this.customersUrl)
             .pipe(
+                map(customers => {
+                    this.setState({ customers }, CustomersStoreActions.GetCustomers);
+                    return customers;
+                }),
                 catchError(this.handleError)
             );
     }
 
     getCustomers() {
-        const state = this.store.getState();
+        const state = this.getState();
         // pull from store cache
         if (state && state.customers) {
             return of(state.customers);
         }
         // doesn't exist in store so fetch from server
         else {
-            return this.fetchCustomers()
-                .pipe(
-                    map(customers => {
-                        this.store.setState({ customers }, CustomersStoreActions.GetCustomers);
-                        return customers;
-                    })
-                );
+            return this.fetchCustomers();
         }
     }
 
-    getCustomer(id) {
+    getCustomer(id: number) {
         return this.getCustomers()
             .pipe(
                 map(custs => {
-                    let filteredCusts = custs.filter(cust => cust.id === id);
-                    const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
-                    this.store.setState({ customer }, CustomersStoreActions.GetCustomer);
+                    let filteredCustomers = custs.filter(cust => cust.id === id);
+                    let customer = (filteredCustomers && filteredCustomers.length) ? filteredCustomers[0] : null;                
+                    this.setState({ customer }, CustomersStoreActions.GetCustomer);
+                    console.log(this.stateHistory);
                     return customer;
                 })
             );

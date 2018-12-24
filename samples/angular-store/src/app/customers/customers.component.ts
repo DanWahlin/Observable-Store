@@ -3,7 +3,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SubSink } from 'subsink';
 import { Customer } from '../shared/interfaces';
 import { CustomersService } from '../core/services/customers.service';
-import { AppStore } from '../core/store/app.store';
 
 @Component({
     selector: 'app-customers',
@@ -14,7 +13,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
     customers: Customer[];
     subsink = new SubSink();
 
-    constructor(private customersService: CustomersService, private store: AppStore) { }
+    constructor(private customersService: CustomersService) { }
 
     ngOnInit() {
       this.title = 'Customers';
@@ -22,7 +21,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
       // Option 1: Subscribe to store stateChanged
       // Useful when a component needs to be notified of changes but won't always
       // call store directly.
-      this.subsink.sink = this.store.stateChanged.subscribe(state => {
+      this.subsink.sink = this.customersService.stateChanged.subscribe(state => {
         if (state) {
             // console.log(this.store.stateHistory);
             this.customers = state.customers;

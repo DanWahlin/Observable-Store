@@ -4,8 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Customer, Order } from '../shared/interfaces';
 import { CustomersService } from '../core/services/customers.service';
 import { OrdersService } from '../core/services/orders.service';
-import { Observable, of } from 'rxjs';
-import { AppStore } from '../core/store/app.store';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-orders',
@@ -19,7 +18,6 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
   constructor(private customersService: CustomersService,
               private ordersService: OrdersService,
-              private store: AppStore,
               private route: ActivatedRoute) { }
 
   ngOnInit() {

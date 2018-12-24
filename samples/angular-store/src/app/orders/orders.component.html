@@ -1,4 +1,4 @@
-<div *ngIf="customer$ | async as customer">
+<div *ngIf="customer$ | async as customer;else elseBlock">
     <h1>Orders for {{ customer.name | capitalize }}</h1>
 
     <div *ngFor="let order of orders$ | async">
@@ -11,9 +11,10 @@
         <br />
     </div>
 </div>
-<div *ngIf="!(customer$ | async)">
+<ng-template #elseBlock>
    No customer found
-</div>  
+</ng-template>  
+<br />
 <br />
 <a routerLink="/customers">View All Customers</a>
 

@@ -1,14 +1,16 @@
 // https://github.com/codeandcats/fast-clone/blob/master/index.js
-export class ClonerService {
-    deepClone(value) {
-        const type = typeof value;
+var ClonerService = /** @class */ (function () {
+    function ClonerService() {
+    }
+    ClonerService.prototype.deepClone = function (value) {
+        var type = typeof value;
         switch (type) {
             case 'object':
                 // null and undefined
                 if (value == null) {
                     return value;
                 }
-                let result;
+                var result = void 0;
                 if (value instanceof Date) {
                     result = new Date();
                     result.setTime(value.getTime());
@@ -24,14 +26,14 @@ export class ClonerService {
             default:
                 return value;
         }
-    }
-    fixPropertyValue(original, copy, key) {
-        const originalValue = original[key];
-        const originalType = typeof originalValue;
+    };
+    ClonerService.prototype.fixPropertyValue = function (original, copy, key) {
+        var originalValue = original[key];
+        var originalType = typeof originalValue;
         switch (originalType) {
             case 'object':
                 if (originalValue instanceof Date) {
-                    const newValue = new Date();
+                    var newValue = new Date();
                     newValue.setTime(originalValue.getTime());
                     copy[key] = newValue;
                 }
@@ -56,24 +58,27 @@ export class ClonerService {
             default:
                 break;
         }
-    }
-    fixTypes(original, copy) {
+    };
+    ClonerService.prototype.fixTypes = function (original, copy) {
+        var _this = this;
         if (original instanceof Array) {
-            for (let index = 0; index < original.length; index++) {
+            for (var index = 0; index < original.length; index++) {
                 this.fixPropertyValue(original, copy, index);
             }
         }
         else {
-            const keys = Object.getOwnPropertyNames(original);
-            keys.forEach((key) => {
-                this.fixPropertyValue(original, copy, key);
+            var keys = Object.getOwnPropertyNames(original);
+            keys.forEach(function (key) {
+                _this.fixPropertyValue(original, copy, key);
             });
         }
-    }
-    newRegExp(value) {
-        const regexpText = String(value);
-        const slashIndex = regexpText.lastIndexOf('/');
+    };
+    ClonerService.prototype.newRegExp = function (value) {
+        var regexpText = String(value);
+        var slashIndex = regexpText.lastIndexOf('/');
         return new RegExp(regexpText.slice(1, slashIndex), regexpText.slice(slashIndex + 1));
-    }
-}
+    };
+    return ClonerService;
+}());
+export { ClonerService };
 //# sourceMappingURL=cloner.service.js.map
