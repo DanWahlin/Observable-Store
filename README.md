@@ -248,8 +248,6 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 
 1. Create a React application using the `create-react-app` or another option.
 
-1. Add `rxjs` into the `package.json` dependencies and run `npm install`.
-
 1. Add a service class (you can call it a store if you'd like) that extends ObservableStore<T>. Pass the interface or model class that represents the shape of your store data in for T.
 
     ``` javascript
