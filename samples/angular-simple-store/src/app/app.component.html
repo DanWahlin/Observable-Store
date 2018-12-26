@@ -12,6 +12,9 @@
 </pre>
 <br />
 <br />
-<pre *ngIf="isHistoryVisible">
+<div *ngIf="isHistoryVisible">
+<h2>State History</h2>
+<pre>
 {{ stateHistory | json }}
 </pre>
+</div>

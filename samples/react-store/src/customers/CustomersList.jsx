@@ -87,10 +87,7 @@ class CustomersList extends Component {
           </thead>
           <tbody>
             {filteredCustomers.map(cust => (
-              <CustomerRow
-                key={cust.id}
-                customer={cust}
-              />
+              <CustomerRow key={cust.id} customer={cust} />
             ))}
             {filteredCustomers.length ? (
               <tr>

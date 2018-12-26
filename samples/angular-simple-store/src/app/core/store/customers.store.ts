@@ -17,6 +17,8 @@ export class CustomersStore extends ObservableStore<StoreState> {
   sorterService: SorterService;
 
   constructor(sorterService: SorterService) { 
+    super({ trackStateHistory: true });
+
     const initialState = {
       customers: [{
         id: Date.now(),
@@ -30,8 +32,7 @@ export class CustomersStore extends ObservableStore<StoreState> {
       }],
       customer: null
     }
-    super({ trackStateHistory: true });
-    this.setState(initialState);
+    this.setState(initialState, CustomersStoreActions.InitializeState);
     this.sorterService = sorterService;
   }
 
@@ -66,7 +67,7 @@ export class CustomersStore extends ObservableStore<StoreState> {
     // const sortedState = this.sorterService.sort(state.customers, property);
     // this.setState({ customers: sortedState }, CustomersStoreActions.SortCustomers);
 
-    // could also pass a function to setState to grab the previous state 
+    // Can also pass a function to setState to grab the previous state 
     // and then update the current state
     this.setState(prevState => { 
       return { customers: this.sorterService.sort(prevState.customers, property) };
@@ -83,6 +84,7 @@ export interface StoreState {
 }
 
 export enum CustomersStoreActions {
+  InitializeState = 'initialize_state',
   AddCustomer = 'add_customer',
   RemoveCustomer = 'remove_customer',
   GetCustomers = 'get_customers',

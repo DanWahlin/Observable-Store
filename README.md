@@ -31,11 +31,11 @@ Open the `samples` folder and follow the instructions provided in the readme fil
 
 ## <a name="angular"></a>Using Observable Store with Angular
 
-See the `samples` folder for examples of using Observable Store with Angular.
+See the `samples` folder in the Github repo for examples of using Observable Store with Angular.
 
 1. Create an Angular application using the Angular CLI or another option.
 
-1. Install @codewithdan/observable-store:
+1. Install `@codewithdan/observable-store`:
 
 `npm install @codewithdan/observable-store`
 
@@ -48,16 +48,16 @@ See the `samples` folder for examples of using Observable Store with Angular.
     }
     ```
 
-1. Add a service (you can call it a store if you'd like) that extends ObservableStore<T>. Pass the interface or model class that represents the shape of your store data in for T.
+1. Add a service (you can optionally calll it a store if you'd like) that extends ObservableStore<T>. Pass the interface or model class that represents the shape of your store data in for T as shown next:
 
     ``` typescript
     @Injectable()
-    export class CustomersStore extends ObservableStore<StoreState> {
+    export class CustomersService extends ObservableStore<StoreState> {
 
     }
     ```
 
-1. In the constructor add a call to `super()`. Currently the store will allow you to turn tracking of store state changes on and off using the `trackStateHistory` property.
+1. In the constructor add a call to `super()`. The store allows you to turn tracking of store state changes on and off using the `trackStateHistory` property.
 
     ``` typescript
     constructor() { 
@@ -69,7 +69,7 @@ See the `samples` folder for examples of using Observable Store with Angular.
 
     ``` typescript
     @Injectable()
-    export class CustomersStore extends ObservableStore<StoreState> {
+    export class CustomersService extends ObservableStore<StoreState> {
         sorterService: SorterService;
 
         constructor(sorterService: SorterService) { 
@@ -136,22 +136,27 @@ See the `samples` folder for examples of using Observable Store with Angular.
 
     ``` typescript
     console.log(this.stateHistory);
+    ```
 
+1. An example of the state history output is shown next:
+
+    ``` typescript
     // example stateHistory output
     [
         {
-            "action": "init_state",
-            "state": {
+            "action": "initialize_state",
+            "beginState": null,
+            "endState": {
                 "customers": [
                     {
-                    "id": 1536354269413,
-                    "name": "Jane Doe",
-                    "address": {
-                        "street": "1234 Main St.",
-                        "city": "Phoenix",
-                        "state": "AZ",
-                        "zip": "85258"
-                    }
+                        "id": 1545847909628,
+                        "name": "Jane Doe",
+                        "address": {
+                            "street": "1234 Main St.",
+                            "city": "Phoenix",
+                            "state": "AZ",
+                            "zip": "85258"
+                        }
                     }
                 ],
                 "customer": null
@@ -159,10 +164,25 @@ See the `samples` folder for examples of using Observable Store with Angular.
         },
         {
             "action": "add_customer",
-            "state": {
+            "beginState": {
                 "customers": [
                     {
-                        "id": 1536354269413,
+                        "id": 1545847909628,
+                        "name": "Jane Doe",
+                        "address": {
+                            "street": "1234 Main St.",
+                            "city": "Phoenix",
+                            "state": "AZ",
+                            "zip": "85258"
+                        }
+                    }
+                ],
+                "customer": null
+            },
+            "endState": {
+                "customers": [
+                    {
+                        "id": 1545847909628,
                         "name": "Jane Doe",
                         "address": {
                             "street": "1234 Main St.",
@@ -172,35 +192,17 @@ See the `samples` folder for examples of using Observable Store with Angular.
                         }
                     },
                     {
-                        "id": 1536354272461,
+                        "id": 1545847921260,
                         "name": "Fred",
                         "address": {
-                            "street": "1536354272461 Main St.",
+                            "street": "1545847921260 Main St.",
                             "city": "Phoenix",
                             "state": "AZ",
                             "zip": "85258"
                         }
                     }
                 ],
-                "customer": null
-            }
-        },
-        {
-            "action": "remove_customer",
-            "state": {
-                "customers": [
-                    {
-                        "id": 1536354269413,
-                        "name": "Jane Doe",
-                        "address": {
-                            "street": "1234 Main St.",
-                            "city": "Phoenix",
-                            "state": "AZ",
-                            "zip": "85258"
-                        }
-                    }
-                ],
-                "customer": null
+            "customer": null
             }
         }
     ]
@@ -212,20 +214,21 @@ See the `samples` folder for examples of using Observable Store with Angular.
     customers: Customer[];
     storeSub: Subscription;
 
-    constructor(private customersStore: CustomersStore) { }
+    constructor(private customersService: CustomersService) { }
 
     ngOnInit() {
-        // Use Observable<Customer> if desired for customers property
+        // Use Observable<Customer> if desired for customers property if using async pipe
+        // Recommend that property is renamed to customers$ in this scenario though
         // this.customers = this.customersService.storeStateChanged;
 
         // Can subscribe to stateChanged observable of the store
-        this.storeSub = this.customersStore.stateChanged.subscribe(state => {
+        this.storeSub = this.customersService.stateChanged.subscribe(state => {
             this.customers = state.customers;
         });
 
         // Can call service/store to get data directly 
         // It won't fire when the store state changes though in this case
-        //this.storeSub = this.customersStore.get().subscribe(custs => this.customers = custs);
+        //this.storeSub = this.customersService.get().subscribe(custs => this.customers = custs);
     }
     ```
 
@@ -241,7 +244,7 @@ See the `samples` folder for examples of using Observable Store with Angular.
 
 ## <a name="react"></a>Using Observable Store with React
 
-See the `samples` folder for examples of using Observable Store with React.
+See the `samples` folder in the Github repo for examples of using Observable Store with React.
 
 1. Create a React application using the `create-react-app` or another option.
 
@@ -255,7 +258,7 @@ See the `samples` folder for examples of using Observable Store with React.
     }
     ```
 
-1. In the constructor add a call to `super()`. Currently the store will allow you to turn tracking of store state changes on and off using the `trackStateHistory` property.
+1. In the constructor add a call to `super()`. The store allows you to turn tracking of store state changes on and off using the `trackStateHistory` property.
 
     ``` javascript
     export class CustomersStore extends ObservableStore {
@@ -343,18 +346,19 @@ See the `samples` folder for examples of using Observable Store with React.
     // example stateHistory output
     [
         {
-            "action": "init_state",
-            "state": {
+            "action": "initialize_state",
+            "beginState": null,
+            "endState": {
                 "customers": [
                     {
-                    "id": 1536354269413,
-                    "name": "Jane Doe",
-                    "address": {
-                        "street": "1234 Main St.",
-                        "city": "Phoenix",
-                        "state": "AZ",
-                        "zip": "85258"
-                    }
+                        "id": 1545847909628,
+                        "name": "Jane Doe",
+                        "address": {
+                            "street": "1234 Main St.",
+                            "city": "Phoenix",
+                            "state": "AZ",
+                            "zip": "85258"
+                        }
                     }
                 ],
                 "customer": null
@@ -362,10 +366,25 @@ See the `samples` folder for examples of using Observable Store with React.
         },
         {
             "action": "add_customer",
-            "state": {
+            "beginState": {
                 "customers": [
                     {
-                        "id": 1536354269413,
+                        "id": 1545847909628,
+                        "name": "Jane Doe",
+                        "address": {
+                            "street": "1234 Main St.",
+                            "city": "Phoenix",
+                            "state": "AZ",
+                            "zip": "85258"
+                        }
+                    }
+                ],
+                "customer": null
+            },
+            "endState": {
+                "customers": [
+                    {
+                        "id": 1545847909628,
                         "name": "Jane Doe",
                         "address": {
                             "street": "1234 Main St.",
@@ -375,35 +394,17 @@ See the `samples` folder for examples of using Observable Store with React.
                         }
                     },
                     {
-                        "id": 1536354272461,
+                        "id": 1545847921260,
                         "name": "Fred",
                         "address": {
-                            "street": "1536354272461 Main St.",
+                            "street": "1545847921260 Main St.",
                             "city": "Phoenix",
                             "state": "AZ",
                             "zip": "85258"
                         }
                     }
                 ],
-                "customer": null
-            }
-        },
-        {
-            "action": "remove_customer",
-            "state": {
-                "customers": [
-                    {
-                        "id": 1536354269413,
-                        "name": "Jane Doe",
-                        "address": {
-                            "street": "1234 Main St.",
-                            "city": "Phoenix",
-                            "state": "AZ",
-                            "zip": "85258"
-                        }
-                    }
-                ],
-                "customer": null
+            "customer": null
             }
         }
     ]
@@ -413,8 +414,9 @@ See the `samples` folder for examples of using Observable Store with React.
 
     ``` javascript
     componentDidMount() {
-        // Get store
-        // Note that all store instances share the same data (a single storage location)
+        // Create the store
+        // You can create as many store objects as you want, but they'll 
+        // all share the same data (singleton store of data)
         let store = new CustomersStore();
 
         // ###### CustomersStore ########
@@ -426,9 +428,12 @@ See the `samples` folder for examples of using Observable Store with React.
             this.setState({ customers: state.customers });
           }
         });
+
+        // In this example we trigger getting the customers (code above receives the customers)
         store.getCustomers();
 
         // Option 2: Get data directly from store
+        // If a component triggers getting the data it can retrieve it directly rather than subscribing
         // store.getCustomers()
         //     .then(customers => {
         //       ....
@@ -436,7 +441,7 @@ See the `samples` folder for examples of using Observable Store with React.
     }
     ```
 
-    You'll of course want to unsubscribe in `componentWillUnmount()`:
+    You'll want to unsubscribe in `componentWillUnmount()`:
 
     ``` javascript
     componentWillUnmount() {

@@ -17,8 +17,9 @@ var ObservableStore = /** @class */ (function () {
     }
     ObservableStore.prototype.setState = function (state, action, dispatchState) {
         if (dispatchState === void 0) { dispatchState = true; }
+        var previousState = this.getState();
         if (typeof state === 'function') {
-            var newState = state(this.getState());
+            var newState = state(previousState);
             this.updateState(newState);
         }
         else if (typeof state === 'object') {
@@ -31,7 +32,11 @@ var ObservableStore = /** @class */ (function () {
             this._dispatchState();
         }
         if (this._settings.trackStateHistory) {
-            this.stateHistory.push({ action: action, state: this._clonerService.deepClone(state) });
+            this.stateHistory.push({
+                action: action,
+                beginState: previousState,
+                endState: this._clonerService.deepClone(this.getState())
+            });
         }
     };
     ObservableStore.prototype.getState = function () {

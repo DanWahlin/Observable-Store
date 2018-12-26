@@ -10,7 +10,6 @@ export class CustomersStore extends ObservableStore {
         return fetch('/customers.json')
             .then(response => response.json())
             .then(customers => {
-                console.log(customers);
                 this.setState({ customers }, CustomersStoreActions.GetCustomers);
                 return customers;
             });

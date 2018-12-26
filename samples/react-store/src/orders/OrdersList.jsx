@@ -12,10 +12,10 @@ class OrdersList extends Component {
     return (
       <div>
         {this.props.orders.map(order => {
-          return <div>
-              <table className="table table-hover orders-table" key={order.customerId}>
+          return <div key={order.id}>
+              <table className="table table-hover orders-table">
               <tbody>
-                {order.orderItems.map(orderItem => {
+                {order.orderItems.map((orderItem) => {
                   return <tr key={orderItem.id}>
                     <td>{orderItem.productName}</td>
                     <td>
