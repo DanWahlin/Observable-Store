@@ -1,8 +1,8 @@
 // React
 import React, { Component } from 'react';
 
-// Store
-import { CustomersStore } from '../stores/CustomersStore';
+// Import store
+import CustomersStore from '../stores/CustomersStore';
 
 // Components
 import CustomersList from './CustomersList';
@@ -14,23 +14,20 @@ class CustomersContainer extends Component {
   storeSub = null;
 
   componentDidMount() {
-    // Get store instance
-    let store = new CustomersStore();
-
     // ###### CustomersStore ########
     // Option 1: Subscribe to store changes
     // Useful when a component needs to be notified of changes but won't always
     // call store directly.
-    this.storeSub = store.stateChanged.subscribe(state => {
+    this.storeSub = CustomersStore.stateChanged.subscribe(state => {
       if (state) {
         this.setState({customers: state.customers});
       }
     });
     
-    store.getCustomers();
+    CustomersStore.getCustomers();
 
     // Option 2: Get data directly from store
-    // store.getCustomers()
+    // CustomersStore.getCustomers()
     //     .then(customers => {
     //       this.setState({customers: customers});
     //     });

@@ -1,29 +1,41 @@
 ## Observable Store - State Management for Front-End Applications (Angular, React, Vue.js)
 
-Observable Store is a small front-end state management library that provides a lot of functionality. Front-end state management has become so complex that many of us spend more hours working on the state management code then on the rest of the code. Something's wrong with that!
+Observable Store is a tiny front-end state management library that provides a lot of functionality. Front-end state management has become so complex that many of us spend more hours working on the state management code then on the rest of the application. Observable Store has one overall goal -   "keep it simple".
 
-The goal of observable store is to provide an extremely small and simple way to store state in a front-end application (Angular, React, Vue.js or any other) while achieving many of the key goals offered by more complex state management options.  
+The goal of observable store is to provide a small, simple, and consistent way to manage state in any front-end application (Angular, React, Vue.js or any other) while achieving many of the [key goals](#goals) offered by more complex state management solutions. While many front-end frameworks/libraries provide state management functionality, many can be overly complex and are only useable with the target framework/library. Observable Store is simple and can be used with any front-end JavaScript codebase.
 
-### Key Goals:
-1. Single source of truth (or create multiple stores if desired)
+### <a name="goals"></a>Key Goals of Observable Store:
+1. Single source of truth
 1. State is read-only/immutable
 1. Provide state change notifications to any subscriber
 1. Track state change history
-1. Works with Angular (demo included), React (demo included), Vue.js (coming soon), or any front-end library/framework
-
-### Running the Samples
-
-Open the `samples` folder and follow the instructions provided in the readme file for one of the provided sample projects.
+1. Minimal amount of code required
+1. Works with Angular (demo included), React (demo included), Vue.js (demo coming soon), or any front-end library/framework
 
 ### Steps to use Observable Store
 
-1. Create a class that extends ObservableStore
-2. Pass any initial store state as well as observable store settings into super()
-3. Update the store state using setState(action, state)
-4. Retrieve from the store using getState()
-5. Subscribe to store changes using the store.stateChanged observable
+1. Install the Observable Store package:
 
-### Walk-Throughs
+    `npm install @codewithdan/observable-store`
+
+1. Create a class that extends `ObservableStore`.
+1. Optionally pass settings into `super()` in your class's constructor ([view Observable Store settings](#settings))
+1. Update the store state using `setState(state, action)`.
+1. Retrieve store state using `getState()`.
+1. Subscribe to store changes using the store's `stateChanged` observable.
+1. Access store state history by calling the `stateHistory` property (this assumes that the `trackStateHistory` setting is set to `true`)
+
+### API and Settings
+
+[Observable Store API](#api)
+
+[Observable Store Settings](#settings)
+
+### Running the Samples
+
+Open the `samples` folder available at the Github repo and follow the instructions provided in the readme file for any of the provided sample projects.
+
+### Sample Applications
 
 * [Using Observable Store with Angular](#angular)
 * [Using Observable Store with React](#react)
@@ -248,7 +260,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 
 1. Create a React application using the `create-react-app` or another option.
 
-1. Add a service class (you can call it a store if you'd like) that extends ObservableStore<T>. Pass the interface or model class that represents the shape of your store data in for T.
+1. Add a store class (you can call it whatever you'd like) that extends ObservableStore<T>. 
 
     ``` javascript
     export class CustomersStore extends ObservableStore {
@@ -336,7 +348,14 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
     }
     ```
 
-1. If you want to view all of the changes to the store you can access the `stateHistory` property:
+1. Export your store. A default export is used here:
+
+
+    ``` javascript
+    export default new CustomersStore();
+    ```
+
+1. If you want to view all of the changes to the store you can access the store's `stateHistory` property:
 
     ``` javascript
     console.log(this.stateHistory);
@@ -408,31 +427,34 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
     ]
     ```
 
-1. Any component can be notified of changes to the store state by subscribing to the `stateChanged` observable:
+1. Import your store into a component:
 
     ``` javascript
-    componentDidMount() {
-        // Create the store
-        // You can create as many store objects as you want, but they'll 
-        // all share the same data (singleton store of data)
-        let store = new CustomersStore();
+    import CustomersStore from '../stores/CustomersStore';
+    ```
 
+1. Now use your store to access or update data. Any component can be notified of changes to the store state by subscribing to the `stateChanged` observable:
+
+    ``` javascript
+    storeSub = null;
+
+    componentDidMount() {
         // ###### CustomersStore ########
         // Option 1: Subscribe to store changes
         // Useful when a component needs to be notified of changes but won't always
         // call store directly.
-        this.storeSub = store.stateChanged.subscribe(state => {
+        this.storeSub = CustomersStore.stateChanged.subscribe(state => {
           if (state) {
             this.setState({ customers: state.customers });
           }
         });
 
         // In this example we trigger getting the customers (code above receives the customers)
-        store.getCustomers();
+        CustomersStore.getCustomers();
 
         // Option 2: Get data directly from store
         // If a component triggers getting the data it can retrieve it directly rather than subscribing
-        // store.getCustomers()
+        // CustomersStore.getCustomers()
         //     .then(customers => {
         //       ....
         //     });
@@ -452,3 +474,36 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 ### <a name="vue"></a>Using Observable Store with Vue.js
 
 Coming Soon
+
+### <a name="api"></a>Store API
+
+Observable Store provides a simple API that can be used to get/set state, subscribe to store state changes, and access state history.
+
+ API                                            | Description
+| ----------------------------------------------|------------------------------------------------------------------------------------------------------------------- 
+| `getState() : any`                              | Retrieve store's state. If using TypeScript (optional) then the state type defined when the store was created will be returned rather than `any`.                                                                                            
+| `setState(state: any, action: string) : any`    | Set store state. Pass the state to be updated as well as the action that is occuring. The state value can be a function (see example below). The latest store state is returned.
+| `stateChanged: Observable`                      | Subscribe to store changes. Returns an RxJS Observable.  
+| `stateHistory: any`                             | Retrieve state history (assumes trackStateHistory setting was set on store)
+
+Note that TypeScript types are used to describe parameters and return types above. TypeScript is not required to use Observable Store though.
+
+#### Passing a Function to setState()
+
+Here's an example of passing a function to setState(). This allows the previous state to be accessed directly while setting the new state.
+
+``` javascript
+this.setState(prevState => { 
+    return { customers: this.sorterService.sort(prevState.customers, property) };
+}, 'sort_customers');
+```
+
+### <a name="settings"></a>Store Settings
+
+Observable Store settings can be passed when the store is initialized (when super() is called). See examples of using it above.
+ 
+ Setting                         | Description
+| -------------------------------|------------------------------------------------------------------------------------------------------------------- 
+| `trackStateHistory: boolean`   | Determines if the store's state will be tracked or not. Pass it when initializing the Observable Store (see examples above). When `true`, you can access the store's state history by calling the `stateHistory` property.
+
+

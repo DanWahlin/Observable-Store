@@ -70,7 +70,8 @@ export class CustomersStore extends ObservableStore<StoreState> {
     // Can also pass a function to setState to grab the previous state 
     // and then update the current state
     this.setState(prevState => { 
-      return { customers: this.sorterService.sort(prevState.customers, property) };
+      const customers = this.sorterService.sort(prevState.customers, property);
+      return { customers };
     }, CustomersStoreActions.SortCustomers);
 
     console.log(this.stateHistory);

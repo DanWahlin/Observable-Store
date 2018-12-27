@@ -38,6 +38,7 @@ var ObservableStore = /** @class */ (function () {
                 endState: this._clonerService.deepClone(this.getState())
             });
         }
+        return this.getState();
     };
     ObservableStore.prototype.getState = function () {
         return this._clonerService.deepClone(storeState);

@@ -10,8 +10,8 @@ import { capitalize } from '../utils';
 import OrdersList from './OrdersList';
 
 // Stores
-import { CustomersStore } from '../stores/CustomersStore';
-import { OrdersStore } from '../stores/OrdersStore';
+import CustomersStore from '../stores/CustomersStore';
+import OrdersStore from '../stores/OrdersStore';
 
 
 class OrdersContainer extends Component {
@@ -32,20 +32,17 @@ class OrdersContainer extends Component {
 
   componentDidMount() {
     const customerId = parseInt(this.props.match.params.id, 10);
-    // Get store instance
-    let customersStore = new CustomersStore();
-    let ordersStore = new OrdersStore();
 
     // ###### CustomersStore ########
     // ## Customer Option 1: Subscribe to store changes
     // Useful when a component needs to be notified of changes but won't always
     // call store directly.
-    this.customersStoreSub = customersStore.stateChanged.subscribe(state => {
+    this.customersStoreSub = CustomersStore.stateChanged.subscribe(state => {
       if (state && state.customer) {
         this.setState( {customer: state.customer} );
       }
     });
-    customersStore.getCustomer(customerId);
+    CustomersStore.getCustomer(customerId);
 
     // ## Customer Option 2: Get data directly from store
     // customersStore.getCustomer(customerId)
@@ -53,7 +50,7 @@ class OrdersContainer extends Component {
     //       this.setState({ customer: customer });
     //     });
 
-    ordersStore.getOrders(customerId)
+    OrdersStore.getOrders(customerId)
         .then(orders => {
           this.setState( {orders} );
         });

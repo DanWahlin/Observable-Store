@@ -1,6 +1,6 @@
 import { ObservableStore } from '../stores/observable-store';
 
-export class OrdersStore extends ObservableStore {
+class OrdersStore extends ObservableStore {
 
     constructor() {
         super({ trackStateHistory: true });
@@ -40,3 +40,5 @@ export class OrdersStore extends ObservableStore {
         });
     }
 }
+
+export default new OrdersStore();

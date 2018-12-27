@@ -31,11 +31,12 @@ export class ObservableStore<T> {
         this.stateHistory = stateHistory;        
     }
 
-    protected setState(state: any, action?: string, dispatchState: boolean = true) { 
-        let previousState = this.getState();
-        if (typeof state === 'function') {
-            const newState = state(previousState);
+    protected setState(state: any, action?: string, dispatchState: boolean = true) : T { 
+        // Needed for tracking below
+        const previousState = this.getState();
 
+        if (typeof state === 'function') {
+            const newState = state(this.getState());
             this.updateState(newState);
         }
         else if (typeof state === 'object') {
@@ -56,6 +57,8 @@ export class ObservableStore<T> {
                 endState: this._clonerService.deepClone(this.getState()) 
             });
         }
+
+        return this.getState();
     }
 
     protected getState() : T {

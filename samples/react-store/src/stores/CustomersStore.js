@@ -1,6 +1,6 @@
 import { ObservableStore } from '../stores/observable-store';
 
-export class CustomersStore extends ObservableStore {
+class CustomersStore extends ObservableStore {
 
     constructor() {
         super({ trackStateHistory: true });
@@ -52,3 +52,5 @@ const CustomersStoreActions = {
     GetCustomers: 'get_customers',
     GetCustomer: 'get_customer'
 };
+
+export default new CustomersStore();
