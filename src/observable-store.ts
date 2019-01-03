@@ -12,8 +12,6 @@ export interface CurrentStoreState {
 }
 
 // static objects
-const stateDispatcher = new BehaviorSubject<any>(null);
-const stateChanged = stateDispatcher.asObservable();
 const clonerService = new ClonerService();
 let storeState: Readonly<any> =  null;
 let stateHistory: any[] = [];
@@ -24,16 +22,15 @@ export class ObservableStore<T> {
     public stateChanged: Observable<any>;
     public stateHistory: any[];
 
-    private _stateDispatcher: BehaviorSubject<any>;
+    private _stateDispatcher = new BehaviorSubject<any>(null);
     private _clonerService: ClonerService;
     private _settings: ObservableStoreSettings
 
     constructor(settings: ObservableStoreSettings = { trackStateHistory: false, includeStateChangesOnSubscribe: false }) {
         this._settings = settings;
-        this._stateDispatcher = stateDispatcher;
         this._clonerService = clonerService;
-
-        this.stateChanged = stateChanged;
+        
+        this.stateChanged = this._stateDispatcher.asObservable();
         this.stateHistory = stateHistory;        
     }
 

@@ -520,4 +520,8 @@ Set the property to `true` if you want to receive the store state as well as the
 
 Changed `updateState()` to `_updateState()` since it's a private function. Remove `tsconfig.json` from package.
 
+#### 1.0.13
+
+Moved `BehaviorSubject` into `ObservableService` class so that if multiple instances of a wrapper around the store are created, subscribers can subscribe to the individual instances.
+
 
