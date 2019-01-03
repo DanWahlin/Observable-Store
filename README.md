@@ -483,7 +483,7 @@ Observable Store provides a simple API that can be used to get/set state, subscr
 | ----------------------------------------------|------------------------------------------------------------------------------------------------------------------- 
 | `getState() : any`                              | Retrieve store's state. If using TypeScript (optional) then the state type defined when the store was created will be returned rather than `any`.                                                                                            
 | `setState(state: any, action: string) : any`    | Set store state. Pass the state to be updated as well as the action that is occuring. The state value can be a function (see example below). The latest store state is returned.
-| `stateChanged: Observable`                      | Subscribe to store changes. Returns an RxJS Observable containing the current store state.  If the `includeStateChangesOnSubscribe` setting is true you'll get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
+| `stateChanged: Observable`                      | Subscribe to store changes. Returns an RxJS Observable containing the current store state.  If the `includeStateChangesOnSubscribe` setting is true you'll get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store) properties.
 | `stateHistory: any`                             | Retrieve state history (assumes trackStateHistory setting was set on store)
 
 Note that TypeScript types are used to describe parameters and return types above. TypeScript is not required to use Observable Store though.
@@ -504,7 +504,16 @@ Observable Store settings can be passed when the store is initialized (when supe
  
  Setting                         | Description
 | -------------------------------|------------------------------------------------------------------------------------------------------------------- 
-| `trackStateHistory: boolean`   | Determines if the store's state will be tracked or not. Pass it when initializing the Observable Store (see examples above). When `true`, you can access the store's state history by calling the `stateHistory` property.
-| `includeStateChangesOnSubscribe: boolean`   | Returns the store state when false (default). Set to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
+| `trackStateHistory: boolean`   | Determines if the store's state will be tracked or not (defaults to false). Pass it when initializing the Observable Store (see examples above). When `true`, you can access the store's state history by calling the `stateHistory` property.
+| `includeStateChangesOnSubscribe: boolean`   | Returns the store state by default when false (default). Set to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
+
+
+### Changes
+
+#### 1.0.11 
+
+Added `includeStateChangesOnSubscribe` setting for cases where a subscriber to `stateChanged` wants to get the current state as well as the specific properties/data that were changes in the store. Defaults to `false` so prior versions will only receive the current state by default which keeps patched versions compatible in the 1.0.x range.
+
+Set the property to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
 
 
