@@ -3,6 +3,12 @@ import { ClonerService } from './utilities/cloner.service';
 
 export interface ObservableStoreSettings {
     trackStateHistory?: boolean;
+    includeStateChangesOnSubscribe?: boolean;
+}
+
+export interface CurrentStoreState {
+    state: any;
+    stateChanges: any;
 }
 
 // static objects
@@ -15,14 +21,14 @@ let stateHistory: any[] = [];
 export class ObservableStore<T> {
     // Not a fan of using _ for private fields in TypeScript, but since 
     // some may use this as pure ES6 I'm going with _ for the private fields.
-    public stateChanged: Observable<T>;
+    public stateChanged: Observable<any>;
     public stateHistory: any[];
 
-    private _stateDispatcher: BehaviorSubject<T>;
+    private _stateDispatcher: BehaviorSubject<any>;
     private _clonerService: ClonerService;
     private _settings: ObservableStoreSettings
 
-    constructor(settings: ObservableStoreSettings = { trackStateHistory: false }) {
+    constructor(settings: ObservableStoreSettings = { trackStateHistory: false, includeStateChangesOnSubscribe: false }) {
         this._settings = settings;
         this._stateDispatcher = stateDispatcher;
         this._clonerService = clonerService;
@@ -47,7 +53,7 @@ export class ObservableStore<T> {
         }
         
         if (dispatchState) {
-            this._dispatchState();
+            this._dispatchState(state);
         }
 
         if (this._settings.trackStateHistory) {
@@ -71,13 +77,19 @@ export class ObservableStore<T> {
         }
     }
 
-    private updateState(state: any) {
+    private updateState(state: T) {
         storeState = (state) ? Object.assign({}, storeState, state) : null;
     }
 
-    private _dispatchState() {
+    private _dispatchState(stateChanges: T) {
         const clone = this._clonerService.deepClone(storeState);
-        this._stateDispatcher.next(clone);
+        if (this._settings.includeStateChangesOnSubscribe) {
+            this._stateDispatcher.next({ state: clone, stateChanges });
+        }
+        else {
+            this._stateDispatcher.next(clone);
+        }
+
     }
 
 }
