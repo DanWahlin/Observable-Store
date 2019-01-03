@@ -43,10 +43,10 @@ export class ObservableStore<T> {
 
         if (typeof state === 'function') {
             const newState = state(this.getState());
-            this.updateState(newState);
+            this._updateState(newState);
         }
         else if (typeof state === 'object') {
-            this.updateState(state);
+            this._updateState(state);
         }
         else {
             throw Error('Pass an object or a function for the state parameter when calling setState().');
@@ -77,7 +77,7 @@ export class ObservableStore<T> {
         }
     }
 
-    private updateState(state: T) {
+    private _updateState(state: T) {
         storeState = (state) ? Object.assign({}, storeState, state) : null;
     }
 

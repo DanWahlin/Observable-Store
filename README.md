@@ -516,4 +516,8 @@ Added `includeStateChangesOnSubscribe` setting for cases where a subscriber to `
 
 Set the property to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
 
+#### 1.0.12
+
+Changed `updateState()` to `_updateState()` since it's a private function. Remove `tsconfig.json` from package.
+
 
