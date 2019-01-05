@@ -3,6 +3,7 @@ import { ClonerService } from './utilities/cloner.service';
 
 export interface ObservableStoreSettings {
     trackStateHistory?: boolean;
+    logStateChanges?: boolean;
     includeStateChangesOnSubscribe?: boolean;
 }
 
@@ -15,6 +16,11 @@ export interface CurrentStoreState {
 const clonerService = new ClonerService();
 let storeState: Readonly<any> =  null;
 let stateHistory: any[] = [];
+const settingsDefaults = { 
+    trackStateHistory: false, 
+    logStateChanges: false,
+    includeStateChangesOnSubscribe: false 
+};
 
 export class ObservableStore<T> {
     // Not a fan of using _ for private fields in TypeScript, but since 
@@ -26,7 +32,7 @@ export class ObservableStore<T> {
     private _clonerService: ClonerService;
     private _settings: ObservableStoreSettings
 
-    constructor(settings: ObservableStoreSettings = { trackStateHistory: false, includeStateChangesOnSubscribe: false }) {
+    constructor(settings: ObservableStoreSettings = settingsDefaults) {
         this._settings = settings;
         this._clonerService = clonerService;
         
@@ -59,6 +65,11 @@ export class ObservableStore<T> {
                 beginState: previousState, 
                 endState: this._clonerService.deepClone(this.getState()) 
             });
+        }
+
+        if (this._settings.logStateChanges) {
+            const caller = (this.constructor) ? '\r\nCaller: ' + this.constructor.name : '';
+            console.log('%cSTATE CHANGED', 'font-weight: bold', caller, '\r\nState: ', state);
         }
 
         return this.getState();

@@ -505,6 +505,7 @@ Observable Store settings can be passed when the store is initialized (when supe
  Setting                         | Description
 | -------------------------------|------------------------------------------------------------------------------------------------------------------- 
 | `trackStateHistory: boolean`   | Determines if the store's state will be tracked or not (defaults to false). Pass it when initializing the Observable Store (see examples above). When `true`, you can access the store's state history by calling the `stateHistory` property.
+| `logStateChanges: boolean`     | Log any store state changes to the browser console (defaults to false). 
 | `includeStateChangesOnSubscribe: boolean`   | Returns the store state by default when false (default). Set to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
 
 
@@ -523,5 +524,9 @@ Changed `updateState()` to `_updateState()` since it's a private function. Remov
 #### 1.0.13
 
 Moved `BehaviorSubject` into `ObservableService` class so that if multiple instances of a wrapper around the store are created, subscribers can subscribe to the individual instances.
+
+#### 1.0.14
+
+Added `logStateChanges` setting to write out all state changes to the browser console when true. Defaults to false.
 
 
