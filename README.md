@@ -529,4 +529,8 @@ Moved `BehaviorSubject` into `ObservableService` class so that if multiple insta
 
 Added `logStateChanges` setting to write out all state changes to the browser console when true. Defaults to false.
 
+#### 1.0.15
+
+Added action to log output when `logStateChanges` is true.
+
 
