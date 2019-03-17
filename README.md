@@ -546,4 +546,8 @@ Thanks to a great contribution by Mickey Puri you can now globally subscribe to 
 Merged in another contribution by Mickey Puri to ensure the settings defaults are always applied regardless of how many properties the user passes. Renamed
 a settings default property (`state_slice_selector` => `stateSliceSelector`). Added editable store example (update/delete functionality) for Angular in the `samples` folder.
 
+#### 1.0.18 
+
+Minor updates to the readme.
+
 
