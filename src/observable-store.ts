@@ -37,8 +37,8 @@ export class ObservableStore<T> {
     private _clonerService: ClonerService;
     private _settings: ObservableStoreSettings
 
-    constructor(settings: ObservableStoreSettings = settingsDefaults) {
-        this._settings = settings;
+    constructor(settings: ObservableStoreSettings) {
+        this._settings = Object.assign({}, settingsDefaults, settings);
         this._clonerService = clonerService;
         
         this.stateChanged = this._stateDispatcher.asObservable();
