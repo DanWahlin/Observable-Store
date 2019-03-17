@@ -5,6 +5,7 @@ export interface ObservableStoreSettings {
     trackStateHistory?: boolean;
     logStateChanges?: boolean;
     includeStateChangesOnSubscribe?: boolean;
+    stateSliceSelector?: (state: any) => any;
 }
 
 export interface CurrentStoreState {
@@ -19,14 +20,18 @@ let stateHistory: any[] = [];
 const settingsDefaults = { 
     trackStateHistory: false, 
     logStateChanges: false,
-    includeStateChangesOnSubscribe: false 
+    includeStateChangesOnSubscribe: false,
+    state_slice_selector: null
 };
+const globalStateDispatcher = new BehaviorSubject<any>(null);
 
 export class ObservableStore<T> {
     // Not a fan of using _ for private fields in TypeScript, but since 
     // some may use this as pure ES6 I'm going with _ for the private fields.
+    // stateChanged is for changes to a slice of state managed by a particular service
     public stateChanged: Observable<any>;
     public stateHistory: any[];
+    public globalStateChanged: Observable<any>;
 
     private _stateDispatcher = new BehaviorSubject<any>(null);
     private _clonerService: ClonerService;
@@ -37,7 +42,8 @@ export class ObservableStore<T> {
         this._clonerService = clonerService;
         
         this.stateChanged = this._stateDispatcher.asObservable();
-        this.stateHistory = stateHistory;        
+        this.stateHistory = stateHistory;
+        this.globalStateChanged = globalStateDispatcher.asObservable();
     }
 
     protected setState(state: any, action?: string, dispatchState: boolean = true) : T { 
@@ -76,7 +82,8 @@ export class ObservableStore<T> {
     }
 
     protected getState() : T {
-        return this._clonerService.deepClone(storeState) as T;
+        const stateOrSlice = this._getStateOrSlice(storeState);
+        return this._clonerService.deepClone(stateOrSlice) as T;
     }
 
     protected logStateAction(state: any, action: string) {
@@ -89,15 +96,26 @@ export class ObservableStore<T> {
         storeState = (state) ? Object.assign({}, storeState, state) : null;
     }
 
+    private _getStateOrSlice(state : Readonly<any>): Readonly<any> {
+        if (this._settings.stateSliceSelector) {
+            return this._settings.stateSliceSelector(storeState);
+        }
+        return storeState;
+    }
+
     private _dispatchState(stateChanges: T) {
-        const clone = this._clonerService.deepClone(storeState);
+        const stateOrSlice = this._getStateOrSlice(storeState);
+        const clonedStateOrSlice = this._clonerService.deepClone(stateOrSlice);
+        const clonedGlobalState = this._clonerService.deepClone(storeState);
+
         if (this._settings.includeStateChangesOnSubscribe) {
-            this._stateDispatcher.next({ state: clone, stateChanges });
+            this._stateDispatcher.next({ state: clonedStateOrSlice, stateChanges });
+            globalStateDispatcher.next({ state: clonedGlobalState, stateChanges });
         }
         else {
-            this._stateDispatcher.next(clone);
+            this._stateDispatcher.next(clonedStateOrSlice);
+            globalStateDispatcher.next(clonedGlobalState);
         }
-
     }
 
 }
