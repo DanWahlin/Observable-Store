@@ -17,11 +17,11 @@ export interface CurrentStoreState {
 const clonerService = new ClonerService();
 let storeState: Readonly<any> =  null;
 let stateHistory: any[] = [];
-const settingsDefaults = { 
+const settingsDefaults: ObservableStoreSettings = { 
     trackStateHistory: false, 
     logStateChanges: false,
     includeStateChangesOnSubscribe: false,
-    state_slice_selector: null
+    stateSliceSelector: null
 };
 const globalStateDispatcher = new BehaviorSubject<any>(null);
 
