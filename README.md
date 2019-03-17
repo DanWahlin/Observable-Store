@@ -537,11 +537,11 @@ Added action to log output when `logStateChanges` is true.
 
 #### 1.0.16
 
-Thanks to a great contribution by Micky Puri you can now globally subscribe to store changes (`globalStateChanged` event) and even define state slices (`stateSliceSelector` setting).
+Thanks to a great contribution by Mickey Puri you can now globally subscribe to store changes (`globalStateChanged` event) and even define state slices (`stateSliceSelector` setting).
 
 #### 1.0.17
 
-Merged in another contribution by Micky Puri to ensure the settings defaults are always applied regardless of how many properties the user passes. Renamed
+Merged in another contribution by Mickey Puri to ensure the settings defaults are always applied regardless of how many properties the user passes. Renamed
 a settings default property (`state_slice_selector` => `stateSliceSelector`). Added editable store example (update/delete functionality) for Angular in the `samples` folder.
 
 
