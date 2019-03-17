@@ -4,7 +4,7 @@ Observable Store is a tiny front-end state management library that provides a lo
 
 The goal of observable store is to provide a small, simple, and consistent way to manage state in any front-end application (Angular, React, Vue.js or any other) while achieving many of the [key goals](#goals) offered by more complex state management solutions. While many front-end frameworks/libraries provide state management functionality, many can be overly complex and are only useable with the target framework/library. Observable Store is simple and can be used with any front-end JavaScript codebase.
 
-[View my blog post about Observable Store](https://blog.codewithdan.com/simplifying-front-end-state-management-with-observable-store)
+<a href="https://blog.codewithdan.com/simplifying-front-end-state-management-with-observable-store" target="_blank">View my blog post about Observable Store</a>
 
 ### <a name="goals"></a>Key Goals of Observable Store:
 1. Single source of truth
