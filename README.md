@@ -535,4 +535,8 @@ Added `logStateChanges` setting to write out all state changes to the browser co
 
 Added action to log output when `logStateChanges` is true.
 
+#### 1.0.16
+
+Thanks to a great contribution by Micky Puri you can now globally subscribe to store changes (globalStateChanged event) and even define state slices (stateSliceSelector setting).
+
 

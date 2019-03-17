@@ -16,11 +16,11 @@ This shows how to use Observable Stores to maintain state in a React application
 
     Windows:  https://yarnpkg.com/en/docs/install#windows-tab
 
-1. If using Yard, run the following to install the application dependencies:
+1. If using Yarn, run the following to install the application dependencies:
 
     `yarn`
 
-1. If using npm, run the following to install the applicaiton dependencies:
+1. If using npm, run the following to install the application dependencies:
 
     `npm install`
 
