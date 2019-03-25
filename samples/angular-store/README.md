@@ -8,7 +8,6 @@ Open the `src/app/core/stores` folder for examples.
 
     `npm install -g @angular/cli`
 
-1. Run `npm install`
+1. Run `npm install` within this folder.
 
 1. Run `ng serve -o`
-

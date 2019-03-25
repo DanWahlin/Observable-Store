@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 
-import { ObservableStore } from '../../../../../../src/observable-store';
+// The following is for testing only
+// import { ObservableStore } from '../../../../../../src/observable-store';
+import { ObservableStore } from '@codewithdan/observable-store';
 import { Customer } from './customer';
 import { SorterService } from '..//utilities/sorter.service';
 

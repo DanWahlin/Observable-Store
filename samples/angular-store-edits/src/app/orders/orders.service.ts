@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { of, Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { ObservableStore } from '../../../../../src/observable-store';
+// The following is for testing only
+// import { ObservableStore } from '../../../../../src/observable-store';
+import { ObservableStore } from '@codewithdan/observable-store';
 
 import { Order } from '../core/model';
 import { StoreState } from '../shared/interfaces';

@@ -1,3 +1,15 @@
-# NgrxDemo
+## Observable Store for Angular
 
-Demo showing NgRx with Angular
+Open the `src/app/core/stores` folder for examples.
+
+## Running the Project
+
+1. Install the Angular CLI
+
+    `npm install -g @angular/cli`
+
+1. Run `npm install` within this folder.
+
+1. 
+
+1. Run `ng serve -o`

@@ -4,7 +4,9 @@ import { map, catchError } from 'rxjs/operators';
 import { Order } from '../../shared/interfaces';
 import { Injectable } from '@angular/core';
 import { StoreState } from '../store/store-state';
-import { ObservableStore } from '../../../../../../src/observable-store';
+// The following is for testing only
+// import { ObservableStore } from '../../../../../../src/observable-store';
+import { ObservableStore } from '@codewithdan/observable-store';
 
 @Injectable({
     providedIn: 'root'
