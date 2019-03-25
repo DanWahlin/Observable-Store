@@ -10,6 +10,4 @@ Open the `src/app/core/stores` folder for examples.
 
 1. Run `npm install` within this folder.
 
-1. 
-
 1. Run `ng serve -o`
