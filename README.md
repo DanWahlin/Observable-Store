@@ -91,7 +91,8 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
                 customers: [],
                 customer: null
             }
-            super(initialState, { trackStateHistory: true });
+            super({ trackStateHistory: true });
+            this.setState(initialState, 'init_state');
             this.sorterService = sorterService;
         }
 
@@ -475,7 +476,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 
 ### <a name="vue"></a>Using Observable Store with Vue.js
 
-Coming Soon
+Coming Soon...
 
 ### <a name="api"></a>Store API
 
@@ -485,7 +486,7 @@ Observable Store provides a simple API that can be used to get/set state, subscr
 | ----------------------------------------------|------------------------------------------------------------------------------------------------------------------- 
 | `getState() : any`                              | Retrieve store's state. If using TypeScript (optional) then the state type defined when the store was created will be returned rather than `any`.                                                                                            
 | `setState(state: any, action: string) : any`    | Set store state. Pass the state to be updated as well as the action that is occuring. The state value can be a function (see example below). The latest store state is returned.
-| `stateChanged: Observable`                      | Subscribe to store changes in the particlar slice of state being managed by this Service. If the store contains 'n' slices of state each being managed by one of 'n' services, then changes in any of the other slices of state will not generate values in the stateChanged stream. Returns an RxJS Observable containing the current store state (or a specific slice of state if a stateSliceSelector has been specified).  If the `includeStateChangesOnSubscribe` setting is true you'll get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store) properties.
+| `stateChanged: Observable`                      | Subscribe to store changes in the particlar slice of state updated by a Service. If the store contains 'n' slices of state each being managed by one of 'n' services, then changes in any of the other slices of state will not generate values in the stateChanged stream. Returns an RxJS Observable containing the current store state (or a specific slice of state if a stateSliceSelector has been specified).  If the `includeStateChangesOnSubscribe` setting is true you'll get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store) properties.
 | `globalStateChanged: Observable`                | Subscribe to global store changes i.e. changes in any slice of state of the store. The global store may consist of 'n' slices of state each managed by a particular service. This property notifies of a change in any of the 'n' slices of state. Returns an RxJS Observable containing the current store state.  If the `includeStateChangesOnSubscribe` setting is true you'll get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store) properties.
 | `stateHistory: any`                             | Retrieve state history (assumes trackStateHistory setting was set on store)
 
@@ -512,6 +513,26 @@ Observable Store settings can be passed when the store is initialized (when supe
 | `includeStateChangesOnSubscribe: boolean`   | Returns the store state by default when false (default). Set to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
 | `stateSliceSelector: function`     | Function to select the slice of the store being managed by this particular service. If specified then the specific state slice is returned. If not specified then the total state is returned (defaults to null). 
 
+
+#### Using the stateSliceSelector() Function
+
+The `stateSliceSelector()` function can be used to return a "slice" of the store state that is managed by a Service to any subscribers. For example, if a CustomersService manages a `customers` collection and a `selectedCustomer` object you can return only the `selectedCustomer` object to subscribers (rather than `customers` and `selectedCustomer`) by creating a `stateSliceSelector()` function. 
+
+Define it as you initialize the service when passing a `settings` object to `super()` in the Service's constructor.
+
+``` typescript
+export class CustomersService extends ObservableStore<StoreState> {
+  constructor() { 
+    super({ stateSliceSelector: state => { 
+        return {
+          customer: state.selectedCustomer
+          // return other parts of the store here too if desired
+        };
+      } 
+    });
+ }
+}
+```
 
 ### Changes
 
@@ -549,5 +570,9 @@ a settings default property (`state_slice_selector` => `stateSliceSelector`). Ad
 #### 1.0.18 
 
 Minor updates to the readme.
+
+#### 1.0.19
+
+Updated Angular example and added `stateSliceSelector()` information in readme
 
 
