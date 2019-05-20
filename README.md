@@ -117,13 +117,13 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
         remove() {
             let state = this.getState();
             state.customers.splice(state.customers.length - 1, 1);
-            this.setState({ customers: state.customers } 'remove_customer');
+            this.setState({ customers: state.customers }, 'remove_customer');
         }
         
         sort(property: string = 'id') {
             let state = this.getState();
             const sortedState = this.sorterService.sort(state.customers, property);
-            this.setState({ customers: sortedState } 'sort_customers');
+            this.setState({ customers: sortedState }, 'sort_customers');
         }
 
     }
