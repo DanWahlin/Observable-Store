@@ -1,4 +1,7 @@
-import { ObservableStore } from '../stores/observable-store';
+// For local testing
+// import { ObservableStore } from '../stores/observable-store';
+
+import { ObservableStore } from '@codewithdan/observable-store';
 
 class OrdersStore extends ObservableStore {
 

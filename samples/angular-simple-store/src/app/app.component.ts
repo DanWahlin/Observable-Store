@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CustomersStore } from './core/store/customers.store';
 import { Customer } from './core/store/customer';
-import { Observable } from 'rxjs';
-import { SubSink } from 'subsink';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +12,7 @@ export class AppComponent implements OnInit, OnDestroy {
   customers: Customer[] | Observable<Customer[]>;
   stateHistory = null;
   isHistoryVisible = false;
-  subsink = new SubSink();
+  sub: Subscription;
 
   constructor(private customersStore: CustomersStore) { }
 
@@ -22,7 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // this.customers$ = this.customersStore.stateChanged;
 
     // Can subscribe to stateChanged of store
-    this.subsink.sink = this.customersStore.stateChanged.subscribe(state => {
+    this.sub = this.customersStore.stateChanged.subscribe(state => {
       this.customers = state.customers;
     });
 
@@ -58,6 +57,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subsink.unsubscribe();
+    this.sub.unsubscribe();
   }
 }

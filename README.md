@@ -574,4 +574,12 @@ Minor updates to the readme.
 
 Updated Angular example and added `stateSliceSelector()` information in readme
 
+#### 1.0.20
+
+Updated readme
+
+#### 1.0.21
+
+Updated to latest version of RxJS. Removed subsink from the Angular Simple Store demo to just use a normal Subscription for unsubscribing (just to keep it more "native" and require less dependencies).
+
 

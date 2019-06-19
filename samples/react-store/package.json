@@ -11,23 +11,30 @@
   "dependencies": {
     "lodash.isequal": "^4.5.0",
     "lodash.orderby": "^4.6.0",
-    "prop-types": "^15.6.2",
-    "react": "^16.7.0",
-    "react-dom": "^16.7.0",
-    "react-router-dom": "^4.3.1",
-    "react-scripts": "2.1.1",
-    "react-currency-formatter": "^1.1.0"
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "3.0.1",
+    "react-currency-formatter": "^1.1.0",
+    "@codewithdan/observable-store": "^1.0.21"
   },
   "devDependencies": {
-    "prettier": "^1.15.3"
+    "prettier": "^1.18.2"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

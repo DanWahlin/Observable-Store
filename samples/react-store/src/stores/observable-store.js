@@ -8,14 +8,13 @@ var settingsDefaults = {
     trackStateHistory: false,
     logStateChanges: false,
     includeStateChangesOnSubscribe: false,
-    state_slice_selector: null
+    stateSliceSelector: null
 };
 var globalStateDispatcher = new BehaviorSubject(null);
 var ObservableStore = /** @class */ (function () {
     function ObservableStore(settings) {
-        if (settings === void 0) { settings = settingsDefaults; }
         this._stateDispatcher = new BehaviorSubject(null);
-        this._settings = settings;
+        this._settings = Object.assign({}, settingsDefaults, settings);
         this._clonerService = clonerService;
         this.stateChanged = this._stateDispatcher.asObservable();
         this.stateHistory = stateHistory;
