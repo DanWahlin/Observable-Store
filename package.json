@@ -22,7 +22,7 @@
   "scripts": {
     "tsc": "tsc",
     "build": "rm -rf ./dist && tsc",
-    "test": "jasmine-ts"
+    "test": "jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json"
   },
   "dependencies": {
     "rxjs": "^6.5.2"
@@ -32,7 +32,7 @@
     "jasmine": "^3.4.0",
     "jasmine-spec-reporter": "^4.2.1",
     "jasmine-ts": "^0.3.0",
-    "ts-node": "^8.3.0",
+    "ts-node": ">=3.2.0 <8",
     "typescript": "^3.5.2"
   }
 }
