@@ -1,3 +1,5 @@
+import { skip } from 'rxjs/operators';
+
 import { ObservableStore } from './observable-store';
 
 describe('Observable Store', () => {
@@ -21,5 +23,27 @@ describe('Observable Store', () => {
     store.updateProp1('test');
 
     expect(store.currentState.prop1).toEqual('test');
+  });
+
+  // we will skip 1 to account for the initial BehaviorSubject<T> value
+  it('should NOT receive notification if no state has changed', () => {
+    const store = new FakeStore({});
+    let receiveUpdate = false;
+    const sub = store.stateChanged.pipe(skip(1)).subscribe(() => (receiveUpdate = true));
+
+    expect(receiveUpdate).toBeFalsy();
+    sub.unsubscribe();
+  });
+
+  // we will skip 1 to account for the initial BehaviorSubject<T> value
+  it('should receive notification when state has been changed', () => {
+    const store = new FakeStore({});
+    let receiveUpdate = false;
+    const sub = store.stateChanged.pipe(skip(1)).subscribe(() => (receiveUpdate = true));
+
+    store.updateProp1('test');
+
+    expect(receiveUpdate).toBeTruthy();
+    sub.unsubscribe();
   });
 });
