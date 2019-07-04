@@ -82,4 +82,34 @@ describe('Observable Store', () => {
       expect(fakeStore.stateHistory.length).toEqual(2);
     });
   });
+
+  describe('Can I have 2 stores?', () => {
+    const Update_Prop1A = 'Update_Prop1-A';
+    const Update_Prop1B = 'Update_Prop1-B';
+
+    class MockStoreA extends ObservableStore<FakeState> {
+      updateProp1(value: string) {
+        this.setState({ prop1: value }, Update_Prop1A);
+      }
+      get currentState() {
+        return this.getState();
+      }
+    }
+
+    class MockStoreB extends ObservableStore<FakeState> {
+      updateProp1(value: string) {
+        this.setState({ prop1: value }, Update_Prop1B);
+      }
+      get currentState() {
+        return this.getState();
+      }
+    }
+    it('should have different histories', () => {
+      const mockStoreA = new MockStoreA({ trackStateHistory: true });
+      const mockStoreB = new MockStoreB({ trackStateHistory: true });
+
+      mockStoreA.updateProp1('test');
+      expect(mockStoreB.stateHistory.length).toBe(0);
+    });
+  });
 });
