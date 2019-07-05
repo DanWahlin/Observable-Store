@@ -4,10 +4,16 @@ import { ObservableStore } from './observable-store';
 
 const Update_Prop1 = 'Update_Prop1';
 
+interface MockUser {
+  name: string;
+}
+
 interface MockState {
   prop1: string;
   prop2: string;
+  user: MockUser;
 }
+
 class MockStore extends ObservableStore<MockState> {
   updateProp1(value: string) {
     this.setState({ prop1: value }, Update_Prop1);
@@ -21,6 +27,7 @@ class MockStore extends ObservableStore<MockState> {
     return this.getState();
   }
 }
+
 describe('Observable Store', () => {
   let mockStore = new MockStore({ trackStateHistory: true });
 
@@ -58,6 +65,36 @@ describe('Observable Store', () => {
       mockStore.updateForTestAction('test', mockAction);
 
       expect(mockStore.stateHistory[mockStore.stateHistory.length - 1].action).toEqual(mockAction);
+    });
+  });
+  describe('SliceSelector', () => {
+    class UserStore extends ObservableStore<MockState> {
+      constructor() {
+        super({
+          stateSliceSelector: state => {
+            // console.log('state constructor', state);
+            return { user: state.user };
+          }
+        });
+      }
+      updateUser(user: MockUser) {
+        this.setState({ user: user });
+      }
+
+      get currentState() {
+        return this.getState();
+      }
+    }
+    const userStore = new UserStore();
+    it('should only have MockUser when requesting state', () => {
+      userStore.updateUser({ name: 'foo' });
+
+      const state = userStore.currentState;
+
+      expect(state.prop1).toBeFalsy();
+      expect(state.prop2).toBeFalsy();
+      // although the state is populated, slice will only populate the User
+      expect(state.user).toBeTruthy();
     });
   });
 });
