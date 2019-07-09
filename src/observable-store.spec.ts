@@ -23,6 +23,12 @@ class MockStore extends ObservableStore<MockState> {
     this.setState({ prop1: value }, action);
   }
 
+  updateUsingAFunction(func: (state: MockState) => MockState) {
+    this.setState(prevState => {
+      return func(prevState);
+    });
+  }
+
   get currentState() {
     return this.getState();
   }
@@ -31,10 +37,26 @@ class MockStore extends ObservableStore<MockState> {
 describe('Observable Store', () => {
   let mockStore = new MockStore({ trackStateHistory: true });
 
-  it('should set a single property', () => {
-    mockStore.updateProp1('test');
+  describe('Changing state', () => {
+    it('should change a single property', () => {
+      mockStore.updateProp1('test');
 
-    expect(mockStore.currentState.prop1).toEqual('test');
+      expect(mockStore.currentState.prop1).toEqual('test');
+    });
+
+    it('should execute an anonymous function', () => {
+      const capitalizeProp1 = (state: MockState) => {
+        state.prop1 = state.prop1.toLocaleUpperCase();
+        return state;
+      };
+
+      const capitalizeSpy = jasmine.createSpy().and.callFake(capitalizeProp1);
+      mockStore.updateProp1('test');
+      mockStore.updateUsingAFunction(capitalizeSpy);
+
+      expect(capitalizeSpy).toHaveBeenCalled();
+      expect(mockStore.currentState.prop1).toEqual('TEST');
+    });
   });
 
   describe('Subscriptions', () => {
