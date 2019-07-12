@@ -25,6 +25,12 @@ const settingsDefaults: ObservableStoreSettings = {
 };
 const globalStateDispatcher = new BehaviorSubject<any>(null);
 
+/**
+ * Executes a function on `state` and returns a version of T
+ * @param state - the original state model
+ */
+export type stateFunc<T> = (state: T) => Partial<T>;
+
 export class ObservableStore<T> {
     // Not a fan of using _ for private fields in TypeScript, but since 
     // some may use this as pure ES6 I'm going with _ for the private fields.
@@ -46,7 +52,7 @@ export class ObservableStore<T> {
         this.globalStateChanged = globalStateDispatcher.asObservable();
     }
 
-    protected setState(state: any, action?: string, dispatchState: boolean = true) : T { 
+    protected setState(state: Partial<T> | stateFunc<T> , action?: string, dispatchState: boolean = true) : T { 
         // Needed for tracking below
         const previousState = this.getState();
 
@@ -62,7 +68,7 @@ export class ObservableStore<T> {
         }
         
         if (dispatchState) {
-            this._dispatchState(state);
+            this._dispatchState(state as any);
         }
 
         if (this._settings.trackStateHistory) {
@@ -92,7 +98,7 @@ export class ObservableStore<T> {
         }
     }
 
-    private _updateState(state: T) {
+    private _updateState(state: Partial<T>) {
         storeState = (state) ? Object.assign({}, storeState, state) : null;
     }
 
@@ -117,5 +123,4 @@ export class ObservableStore<T> {
             globalStateDispatcher.next(clonedGlobalState);
         }
     }
-
 }

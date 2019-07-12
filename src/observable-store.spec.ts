@@ -1,6 +1,6 @@
 import { skip } from 'rxjs/operators';
 
-import { ObservableStore } from './observable-store';
+import { ObservableStore, stateFunc } from './observable-store';
 
 const Update_Prop1 = 'Update_Prop1';
 
@@ -23,7 +23,7 @@ class MockStore extends ObservableStore<MockState> {
     this.setState({ prop1: value }, action);
   }
 
-  updateUsingAFunction(func: (state: MockState) => MockState) {
+  updateUsingAFunction(func: stateFunc<MockState>) {
     this.setState(prevState => {
       return func(prevState);
     });
@@ -45,7 +45,7 @@ describe('Observable Store', () => {
     });
 
     it('should execute an anonymous function', () => {
-      const capitalizeProp1 = (state: MockState) => {
+      const capitalizeProp1: stateFunc<MockState> = (state: MockState) => {
         state.prop1 = state.prop1.toLocaleUpperCase();
         return state;
       };
@@ -56,6 +56,20 @@ describe('Observable Store', () => {
 
       expect(capitalizeSpy).toHaveBeenCalled();
       expect(mockStore.currentState.prop1).toEqual('TEST');
+    });
+
+    it('should execute an anonymous function on a slice of data', () => {
+      const updateUser: stateFunc<MockState> = (state: MockState) => {
+        state.user = { name: 'fred' };
+        return { user: state.user };
+      };
+
+      const updateUserSpy = jasmine.createSpy().and.callFake(updateUser);
+
+      mockStore.updateUsingAFunction(updateUserSpy);
+
+      expect(updateUserSpy).toHaveBeenCalled();
+      expect(mockStore.currentState.user.name).toEqual('fred');
     });
   });
 
