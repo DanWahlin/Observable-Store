@@ -582,4 +582,8 @@ Updated readme
 
 Updated to latest version of RxJS. Removed subsink from the Angular Simple Store demo to just use a normal Subscription for unsubscribing (just to keep it more "native" and require less dependencies).
 
+#### 1.0.22
+
+Internal type additions and tests contributed by @elAndyG (https://github.com/elAndyG). 
+
 
