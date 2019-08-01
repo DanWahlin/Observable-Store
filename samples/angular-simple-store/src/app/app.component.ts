@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CustomersStore } from './core/store/customers.store';
+import { CustomersService } from './core/store/customers.service';
 import { Customer } from './core/store/customer';
 import { Observable, Subscription } from 'rxjs';
 
@@ -14,14 +14,14 @@ export class AppComponent implements OnInit, OnDestroy {
   isHistoryVisible = false;
   sub: Subscription;
 
-  constructor(private customersStore: CustomersStore) { }
+  constructor(private customersService: CustomersService) { }
 
   ngOnInit() {
     // Use Observable<Customer> if desired
     // this.customers$ = this.customersStore.stateChanged;
 
     // Can subscribe to stateChanged of store
-    this.sub = this.customersStore.stateChanged.subscribe(state => {
+    this.sub = this.customersService.stateChanged.subscribe(state => {
       this.customers = state.customers;
     });
 
@@ -40,20 +40,20 @@ export class AppComponent implements OnInit, OnDestroy {
         zip: '85258'
       }
     };
-    this.customersStore.add(cust);
+    this.customersService.add(cust);
   }
 
   removeCustomer() {
-    this.customersStore.remove();
+    this.customersService.remove();
   }
 
   sortCustomers() {
-    this.customersStore.sort('id');
+    this.customersService.sort('id');
   }
 
   viewStateHistory() {
     this.isHistoryVisible = !this.isHistoryVisible;
-    this.stateHistory = this.customersStore.stateHistory;
+    this.stateHistory = this.customersService.stateHistory;
   }
 
   ngOnDestroy() {

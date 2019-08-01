@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 // import { ObservableStore } from '../../../../../../src/observable-store';
 import { ObservableStore } from '@codewithdan/observable-store';
 import { Customer } from './customer';
-import { SorterService } from '..//utilities/sorter.service';
+import { SorterService } from '../utilities/sorter.service';
 
 export interface StoreState {
   customers: Customer[];
@@ -15,7 +15,7 @@ export interface StoreState {
 @Injectable({
   providedIn: 'root'
 })
-export class CustomersStore extends ObservableStore<StoreState> {
+export class CustomersService extends ObservableStore<StoreState> {
   sorterService: SorterService;
 
   constructor(sorterService: SorterService) { 

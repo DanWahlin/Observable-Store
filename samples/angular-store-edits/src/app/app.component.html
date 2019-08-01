@@ -1,3 +1,14 @@
+<header class="navbar fixed-top navbar-dark bg-primary">
+    <nav class="container">
+        <div>
+          <span class="navbar-brand"><a href="/customers" class="white">Angular and Observable Store</a></span>
+        </div>
+        <strong *ngIf="customers" class="pull-right circle">
+            {{ customers.length }}
+        </strong>
+    </nav>
+</header>
+
 <div class="container">
     <router-outlet></router-outlet>
 </div>
