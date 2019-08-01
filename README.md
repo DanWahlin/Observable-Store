@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/DanWahlin/Observable-Store.svg?branch=master)](https://travis-ci.org/DanWahlin/Observable-Store)
+
 ## Observable Store - State Management for Front-End Applications (Angular, React, Vue.js, or any other)
 
 Observable Store is a tiny front-end state management library that provides a lot of functionality. Front-end state management has become so complex that many of us spend more hours working on the state management code then on the rest of the application. Observable Store has one overall goal -   "keep it simple".
