@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
       "target": "es5",
-      "module": "es2015",
+      "module": "commonjs",
       "moduleResolution": "node",
       "baseUrl": "./",
       // "outDir": "./samples/react-store/src/stores",
@@ -9,6 +9,7 @@
       "outDir": "dist/",
       "declaration": true,
       "sourceMap": true,
+      "noImplicitUseStrict": true,
       "experimentalDecorators": true,
       "lib": [
         "dom",

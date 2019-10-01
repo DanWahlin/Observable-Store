@@ -1,4 +1,5 @@
 // https://github.com/codeandcats/fast-clone/blob/master/index.js
+Object.defineProperty(exports, "__esModule", { value: true });
 var ClonerService = /** @class */ (function () {
     function ClonerService() {
     }
@@ -80,5 +81,5 @@ var ClonerService = /** @class */ (function () {
     };
     return ClonerService;
 }());
-export { ClonerService };
+exports.ClonerService = ClonerService;
 //# sourceMappingURL=cloner.service.js.map

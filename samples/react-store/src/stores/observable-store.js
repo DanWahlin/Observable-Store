@@ -1,7 +1,8 @@
-import { BehaviorSubject } from 'rxjs';
-import { ClonerService } from './utilities/cloner.service';
+Object.defineProperty(exports, "__esModule", { value: true });
+var rxjs_1 = require("rxjs");
+var cloner_service_1 = require("./utilities/cloner.service");
 // static objects
-var clonerService = new ClonerService();
+var clonerService = new cloner_service_1.ClonerService();
 var storeState = null;
 var stateHistory = [];
 var settingsDefaults = {
@@ -10,10 +11,10 @@ var settingsDefaults = {
     includeStateChangesOnSubscribe: false,
     stateSliceSelector: null
 };
-var globalStateDispatcher = new BehaviorSubject(null);
+var globalStateDispatcher = new rxjs_1.BehaviorSubject(null);
 var ObservableStore = /** @class */ (function () {
     function ObservableStore(settings) {
-        this._stateDispatcher = new BehaviorSubject(null);
+        this._stateDispatcher = new rxjs_1.BehaviorSubject(null);
         this._settings = Object.assign({}, settingsDefaults, settings);
         this._clonerService = clonerService;
         this.stateChanged = this._stateDispatcher.asObservable();
@@ -83,5 +84,5 @@ var ObservableStore = /** @class */ (function () {
     };
     return ObservableStore;
 }());
-export { ObservableStore };
+exports.ObservableStore = ObservableStore;
 //# sourceMappingURL=observable-store.js.map
