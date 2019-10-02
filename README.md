@@ -588,9 +588,4 @@ Updated to latest version of RxJS. Removed subsink from the Angular Simple Store
 
 Internal type additions and tests contributed by @elAndyG (https://github.com/elAndyG). 
 
-#### 1.0.23
-
-Changed TypeScript module to `commonjs` from `es2015` to make it easier for tools such as Jest to work
-with Observable Store
-
 
