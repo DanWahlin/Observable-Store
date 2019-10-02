@@ -1,0 +1,6 @@
+<h1>Customers (in Child Component)</h1>
+<ul>
+  <li *ngFor="let customer of (storeState$ | async).customers">
+    {{ customer.firstName }} {{ customer.lastName }}
+  </li>
+</ul>

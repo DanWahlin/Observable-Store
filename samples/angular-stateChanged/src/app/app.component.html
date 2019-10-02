@@ -1,0 +1,11 @@
+<h1>Customers</h1>
+<button (click)="addCustomer()">Add Customer</button>
+<ul>
+  <li *ngFor="let customer of (storeState$ | async).customers">
+    {{ customer.firstName }} {{ customer.lastName }} <button (click)="updateCustomer(customer)">Update</button>
+  </li>
+</ul>
+
+<br><br>
+
+<app-child></app-child>
