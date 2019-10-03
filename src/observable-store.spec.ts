@@ -1,11 +1,19 @@
 import { skip } from 'rxjs/operators';
 
 import { ObservableStore, stateFunc } from './observable-store';
+import { ObservableStoreSettings } from './interfaces';
 
 const Update_Prop1 = 'Update_Prop1';
 
 interface MockUser {
   name: string;
+  address?: MockAddress;
+}
+
+interface MockAddress {
+  city: string;
+  state: string;
+  zip: number;
 }
 
 interface MockState {
@@ -103,27 +111,17 @@ describe('Observable Store', () => {
       expect(mockStore.stateHistory[mockStore.stateHistory.length - 1].action).toEqual(mockAction);
     });
   });
-  describe('SliceSelector', () => {
-    class UserStore extends ObservableStore<MockState> {
-      constructor() {
-        super({
-          stateSliceSelector: state => {
-            // console.log('state constructor', state);
-            return { user: state.user };
-          }
-        });
-      }
-      updateUser(user: MockUser) {
-        this.setState({ user: user });
-      }
 
-      get currentState() {
-        return this.getState();
+  describe('SliceSelector', () => {
+
+    const userStore = createUserStore({
+      stateSliceSelector: state => {
+        return { user: state.user };
       }
-    }
-    const userStore = new UserStore();
+    });
+
     it('should only have MockUser when requesting state', () => {
-      userStore.updateUser({ name: 'foo' });
+      userStore.updateUser({ name: 'foo', address: { city: 'Phoenix', state: 'AZ', zip: 85349 } });
 
       const state = userStore.currentState;
 
@@ -132,5 +130,35 @@ describe('Observable Store', () => {
       // although the state is populated, slice will only populate the User
       expect(state.user).toBeTruthy();
     });
+
   });
+
+  describe('Deep Clone', () => {
+    const userStore = createUserStore(null);
+
+    it('should be deep clone', () => {
+      let user = { name: 'foo', address: { city: 'Phoenix', state: 'AZ', zip: 85349 } };
+      userStore.updateUser(user);
+      user.address.city = 'Las Vegas';
+      expect(userStore.currentState.user.address.city).toEqual('Phoenix');
+    });
+
+  });
+
 });
+
+function createUserStore(settings: ObservableStoreSettings) {
+  class UserStore extends ObservableStore<MockState> {
+    constructor() {
+      super(settings);
+    }
+    updateUser(user: MockUser) {
+      this.setState({ user: user });
+    }
+
+    get currentState() {
+      return this.getState();
+    }
+  }
+  return new UserStore();
+}

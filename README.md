@@ -513,6 +513,8 @@ Observable Store settings can be passed when the store is initialized (when supe
 | `logStateChanges: boolean`     | Log any store state changes to the browser console (defaults to false). 
 | `includeStateChangesOnSubscribe: boolean`   | Returns the store state by default when false (default). Set to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
 | `stateSliceSelector: function`     | Function to select the slice of the store being managed by this particular service. If specified then the specific state slice is returned. If not specified then the total state is returned (defaults to null). 
+| `useDeepCloning: boolean`     | Determines if deep cloning (complete copies of objects) will be used when store state is returned (defaults to true). To use the spread operator instead to create a shallow clone (note that complex properties/objects will still be reference types if this is set to true), switch the property to false. 
+
 
 
 #### Using the stateSliceSelector() Function

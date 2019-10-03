@@ -8,7 +8,7 @@ import { Customer, CustomersService, StoreState } from './core/customers.service
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  storeState$: any;
+  storeState$: Observable<Partial<StoreState>>;
 
   constructor(private customersService: CustomersService) {}
 

@@ -24,8 +24,8 @@
     "build": "rm -rf ./dist && tsc",
     "test": "jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json"
   },
-  "dependencies": {
-    "rxjs": "^6.5.2"
+  "peerDependencies": {
+    "rxjs": "^6.4.0"
   },
   "devDependencies": {
     "@types/jasmine": "^3.3.13",
@@ -33,6 +33,7 @@
     "jasmine-spec-reporter": "^4.2.1",
     "jasmine-ts": "^0.3.0",
     "ts-node": ">=3.2.0 <8",
-    "typescript": "^3.5.2"
+    "typescript": "^3.5.2",
+    "rxjs": "^6.4.0"
   }
 }
