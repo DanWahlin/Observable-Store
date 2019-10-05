@@ -497,7 +497,7 @@ Coming Soon...
 
 ### <a name="api"></a>Store API
 
-Observable Store provides a simple API that can be used to get/set state, subscribe to store state changes, and access state history.
+Observable Store provides a simple API that can be used to get/set state, subscribe to store state changes, and access state history. If you're new to TypeScript generics, the `T` shown in the APIs below represents your store's state.
 
  API                                            | Description
 | ----------------------------------------------|------------------------------------------------------------------------------------------------------------------- 
