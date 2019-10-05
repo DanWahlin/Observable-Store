@@ -22,6 +22,10 @@ The goal of observable store is to provide a small, simple, and consistent way t
 
     `npm install @codewithdan/observable-store`
 
+1. Install RxJS (a required peer dependency)
+
+    `npm install rxjs`
+
 1. Create a class that extends `ObservableStore`.
 1. Optionally pass settings into `super()` in your class's constructor ([view Observable Store settings](#settings))
 1. Update the store state using `setState(state, action)`.
@@ -53,7 +57,11 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 
 1. Install `@codewithdan/observable-store`:
 
-`npm install @codewithdan/observable-store`
+    `npm install @codewithdan/observable-store`
+
+1. Install RxJS (a required peer dependency)
+
+    `npm install rxjs`
 
 1. Add an interface or model object that represents the shape of the data you'd like to add to your store. Here's an example of an interface to store customer state:
 
@@ -263,6 +271,14 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 See the `samples` folder in the Github repo for examples of using Observable Store with React.
 
 1. Create a React application using the `create-react-app` or another option.
+
+1. Install `@codewithdan/observable-store`:
+
+    `npm install @codewithdan/observable-store`
+
+1. Install RxJS (a required peer dependency)
+
+    `npm install rxjs`
 
 1. Add a store class (you can call it whatever you'd like) that extends ObservableStore<T>. 
 
@@ -589,5 +605,12 @@ Updated to latest version of RxJS. Removed subsink from the Angular Simple Store
 #### 1.0.22
 
 Internal type additions and tests contributed by @elAndyG (https://github.com/elAndyG). 
+
+#### 2.0.0
+
+1. RxJS is now a peer dependency (RxJS 6.4.0 or higher is required). This avoids reported versioning issues that have come up when a project already has RxJS in it. The 1.x version of Observable Store added RxJS as a dependency. Starting with 2.0.0 this is no longer the case.
+1. setState() now clones the state as its added. State cloning used to be done in getState(). Previously, references to objects added using setState() could update the state as they were changed which wasn't a desirable behavior. 
+1. Refactored some of the underlying code to be more maintainable.
+1. Changed TypeScript module compilation to CommonJS instead of ES2015 to aid with testing scenarios (such as Jest) where the project didn't automatically handle ES2015 module conventions without extra  configuration.
 
 
