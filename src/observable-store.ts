@@ -1,6 +1,6 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ClonerService } from './utilities/cloner.service';
-import { ObservableStoreSettings } from './interfaces';
+import { ObservableStoreSettings, StateHistory } from './interfaces';
 import ObservableStoreBase from './observable-store-base';
 
 /**
@@ -22,7 +22,7 @@ export class ObservableStore<T> {
 
     stateChanged: Observable<T>;
     globalStateChanged: Observable<any>;
-    stateHistory: any[];
+    stateHistory: StateHistory<T>[];
 
     constructor(settings: ObservableStoreSettings) {
         this._settings = Object.assign({}, ObservableStoreBase.settingsDefaults, settings);
@@ -79,7 +79,7 @@ export class ObservableStore<T> {
 
     protected logStateAction(state: any, action: string) {
         if (this._settings.trackStateHistory) {
-            this.stateHistory.push({ action, state: this._clonerService.deepClone(state) });
+            this.stateHistory.push({ action, beginState: this.getState(), endState: this._clonerService.deepClone(state) });
         }
     }
 

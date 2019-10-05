@@ -5,7 +5,8 @@ export interface ObservableStoreSettings {
     stateSliceSelector?: (state: any) => any;
 }
 
-export interface CurrentStoreState {
-    state: any;
-    stateChanges: any;
+export interface StateHistory<T>{
+    action: string;
+    beginState: T,
+    endState: T
 }

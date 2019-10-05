@@ -501,11 +501,11 @@ Observable Store provides a simple API that can be used to get/set state, subscr
 
  API                                            | Description
 | ----------------------------------------------|------------------------------------------------------------------------------------------------------------------- 
-| `getState() : any`                              | Retrieve store's state. If using TypeScript (optional) then the state type defined when the store was created will be returned rather than `any`.                                                                                            
-| `setState(state: any, action: string) : any`    | Set store state. Pass the state to be updated as well as the action that is occuring. The state value can be a function (see example below). The latest store state is returned.
-| `stateChanged: Observable`                      | Subscribe to store changes in the particlar slice of state updated by a Service. If the store contains 'n' slices of state each being managed by one of 'n' services, then changes in any of the other slices of state will not generate values in the stateChanged stream. Returns an RxJS Observable containing the current store state (or a specific slice of state if a stateSliceSelector has been specified).  If the `includeStateChangesOnSubscribe` setting is true you'll get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store) properties.
-| `globalStateChanged: Observable`                | Subscribe to global store changes i.e. changes in any slice of state of the store. The global store may consist of 'n' slices of state each managed by a particular service. This property notifies of a change in any of the 'n' slices of state. Returns an RxJS Observable containing the current store state.  If the `includeStateChangesOnSubscribe` setting is true you'll get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store) properties.
-| `stateHistory: any`                             | Retrieve state history (assumes trackStateHistory setting was set on store)
+| `getState() : T`                              | Retrieve store's state. If using TypeScript (optional) then the state type defined when the store was created will be returned rather than `any`.                                                                                            
+| `setState(state: Partial<T> | stateFunc<T>, action: string) : T`    | Set store state. Pass the state to be updated as well as the action that is occuring. The state value can be a function (see example below). The latest store state is returned.
+| `stateChanged: Observable<T>`                      | Subscribe to store changes in the particlar slice of state updated by a Service. If the store contains 'n' slices of state each being managed by one of 'n' services, then changes in any of the other slices of state will not generate values in the stateChanged stream. Returns an RxJS Observable containing the current store state (or a specific slice of state if a stateSliceSelector has been specified).  If the `includeStateChangesOnSubscribe` setting is true you'll get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store) properties.
+| `globalStateChanged: Observable<any>`                | Subscribe to global store changes i.e. changes in any slice of state of the store. The global store may consist of 'n' slices of state each managed by a particular service. This property notifies of a change in any of the 'n' slices of state. Returns an RxJS Observable containing the current store state.  If the `includeStateChangesOnSubscribe` setting is true you'll get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store) properties.
+| `stateHistory: StateHistory`                             | Retrieve state history (assumes trackStateHistory setting was set on store)
 
 Note that TypeScript types are used to describe parameters and return types above. TypeScript is not required to use Observable Store though.
 
@@ -528,9 +528,7 @@ Observable Store settings can be passed when the store is initialized (when supe
 | `trackStateHistory: boolean`   | Determines if the store's state will be tracked or not (defaults to false). Pass it when initializing the Observable Store (see examples above). When `true`, you can access the store's state history by calling the `stateHistory` property.
 | `logStateChanges: boolean`     | Log any store state changes to the browser console (defaults to false). 
 | `includeStateChangesOnSubscribe: boolean`   | Returns the store state by default when false (default). Set to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
-| `stateSliceSelector: function`     | Function to select the slice of the store being managed by this particular service. If specified then the specific state slice is returned. If not specified then the total state is returned (defaults to null). 
-| `useDeepCloning: boolean`     | Determines if deep cloning (complete copies of objects) will be used when store state is returned (defaults to true). To use the spread operator instead to create a shallow clone (note that complex properties/objects will still be reference types if this is set to true), switch the property to false. 
-
+| `stateSliceSelector: function`     | Function to select the slice of the store being managed by this particular service. If specified then the specific state slice is returned. If not specified then the total state is returned (defaults to null).
 
 
 #### Using the stateSliceSelector() Function
@@ -608,10 +606,10 @@ Internal type additions and tests contributed by @elAndyG (https://github.com/el
 
 #### 2.0.0 (coming soon)
 
+1. Added more strongly-typed information for `stateChanged` and the overall API to provide better code help while using Observable Store.
 1. RxJS is now a peer dependency (RxJS 6.4.0 or higher is required). This avoids reported versioning issues that have come up when a project already has RxJS in it. The 1.x version of Observable Store added RxJS as a dependency. Starting with 2.0.0 this is no longer the case.
-1. setState() now clones the state as its added. State cloning used to be done in getState(). Previously, references to objects added using setState() could update the state as they were changed. While no issues were reported with that scenario, it wasn't a desirable behavior since the store state is immutable. 
+1. setState() now clones the state as it is added. State cloning used to be done in getState() which worked, but had a potential flaw. Previously, references to objects added using setState() could update the state as they were changed. While no issues were reported with that scenario, it wasn't a desirable behavior since the store state is supposed to be immutable. 
 1. Refactored some of the underlying code to be more maintainable.
-1. Changed TypeScript module compilation to CommonJS instead of ES2015 to aid with testing scenarios (such as Jest) where the project didn't automatically handle ES2015 module conventions without extra  configuration.
-1. Added more strongly-typed information for `stateChanged` to provide better code help.
+1. Changed TypeScript module compilation to CommonJS instead of ES2015 to aid with testing scenarios (such as Jest) where the project didn't automatically handle ES2015 module conventions without extra configuration.
 
 
