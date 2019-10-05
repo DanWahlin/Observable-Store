@@ -609,7 +609,7 @@ Internal type additions and tests contributed by @elAndyG (https://github.com/el
 #### 2.0.0
 
 1. RxJS is now a peer dependency (RxJS 6.4.0 or higher is required). This avoids reported versioning issues that have come up when a project already has RxJS in it. The 1.x version of Observable Store added RxJS as a dependency. Starting with 2.0.0 this is no longer the case.
-1. setState() now clones the state as its added. State cloning used to be done in getState(). Previously, references to objects added using setState() could update the state as they were changed which wasn't a desirable behavior. 
+1. setState() now clones the state as its added. State cloning used to be done in getState(). Previously, references to objects added using setState() could update the state as they were changed. While no issues were reported with that scenario, it wasn't a desirable behavior since the store state is immutable. 
 1. Refactored some of the underlying code to be more maintainable.
 1. Changed TypeScript module compilation to CommonJS instead of ES2015 to aid with testing scenarios (such as Jest) where the project didn't automatically handle ES2015 module conventions without extra  configuration.
 
