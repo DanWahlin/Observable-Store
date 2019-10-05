@@ -606,7 +606,7 @@ Updated to latest version of RxJS. Removed subsink from the Angular Simple Store
 
 Internal type additions and tests contributed by @elAndyG (https://github.com/elAndyG). 
 
-#### 2.0.0 (Coming soon)
+#### 2.0.0 (coming soon)
 
 1. RxJS is now a peer dependency (RxJS 6.4.0 or higher is required). This avoids reported versioning issues that have come up when a project already has RxJS in it. The 1.x version of Observable Store added RxJS as a dependency. Starting with 2.0.0 this is no longer the case.
 1. setState() now clones the state as its added. State cloning used to be done in getState(). Previously, references to objects added using setState() could update the state as they were changed. While no issues were reported with that scenario, it wasn't a desirable behavior since the store state is immutable. 
