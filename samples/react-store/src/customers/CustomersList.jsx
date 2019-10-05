@@ -18,17 +18,20 @@ class CustomersList extends Component {
   state = {
     filter: '',
     filteredCustomers: [],
+    prevFilteredCustomers: [],
     customersOrderTotal: 0,
     sortOrder: 'asc'
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (!_isEqual(this.props.customers, nextProps.customers)) {
-      this.setState({
-        filteredCustomers: nextProps.customers,
-        customersOrderTotal: this.calculateOrders(nextProps.customers)
-      });
+  static getDerivedStateFromProps(props, state) {
+    if (!_isEqual(props.customers, state.prevFilteredCustomers)) {
+      return {
+        prevFilteredCustomers: props.customers,
+        filteredCustomers: props.customers,
+        customersOrderTotal: CustomersList.calculateOrders(props.customers)
+      };
     }
+    return null;
   }
 
   sort(prop) {
@@ -40,13 +43,11 @@ class CustomersList extends Component {
     }));
   }
 
-  calculateOrders = customers => {
+  static calculateOrders = customers => {
     let total = 0;
-
     customers.forEach(cust => {
       total += cust.orderTotal;
     });
-
     return total;
   };
 
@@ -65,7 +66,7 @@ class CustomersList extends Component {
     this.setState({
       filter,
       filteredCustomers,
-      customersOrderTotal: this.calculateOrders(filteredCustomers),
+      customersOrderTotal: CustomersList.calculateOrders(filteredCustomers),
     });
   };
 

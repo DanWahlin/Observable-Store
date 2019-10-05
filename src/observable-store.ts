@@ -77,6 +77,12 @@ export class ObservableStore<T> {
         return this.getState();
     }
 
+    protected logStateAction(state: any, action: string) {
+        if (this._settings.trackStateHistory) {
+            this.stateHistory.push({ action, state: this._clonerService.deepClone(state) });
+        }
+    }
+
     private _updateState(state: Partial<T>) {
         const storeState = (state) ? Object.assign({}, 
             ObservableStoreBase.getStoreState(), state) : null;
@@ -110,9 +116,4 @@ export class ObservableStore<T> {
         }
     }
 
-    // protected logStateAction(state: any, action: string) {
-    //     if (this._settings.trackStateHistory) {
-    //         this.stateHistory.push({ action, state: this._clonerService.deepClone(state) });
-    //     }
-    // }
 }
