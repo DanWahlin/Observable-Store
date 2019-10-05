@@ -612,5 +612,6 @@ Internal type additions and tests contributed by @elAndyG (https://github.com/el
 1. setState() now clones the state as its added. State cloning used to be done in getState(). Previously, references to objects added using setState() could update the state as they were changed. While no issues were reported with that scenario, it wasn't a desirable behavior since the store state is immutable. 
 1. Refactored some of the underlying code to be more maintainable.
 1. Changed TypeScript module compilation to CommonJS instead of ES2015 to aid with testing scenarios (such as Jest) where the project didn't automatically handle ES2015 module conventions without extra  configuration.
+1. Added more strongly-typed information for `stateChanged` to provide better code help.
 
 
