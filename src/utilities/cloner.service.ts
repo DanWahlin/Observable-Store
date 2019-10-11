@@ -39,7 +39,7 @@ export class ClonerService {
         switch (originalType) {
             case 'object':
                 if (originalValue instanceof Date) {
-                    const newValue = new Date();
+                    var newValue = new Date();
                     newValue.setTime(originalValue.getTime());
                     copy[key] = newValue;
                 }
@@ -58,7 +58,7 @@ export class ClonerService {
                 if (isNaN(originalValue)) {
                     copy[key] = NaN;
                 }
-                else if (originalValue === Infinity) {
+                else if (originalValue == Infinity) {
                     copy[key] = Infinity;
                 }
                 break;
@@ -75,8 +75,8 @@ export class ClonerService {
             }
         }
         else {
-            const keys = Object.getOwnPropertyNames(original);
-            keys.forEach((key) => {
+            let keys = Object.getOwnPropertyNames(original);
+            keys.forEach(key => {
                 this.fixPropertyValue(original, copy, key);
             });
         }

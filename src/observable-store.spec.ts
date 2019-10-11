@@ -20,6 +20,7 @@ interface MockState {
   prop1: string;
   prop2: string;
   user: MockUser;
+  users: MockUser[];
 }
 
 class MockStore extends ObservableStore<MockState> {
@@ -40,6 +41,33 @@ class MockStore extends ObservableStore<MockState> {
   get currentState() {
     return this.getState();
   }
+}
+
+let user = { name: 'foo', address: { city: 'Phoenix', state: 'AZ', zip: 85349 } };
+
+function createUserStore(settings: ObservableStoreSettings) {
+  class UserStore extends ObservableStore<MockState> {
+    constructor() {
+      super(settings);
+      this.setState(null, 'Initialize');
+      this.resetStateHistory();
+    }
+
+    updateUser(user: MockUser) {
+      this.setState({ user }, 'Update User');
+    }
+
+    addToUsers(user: MockUser) {
+      let users = (this.getState().users) ? this.getState().users : [];
+      users.push(user);
+      this.setState({ users }, 'Update Users');
+    }
+
+    get currentState() {
+      return this.getState();
+    }
+  }
+  return new UserStore();
 }
 
 describe('Observable Store', () => {
@@ -116,7 +144,9 @@ describe('Observable Store', () => {
 
     const userStore = createUserStore({
       stateSliceSelector: state => {
-        return { user: state.user };
+        if (state) {
+          return { user: state.user };
+        }
       }
     });
 
@@ -134,31 +164,63 @@ describe('Observable Store', () => {
   });
 
   describe('Deep Clone', () => {
-    const userStore = createUserStore(null);
-
-    it('should be deep clone', () => {
-      let user = { name: 'foo', address: { city: 'Phoenix', state: 'AZ', zip: 85349 } };
+    it('should be deep clone when not production', () => {
+      ObservableStore.globalSettings = { isProduction: false }; // will deep clone while in dev
+      const userStore = createUserStore(null);
       userStore.updateUser(user);
       user.address.city = 'Las Vegas';
       expect(userStore.currentState.user.address.city).toEqual('Phoenix');
     });
 
+    it('should not deep clone when production', () => {
+      ObservableStore.globalSettings = { isProduction: true }; // will not deep clone because not in dev
+      const userStore = createUserStore(null);
+      userStore.updateUser(user);
+      user.address.city = 'Las Vegas';
+      expect(userStore.currentState.user.address.city).toEqual('Las Vegas');
+    });
+
+    it('should be deep clone with matching number of keys', () => {
+      ObservableStore.globalSettings = { isProduction: false }; // will deep clone while in dev
+      const userStore = createUserStore(null);
+      userStore.updateUser(user);
+      userStore.addToUsers(user);
+      const stateKeys = Object.getOwnPropertyNames(userStore.currentState);
+      expect(stateKeys.length).toEqual(2);
+    });
+
+  });
+
+  describe('trackHistory', () => {
+
+    it('should set trackHistory through global settings', () => {
+      ObservableStore.globalSettings = { trackStateHistory: true };
+      const userStore = createUserStore(null);
+      userStore.updateUser(user);
+      expect(userStore.stateHistory).toBeTruthy();
+      console.log(userStore.stateHistory);
+    });
+
+    it('should turn off trackHistory through global settings', () => {
+      ObservableStore.globalSettings = { trackStateHistory: false };
+      const userStore = createUserStore(null);
+      userStore.updateUser(user);
+      expect(userStore.stateHistory.length).toEqual(0);
+    });
+
+    it('should turn on trackHistory through settings', () => {
+      ObservableStore.globalSettings = {};
+      const userStore = createUserStore({ trackStateHistory: true });
+      userStore.updateUser(user);
+      expect(userStore.stateHistory.length).toEqual(1);
+    });
+
+    it('should turn off trackHistory through settings', () => {
+      ObservableStore.globalSettings = {};
+      const userStore = createUserStore({ trackStateHistory: false });
+      userStore.updateUser(user);
+      expect(userStore.stateHistory.length).toEqual(0);
+    });
   });
 
 });
-
-function createUserStore(settings: ObservableStoreSettings) {
-  class UserStore extends ObservableStore<MockState> {
-    constructor() {
-      super(settings);
-    }
-    updateUser(user: MockUser) {
-      this.setState({ user: user });
-    }
-
-    get currentState() {
-      return this.getState();
-    }
-  }
-  return new UserStore();
-}

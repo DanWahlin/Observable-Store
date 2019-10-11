@@ -1,8 +1,17 @@
-export interface ObservableStoreSettings {
+export interface StateSliceSelector {
+    stateSliceSelector?: (state: any) => any;
+}
+
+export interface BaseStoreSettings {
     trackStateHistory?: boolean;
     logStateChanges?: boolean;
     includeStateChangesOnSubscribe?: boolean;
-    stateSliceSelector?: (state: any) => any;
+}
+
+export interface ObservableStoreSettings extends BaseStoreSettings, StateSliceSelector { }
+
+export interface ObservableStoreGlobalSettings extends BaseStoreSettings {
+    isProduction?: boolean;
 }
 
 export interface StateHistory<T>{

@@ -22,7 +22,8 @@
   "scripts": {
     "tsc": "tsc",
     "build": "rm -rf ./dist && tsc",
-    "test": "jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json"
+    "build:watch": "tsc --watch",
+    "test": "nodemon --ext ts --exec 'jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json'"
   },
   "peerDependencies": {
     "rxjs": "^6.4.0"

@@ -1,6 +1,5 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ClonerService } from './utilities/cloner.service';
-import { ObservableStoreSettings, StateHistory } from './interfaces';
+import { ObservableStoreSettings, StateHistory, ObservableStoreGlobalSettings } from './interfaces';
 import ObservableStoreBase from './observable-store-base';
 
 /**
@@ -15,22 +14,39 @@ export type stateFunc<T> = (state: T) => Partial<T>;
  */
 export class ObservableStore<T> {
     // Not a fan of using _ for private fields in TypeScript, but since 
-    // some may use this as pure ES6 I'm going with _ for the private fields.
+    // some may use this as pure ES2015 I'm going with _ for the private fields.
+    // private _stateDispatcher$ = new BehaviorSubject<T>(null);
+    private _settings: ObservableStoreSettings;
     private _stateDispatcher$ = new BehaviorSubject<T>(null);
-    private _clonerService: ClonerService;
-    private _settings: ObservableStoreSettings
 
     stateChanged: Observable<T>;
     globalStateChanged: Observable<any>;
-    stateHistory: StateHistory<T>[];
+    
+    get stateHistory(): StateHistory<T>[] {
+        return ObservableStoreBase.stateHistory;
+    }
 
     constructor(settings: ObservableStoreSettings) {
-        this._settings = Object.assign({}, ObservableStoreBase.settingsDefaults, settings);
-        this._clonerService = ObservableStoreBase.clonerService;
+        this._settings = { ...ObservableStoreBase.settingsDefaults, ...settings, ...ObservableStoreBase.globalSettings };
         
         this.stateChanged = this._stateDispatcher$.asObservable();
         this.globalStateChanged = ObservableStoreBase.globalStateDispatcher.asObservable();
-        this.stateHistory = ObservableStoreBase.stateHistory;
+    }
+
+    static get globalSettings() {
+        return ObservableStoreBase.globalSettings;
+    }
+
+    static set globalSettings(settings: ObservableStoreGlobalSettings) {
+        if (settings) {
+            ObservableStoreBase.globalSettings = settings;
+        }
+        else if (!settings) {
+            throw new Error('Please provide the global settings you would like to apply to Observable Store');
+        }
+        // else if (settings && ObservableStoreBase.globalSettings) {
+        //     throw new Error('Observable Store global settings may only be set once.');
+        // }
     }
 
     protected getState() : T {
@@ -62,7 +78,7 @@ export class ObservableStore<T> {
         }
 
         if (this._settings.trackStateHistory) {
-            this.stateHistory.push({ 
+            ObservableStoreBase.stateHistory.push({ 
                 action, 
                 beginState: previousState, 
                 endState: this.getState() 
@@ -79,14 +95,20 @@ export class ObservableStore<T> {
 
     protected logStateAction(state: any, action: string) {
         if (this._settings.trackStateHistory) {
-            this.stateHistory.push({ action, beginState: this.getState(), endState: this._clonerService.deepClone(state) });
+            ObservableStoreBase.stateHistory.push({ 
+                action, 
+                beginState: this.getState(), 
+                endState: ObservableStoreBase.deepClone(state) 
+            });
         }
     }
 
+    protected resetStateHistory() {
+        ObservableStoreBase.stateHistory = [];
+    }
+
     private _updateState(state: Partial<T>) {
-        const storeState = (state) ? Object.assign({}, 
-            ObservableStoreBase.getStoreState(), state) : null;
-        ObservableStoreBase.setStoreState(storeState);
+        ObservableStoreBase.setStoreState(state);
     }
 
     private _getStateOrSlice(): Readonly<Partial<T>> {

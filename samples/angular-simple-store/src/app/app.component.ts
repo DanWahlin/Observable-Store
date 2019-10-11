@@ -22,7 +22,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Can subscribe to stateChanged of store
     this.sub = this.customersService.stateChanged.subscribe(state => {
-      this.customers = state.customers;
+      if (state) {
+        this.customers = state.customers;
+      }
     });
 
     // Can call service/store to get data directly (won't fire when the store state changes)
