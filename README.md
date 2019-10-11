@@ -33,6 +33,8 @@ The goal of observable store is to provide a small, simple, and consistent way t
 1. Subscribe to store changes using the store's `stateChanged` observable.
 1. Access store state history by calling the `stateHistory` property (this assumes that the `trackStateHistory` setting is set to `true`)
 
+![Using Obervable Store](images/ObservableStore.png)
+
 ### API and Settings
 
 [Observable Store API](#api)
