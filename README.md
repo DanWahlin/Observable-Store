@@ -8,6 +8,8 @@ The goal of observable store is to provide a small, simple, and consistent way t
 
 <a href="https://blog.codewithdan.com/simplifying-front-end-state-management-with-observable-store" target="_blank">View my blog post about Observable Store</a>
 
+![Using Obervable Store](images/ObservableStore.png)
+
 ### <a name="goals"></a>Key Goals of Observable Store:
 1. Single source of truth for store state
 1. Store state is read-only/immutable
@@ -32,8 +34,6 @@ The goal of observable store is to provide a small, simple, and consistent way t
 1. Retrieve store state using `getState()`.
 1. Subscribe to store changes using the store's `stateChanged` observable.
 1. Access store state history by calling the `stateHistory` property (this assumes that the `trackStateHistory` setting is set to `true`)
-
-![Using Obervable Store](images/ObservableStore.png)
 
 ### API and Settings
 
