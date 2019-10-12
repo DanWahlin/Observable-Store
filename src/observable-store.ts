@@ -27,8 +27,7 @@ export class ObservableStore<T> {
     }
 
     constructor(settings: ObservableStoreSettings) {
-        this._settings = { ...ObservableStoreBase.settingsDefaults, ...settings, ...ObservableStoreBase.globalSettings };
-        
+        this._settings = { ...ObservableStoreBase.settingsDefaults, ...settings, ...ObservableStoreBase.globalSettings };        
         this.stateChanged = this._stateDispatcher$.asObservable();
         this.globalStateChanged = ObservableStoreBase.globalStateDispatcher.asObservable();
     }
@@ -38,15 +37,17 @@ export class ObservableStore<T> {
     }
 
     static set globalSettings(settings: ObservableStoreGlobalSettings) {
-        if (settings) {
+        // ObservableStore['isTesting'] used so that unit tests can set globalSettings 
+        // multiple times during a suite of tests
+        if (settings && (ObservableStore['isTesting'] || !ObservableStoreBase.globalSettings)) {
             ObservableStoreBase.globalSettings = settings;
         }
         else if (!settings) {
             throw new Error('Please provide the global settings you would like to apply to Observable Store');
         }
-        // else if (settings && ObservableStoreBase.globalSettings) {
-        //     throw new Error('Observable Store global settings may only be set once.');
-        // }
+        else if (settings && ObservableStoreBase.globalSettings) {
+            throw new Error('Observable Store global settings may only be set once.');
+        }
     }
 
     protected getState() : T {
