@@ -9,15 +9,15 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@codewithdan/observable-store": "^2.0.0",
     "lodash.isequal": "^4.5.0",
     "lodash.orderby": "^4.6.0",
     "prop-types": "^15.7.2",
     "react": "^16.10.1",
+    "react-currency-formatter": "^1.1.0",
     "react-dom": "^16.10.1",
     "react-router-dom": "^5.1.1",
     "react-scripts": "3.1.2",
-    "react-currency-formatter": "^1.1.0",
-    "@codewithdan/observable-store": "^1.0.22",
     "rxjs": "6.4.0"
   },
   "devDependencies": {
