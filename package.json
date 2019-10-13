@@ -1,6 +1,6 @@
 {
   "name": "@codewithdan/observable-store",
-  "version": "1.0.22",
+  "version": "2.0.0",
   "author": "Dan Wahlin",
   "description": "Observable Store provides a simple way to store and retrieve state in Angular, React, Vue.js and other front-end applications.",
   "license": "MIT",
@@ -29,12 +29,12 @@
     "rxjs": "^6.4.0"
   },
   "devDependencies": {
-    "@types/jasmine": "^3.3.13",
-    "jasmine": "^3.4.0",
+    "@types/jasmine": "^3.4.4",
+    "jasmine": "^3.5.0",
     "jasmine-spec-reporter": "^4.2.1",
     "jasmine-ts": "^0.3.0",
     "ts-node": ">=3.2.0 <8",
-    "typescript": "^3.5.2",
+    "typescript": "^3.6.4",
     "rxjs": "^6.4.0"
   }
 }
