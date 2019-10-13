@@ -6,7 +6,7 @@ import { ObservableStore } from '@codewithdan/observable-store';
 class CustomersStore extends ObservableStore {
 
     constructor() {
-        super({ trackStateHistory: true });
+        super({ trackStateHistory: true, logStateChanges: true });
     }
 
     fetchCustomers() {
@@ -44,6 +44,20 @@ class CustomersStore extends ObservableStore {
             });
     }
 
+    update(customer) {
+        let customers = this.getState().customers;
+        let index = customers.findIndex(c => c.id === customer.id);
+        customers[index] = customer;
+        this.setState({ customers }, CustomersStoreActions.UpdateCustomer);
+    }
+
+    delete(id) {
+        let customers = this.getState().customers;
+        let index = customers.findIndex(c => c.id === +id);
+        customers.splice(index, 1);
+        this.setState({ customers }, CustomersStoreActions.DeleteCustomer);
+    }
+
     createPromise(err, result) {
         return new Promise((resolve, reject) => {
             return err ? reject(err) : resolve(result);
@@ -53,7 +67,9 @@ class CustomersStore extends ObservableStore {
 
 const CustomersStoreActions = {
     GetCustomers: 'get_customers',
-    GetCustomer: 'get_customer'
+    GetCustomer: 'get_customer',
+    UpdateCustomer: 'update_customer',
+    DeleteCustomer: 'delete_customer'
 };
 
 export default new CustomersStore();

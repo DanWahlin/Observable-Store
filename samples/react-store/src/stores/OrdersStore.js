@@ -6,7 +6,7 @@ import { ObservableStore } from '@codewithdan/observable-store';
 class OrdersStore extends ObservableStore {
 
     constructor() {
-        super({ trackStateHistory: true });
+        super({ trackStateHistory: true, logStateChanges: true });
     }
 
     fetchOrders() {

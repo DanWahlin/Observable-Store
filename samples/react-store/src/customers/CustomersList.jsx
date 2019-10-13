@@ -84,6 +84,8 @@ class CustomersList extends Component {
               <th onClick={() => this.sort('name')}>Name</th>
               <th onClick={() => this.sort('city')}>City</th>
               <th onClick={() => this.sort('orderTotal')}>Order Total</th>
+              <th>&nbsp;</th>
+              <th>&nbsp;</th>
             </tr>
           </thead>
           <tbody>
@@ -96,10 +98,11 @@ class CustomersList extends Component {
                 <td>
                   <Currency quantity={customersOrderTotal} />
                 </td>
+                <td colSpan="2" />
               </tr>
             ) : (
               <tr>
-                <td colSpan="4">No customers found</td>
+                <td colSpan="6">No customers found</td>
               </tr>
             )}
           </tbody>

@@ -31,7 +31,7 @@ class OrdersContainer extends Component {
   };
 
   componentDidMount() {
-    const customerId = parseInt(this.props.match.params.id, 10);
+    const customerId = +this.props.match.params.id;
 
     // ###### CustomersStore ########
     // ## Customer Option 1: Subscribe to store changes
