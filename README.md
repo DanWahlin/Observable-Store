@@ -533,9 +533,9 @@ this.setState(prevState => {
 }, 'sort_customers');
 ```
 
-### <a name="settings"></a>Store Settings
+### <a name="settings"></a>Store Settings (per service)
 
-Observable Store settings can be passed when the store is initialized (when super() is called). 
+Observable Store settings can be passed when the store is initialized (when super() is called in a service). This gives you control over how things work for each service within your application that extends the store.
  
  Setting                         | Description
 | -------------------------------|------------------------------------------------------------------------------------------------------------------- 
@@ -578,7 +578,7 @@ export class CustomersService extends ObservableStore<StoreState> {
 
 #### <a name="globalSettings"></a>Global Store Settings
 
-You can set the following Observable Store settings globally for the entire application if desired. For details, view the [Observable Store Settings](#settings) section.
+You can set the following Observable Store settings globally for the entire application if desired. For details, view the [Observable Store Settings](#settings) section. This allows you to define the settings once and all services that extend Observable Store will automatically pick these settings up. You can override these properties (except the isProduction property) at the service level as well which is nice when you want a particular service to have more logging (as an example) while other services don't.
 
 * `trackStateHistory`
 * `logStateChanges`
