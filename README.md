@@ -41,6 +41,8 @@ The goal of observable store is to provide a small, simple, and consistent way t
 
 [Observable Store Settings](#settings)
 
+[Observable Store Global Settings](#globalSettings)
+
 ### Running the Samples
 
 Open the `samples` folder available at the Github repo and follow the instructions provided in the readme file for any of the provided sample projects.
@@ -574,9 +576,9 @@ export class CustomersService extends ObservableStore<StoreState> {
 }
 ```
 
-#### Global Store Settings
+#### <a name="globalSettings"></a>Global Store Settings
 
-You can set the following Observable Store settings globally for the entire application if desired:
+You can set the following Observable Store settings globally for the entire application if desired. For details, view the [Observable Store Settings](#settings) section.
 
 * `trackStateHistory`
 * `logStateChanges`
@@ -588,6 +590,7 @@ Global store settings are defined ONCE when the application **first initializes*
 ``` javascript
 ObservableStore.globalSettings = {  /* pass settings here */ };
 ```
+**The isProduction Property**
 
 When `isProduction` is `false`, cloning will be used when calling `getState()` or `setState()` in order to enforce immutability of the store state. When `isProduction` is `true`, cloning will not be used in order to enhance performance. This works since any immutability issues would've been caught in development mode (other store solutions out there use this technique as well). While setting the `isProduction` property is optional, with large amounts of store data the cloning that is used could *potentially* impact performance so it's important to be aware of this property.
 
