@@ -4,10 +4,15 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 import { AppDevModule } from './app/app-dev.module';
+import { ObservableStore } from '@codewithdan/observable-store';
 
 if (environment.production) {
   enableProdMode();
 }
+
+// Set ObservableStore globalSettings here since 
+// it'll be called before the rest of the app loads
+ObservableStore.globalSettings = { isProduction: environment.production };
 
 // platformBrowserDynamic().bootstrapModule(AppModule)
 platformBrowserDynamic()
