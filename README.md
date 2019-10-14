@@ -590,7 +590,7 @@ Global store settings are defined ONCE when the application **first initializes*
 ``` javascript
 ObservableStore.globalSettings = {  /* pass settings here */ };
 ```
-#####<a name="isProduction"></a>The isProduction Property
+##### <a name="isProduction"></a>The isProduction Property
 
 When `isProduction` is `false`, cloning will be used when calling `getState()` or `setState()` in order to enforce immutability of the store state. When `isProduction` is `true`, cloning will not be used in order to enhance performance. This works since any immutability issues would've been caught in development mode (other store solutions out there use this technique as well). While setting the `isProduction` property is optional, with large amounts of store data the cloning that is used could *potentially* impact performance so it's important to be aware of this property.
 
