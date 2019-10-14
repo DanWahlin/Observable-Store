@@ -204,7 +204,7 @@ describe('Observable Store', () => {
       expect(stateKeys.length).toEqual(2);
     });
 
-    it('should deep clone 1000 items when not production', () => {
+    it('should deep clone multiple items when not production', () => {
       ObservableStore.globalSettings = { isProduction: false }; // will deep clone while in dev
       const userStore = new UserStore(null);
       for (let i=0;i<10;i++) {

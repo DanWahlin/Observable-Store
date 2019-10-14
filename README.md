@@ -700,4 +700,8 @@ Internal type additions and tests contributed by @elAndyG (https://github.com/el
 1. `getState()` and `setState()` now clone when the global settings `isProduction` property is false (`ObservableStore.globalSettings = { isProduction: false }`). When running in production mode no cloning is used in order to enhance performance since mutability issues would've been detected at development time. This technique is used with other store solutions as well.
 1. Changed TypeScript module compilation to CommonJS instead of ES2015 to aid with testing scenarios (such as Jest) where the project doesn't automatically handle ES2015 module conventions without extra configuration.
 
+#### 2.0.1 - October 14, 2019
+
+With this version Observable Store won't clone when adding state via `setState()` if `isProduction` is `true` for `globalSettings`. It will clone when `getState()` is called though even when `isProduction` is set in this version. Otherwise certain change detection scenarios won't work correctly in various libraries/frameworks. The same behavior in the original 2.0 release of cloning during `setState()` and `getState()` calls still applies. This change only affects production scenarios.
+
 

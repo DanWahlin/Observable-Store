@@ -18,12 +18,17 @@ class ObservableStoreBase {
     globalSettings: ObservableStoreGlobalSettings = null;
 
     getStoreState() {
-        if (!this.globalSettings || (this.globalSettings && !this.globalSettings.isProduction)) {
-            // Clone in dev
-            return this.deepClone(this._storeState);
-        }
-        // Do NOT clone if in something other than dev for performance
-        return this._storeState;
+        return this.deepClone(this._storeState);
+        
+        // Removing the following since we need to clone the state even in production to ensure
+        // that different change detection mechanisms in frameworks/libraries work correctly
+
+        // if (!this.globalSettings || (this.globalSettings && !this.globalSettings.isProduction)) {
+        //     // Clone in dev
+        //     return this.deepClone(this._storeState);
+        // }
+        // // Do NOT clone if in something other than dev for performance
+        // return this._storeState;
     }
 
     setStoreState(state) {
