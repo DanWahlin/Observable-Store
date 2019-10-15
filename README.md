@@ -21,20 +21,66 @@ The goal of observable store is to provide a small, simple, and consistent way t
 
 ### Steps to use Observable Store
 
+Here's a simple example of getting started using Observable Store. Note that if you're using TypeScript you can provide additional details about the store state by using an interface or class (additional examples of that can be found below).
+
 1. Install the Observable Store package:
 
     `npm install @codewithdan/observable-store`
 
-1. Install RxJS (a required peer dependency):
+1. Install RxJS - a required peer dependency:
 
     `npm install rxjs`
 
-1. Create a class that extends `ObservableStore`.
-1. Optionally pass settings into `super()` in your class's constructor ([view Observable Store settings](#settings))
+1. Create a class that extends `ObservableStore`. Optionally pass settings into `super()` in your class's constructor ([view Observable Store settings](#settings)).
+
+    ``` javascript
+    export class CustomersStore extends ObservableStore {
+
+        constructor() {
+            super({ /* add settings here */ });
+        }
+
+    }
+    ```
+
 1. Update the store state using `setState(state, action)`.
+
+    ``` javascript
+    addCustomerToStore(newCustomer) {
+        this.setState({ customer: newCustomer }, 'add_customer');
+    }
+    ```
+
 1. Retrieve store state using `getState()`.
+
+    ``` javascript
+    getCustomerFromStore() {
+        this.getState().customer;
+    }
+    ```
+
 1. Subscribe to store changes using the store's `stateChanged` observable.
-1. Access store state history by calling the `stateHistory` property (this assumes that the `trackStateHistory` setting is set to `true`)
+
+    ``` javascript
+    // Create CustomersStore object or have it injected if platform supports that
+
+    init() {
+        this.storeSub = this.customersStore.stateChanged.subscribe(state => {
+            if (state) {
+                this.customer = state.customer;
+            }
+        });
+    }
+
+    // Note: Would need to unsubscribe by calling this.storeSub.unsubscribe()
+    // as the target object is destroyed
+    ```
+
+1. Access store state history in `CustomersStore` by calling the `stateHistory` property (this assumes that the `trackStateHistory` setting is set to `true`)
+
+    ``` javascript
+    console.log(this.stateHistory)
+    ```
 
 ### API and Settings
 
