@@ -59,7 +59,7 @@ Here's a simple example of getting started using Observable Store. Note that if 
     }
     ```
 
-1. Subscribe to store changes using the store's `stateChanged` observable.
+1. Subscribe to store changes in other areas of the application by using the store's `stateChanged` observable.
 
     ``` javascript
     // Create CustomersStore object or have it injected if platform supports that
@@ -79,7 +79,7 @@ Here's a simple example of getting started using Observable Store. Note that if 
 1. Access store state history in `CustomersStore` by calling the `stateHistory` property (this assumes that the `trackStateHistory` setting is set to `true`)
 
     ``` javascript
-    console.log(this.stateHistory)
+    console.log(this.stateHistory);
     ```
 
 ### API and Settings
