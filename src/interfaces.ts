@@ -19,3 +19,8 @@ export interface StateHistory<T>{
     beginState: T,
     endState: T
 }
+
+export interface StateWithChanges<T> {
+    state: T,
+    stateChanges: Partial<T>
+}

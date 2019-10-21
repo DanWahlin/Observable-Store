@@ -1,7 +1,6 @@
 import { skip } from 'rxjs/operators';
-
 import { ObservableStore, stateFunc } from './observable-store';
-import { ObservableStoreSettings } from './interfaces';
+import { StateWithChanges } from './interfaces';
 
 const Update_Prop1 = 'Update_Prop1';
 
@@ -132,7 +131,7 @@ describe('Observable Store', () => {
     it('should receive notification with state change information when state has been changed', () => {
       let mockStore = new MockStore({ includeStateChangesOnSubscribe: true });
       let receivedData;
-      const sub = mockStore.stateChanged.pipe(skip(1)).subscribe((data) => (receivedData = data));
+      const sub = mockStore.stateChanged.pipe(skip(1)).subscribe(stateWithChanges => receivedData = stateWithChanges);
 
       mockStore.updateProp1('test');
 
