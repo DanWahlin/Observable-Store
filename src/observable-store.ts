@@ -32,8 +32,9 @@ export class ObservableStore<T> {
     constructor(settings: ObservableStoreSettings) {
         this._settings = { ...ObservableStoreBase.settingsDefaults, ...settings, ...ObservableStoreBase.globalSettings };        
         this.stateChanged = this._stateDispatcher$.asObservable();
-        this.stateWithPropertyChanges = this._stateWithChangesDispatcher$.asObservable();
         this.globalStateChanged = ObservableStoreBase.globalStateDispatcher.asObservable();
+
+        this.stateWithPropertyChanges = this._stateWithChangesDispatcher$.asObservable();
         this.globalStateWithPropertyChanges = ObservableStoreBase.globalStateWithChangesDispatcher.asObservable();
     }
 
@@ -51,20 +52,19 @@ export class ObservableStore<T> {
             throw new Error('Please provide the global settings you would like to apply to Observable Store');
         }
         else if (settings && ObservableStoreBase.globalSettings) {
-            throw new Error('Observable Store global settings may only be set once.');
+            throw new Error('Observable Store global settings may only be set once when the application first loads.');
         }
     }
 
     protected getState() : T {
-        const stateOrSlice = this._getStateOrSlice();
-        return stateOrSlice;
+        return this._getStateOrSlice();
     }
 
     protected setState(state: Partial<T> | stateFunc<T>, 
         action?: string, 
         dispatchState: boolean = true) : T { 
 
-        // Needed for tracking below
+        // Needed for tracking below (don't move or delete)
         const previousState = this.getState();
 
         switch (typeof state) {
@@ -125,11 +125,9 @@ export class ObservableStore<T> {
         return storeState;
     }
 
-    private _dispatchState(stateChanges: Partial<T>) {
-        const stateOrSlice = this._getStateOrSlice();
-        
+    private _dispatchState(stateChanges: Partial<T>) {       
         // Get store state or slice of state
-        const clonedStateOrSlice = stateOrSlice;
+        const clonedStateOrSlice = this._getStateOrSlice();
 
         //  Get full store state
         const clonedGlobalState = ObservableStoreBase.getStoreState();
@@ -146,7 +144,7 @@ export class ObservableStore<T> {
             this._stateDispatcher$.next(clonedStateOrSlice);
             ObservableStoreBase.globalStateDispatcher.next(clonedGlobalState);
 
-            // send out StateWithChanges<T<
+            // send out StateWithChanges<T>
             this._stateWithChangesDispatcher$.next({ state: clonedStateOrSlice, stateChanges });
             ObservableStoreBase.globalStateWithChangesDispatcher.next({ state: clonedGlobalState, stateChanges });
         }

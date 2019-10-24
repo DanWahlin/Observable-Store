@@ -20,8 +20,8 @@ class ObservableStoreBase {
     globalSettings: ObservableStoreGlobalSettings = null;
 
     getStoreState() {
-        return this.deepClone(this._storeState);
-        
+        return { ...this._storeState };
+        // return this.deepClone(this._storeState);
         // Removing the following since we need to clone the state even in production to ensure
         // that different change detection mechanisms in frameworks/libraries work correctly
 
