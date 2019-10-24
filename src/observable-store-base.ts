@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 import { ClonerService } from './utilities/cloner.service';
-import { ObservableStoreSettings, ObservableStoreGlobalSettings } from './interfaces';
+import { ObservableStoreSettings, ObservableStoreGlobalSettings, StateWithPropertyChanges } from './interfaces';
 
 // Will be used to create a singleton
 class ObservableStoreBase {  
@@ -16,7 +16,7 @@ class ObservableStoreBase {
     };    
     stateHistory: any[] = [];
     globalStateDispatcher = new BehaviorSubject<any>(null);
-    globalStateWithChangesDispatcher = new BehaviorSubject<any>(null);
+    globalStateWithChangesDispatcher = new BehaviorSubject<StateWithPropertyChanges<any>>(null);
     globalSettings: ObservableStoreGlobalSettings = null;
 
     getStoreState() {

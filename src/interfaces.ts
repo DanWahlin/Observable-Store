@@ -20,7 +20,7 @@ export interface StateHistory<T>{
     endState: T
 }
 
-export interface StateWithChanges<T> {
+export interface StateWithPropertyChanges<T> {
     state: T,
     stateChanges: Partial<T>
 }

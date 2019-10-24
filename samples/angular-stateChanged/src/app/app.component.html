@@ -9,3 +9,10 @@
 <br><br>
 
 <app-child></app-child>
+
+<br><br>
+<h2>State with Property Changes</h2>
+This shows the store state as well as which properties changed.
+<pre>
+{{ (storeStateWithPropertyChanges$ | async) | json }}
+</pre>

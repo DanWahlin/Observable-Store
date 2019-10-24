@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ObservableStoreSettings, StateHistory, ObservableStoreGlobalSettings, StateWithChanges } from './interfaces';
+import { ObservableStoreSettings, StateHistory, ObservableStoreGlobalSettings, StateWithPropertyChanges } from './interfaces';
 import ObservableStoreBase from './observable-store-base';
 
 /**
@@ -18,12 +18,12 @@ export class ObservableStore<T> {
     // private _stateDispatcher$ = new BehaviorSubject<T>(null);
     private _settings: ObservableStoreSettings;
     private _stateDispatcher$ = new BehaviorSubject<T>(null);
-    private _stateWithChangesDispatcher$ = new BehaviorSubject<StateWithChanges<T>>(null);
+    private _stateWithChangesDispatcher$ = new BehaviorSubject<StateWithPropertyChanges<T>>(null);
 
     stateChanged: Observable<T>;
-    stateChangedWithChanges: Observable<StateWithChanges<T>>;
+    stateWithPropertyChanges: Observable<StateWithPropertyChanges<T>>;
     globalStateChanged: Observable<T>;
-    globalStateChangedWithChanges: Observable<StateWithChanges<T>>;
+    globalStateWithPropertyChanges: Observable<StateWithPropertyChanges<T>>;
     
     get stateHistory(): StateHistory<T>[] {
         return ObservableStoreBase.stateHistory;
@@ -32,9 +32,9 @@ export class ObservableStore<T> {
     constructor(settings: ObservableStoreSettings) {
         this._settings = { ...ObservableStoreBase.settingsDefaults, ...settings, ...ObservableStoreBase.globalSettings };        
         this.stateChanged = this._stateDispatcher$.asObservable();
-        this.stateChangedWithChanges = this._stateWithChangesDispatcher$.asObservable();
+        this.stateWithPropertyChanges = this._stateWithChangesDispatcher$.asObservable();
         this.globalStateChanged = ObservableStoreBase.globalStateDispatcher.asObservable();
-        this.globalStateChangedWithChanges = ObservableStoreBase.globalStateWithChangesDispatcher.asObservable();
+        this.globalStateWithPropertyChanges = ObservableStoreBase.globalStateWithChangesDispatcher.asObservable();
     }
 
     static get globalSettings() {

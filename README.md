@@ -555,16 +555,18 @@ Observable Store provides a simple API that can be used to get/set state, subscr
  Functions                                      | Description
 | ----------------------------------------------| -----------------------------------------------------
 | `getState() : T`                              | Retrieve store's state. If using TypeScript (optional) then the state type defined when the store was created will be returned rather than `any`.                           
-| `logStateAction(state: any, action: string): void` | Add a custom state value and action into the state history. Assumes `trackStateHistory` setting was set on store.
+| `logStateAction(state: any, action: string): void` | Add a custom state value and action into the state history. Assumes `trackStateHistory` setting was set on store or using the global settings.
 | `resetStateHistory(): void`                   | Reset the store's state history
 | `setState(state: T, action: string) : T`      | Set store state. Pass the state to be updated as well as the action that is occuring. The state value can be a function (see example below). The latest store state is returned.
 <br>
 
  Properties                                     | Description
 | ----------------------------------------------| -----------------------------------------------------
-| `globalSettings: ObservableStoreGlobalSettings`| get/set global settings throughout the application for ObservableStore. See the [Observable Store Settings](#settings) below for additional information.
-| `globalStateChanged: Observable<any>`         | Subscribe to global store changes i.e. changes in any slice of state of the store. The global store may consist of 'n' slices of state each managed by a particular service. This property notifies of a change in any of the 'n' slices of state. Returns an RxJS Observable containing the current store state.  If the `includeStateChangesOnSubscribe` setting is true you'll get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store) properties.
-| `stateChanged: Observable<T>`                 | Subscribe to store changes in the particlar slice of state updated by a Service. If the store contains 'n' slices of state each being managed by one of 'n' services, then changes in any of the other slices of state will not generate values in the stateChanged stream. Returns an RxJS Observable containing the current store state (or a specific slice of state if a stateSliceSelector has been specified).  If the `includeStateChangesOnSubscribe` setting is true you'll get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store) properties.
+| `globalSettings: ObservableStoreGlobalSettings`| get/set global settings throughout the application for ObservableStore. See the [Observable Store Settings](#settings) below for additional information. Note that global settings can only be set once as the application first loads.
+| `globalStateChanged: Observable<any>`         | Subscribe to global store changes i.e. changes in any slice of state of the store. The global store may consist of 'n' slices of state each managed by a particular service. This property notifies of a change in any of the 'n' slices of state. Returns an RxJS Observable containing the current store state. 
+| `globalStateWithPropertyChanges: Observable<StateWithPropertyChanges<any>>`         | Subscribe to global store changes i.e. changes in any slice of state of the store and also include the properties that changed as well. The global store may consist of 'n' slices of state each managed by a particular service. This property notifies of a change in any of the 'n' slices of state. Upon subscribing to `globalStateWithPropertyChanges` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
+| `stateChanged: Observable<T>`                 | Subscribe to store changes in the particlar slice of state updated by a Service. If the store contains 'n' slices of state each being managed by one of 'n' services, then changes in any of the other slices of state will not generate values in the stateChanged stream. Returns an RxJS Observable containing the current store state (or a specific slice of state if a stateSliceSelector has been specified). 
+| `stateWithPropertyChanges: Observable<StateWithPropertyChanges<T>>`     | Subscribe to store changes in the particlar slice of state updated by a Service and also include the properties that changed as well. Upon subscribing to `stateWithPropertyChanges` you will get back an object containing `state` (which has the current slice of store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
 | `stateHistory: StateHistory`                  | Retrieve state history. Assumes `trackStateHistory` setting was set on the store.
 <br>
 
@@ -588,7 +590,7 @@ Observable Store settings can be passed when the store is initialized (when supe
 | -------------------------------|------------------------------------------------------------------------------------------------------------------- 
 | `trackStateHistory: boolean`   | Determines if the store's state will be tracked or not (defaults to false). Pass it when initializing the Observable Store (see examples above). When `true`, you can access the store's state history by calling the `stateHistory` property.
 | `logStateChanges: boolean`     | Log any store state changes to the browser console (defaults to false). 
-| `includeStateChangesOnSubscribe: boolean`   | Returns the store state by default when false (default). Set to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
+| `includeStateChangesOnSubscribe: boolean`   | **DEPRECATED**. Returns the store state by default when false (default). Set to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store). **Since this is deprecated, use `stateWithPropertyChanges` or `globalStateWithPropertyChanges` instead.**
 | `stateSliceSelector: function`     | Function to select the slice of the store being managed by this particular service. If specified then the specific state slice is returned. If not specified then the total state is returned (defaults to null).
 
 Example of passing settings to the store:
@@ -629,7 +631,7 @@ You can set the following Observable Store settings globally for the entire appl
 
 * `trackStateHistory`
 * `logStateChanges`
-* `includeStateChangesOnSubscribe`
+* `includeStateChangesOnSubscribe` [DEPRECATED]
 * `isProduction`
 
 Global store settings are defined ONCE when the application **first initializes** and BEFORE the store has been used:
@@ -689,7 +691,7 @@ ReactDOM.render(<App />, document.getElementById('root'));
 
 #### 1.0.11 
 
-Added `includeStateChangesOnSubscribe` setting for cases where a subscriber to `stateChanged` wants to get the current state as well as the specific properties/data that were changes in the store. Defaults to `false` so prior versions will only receive the current state by default which keeps patched versions compatible in the 1.0.x range.
+Added `includeStateChangesOnSubscribe` setting (NOW DEPRECATED in 2+) for cases where a subscriber to `stateChanged` wants to get the current state as well as the specific properties/data that were changes in the store. Defaults to `false` so prior versions will only receive the current state by default which keeps patched versions compatible in the 1.0.x range.
 
 Set the property to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
 
@@ -749,5 +751,29 @@ Internal type additions and tests contributed by @elAndyG (https://github.com/el
 #### 2.0.1 - October 14, 2019
 
 With this version Observable Store won't clone when adding state via `setState()` if `isProduction` is `true` for `globalSettings`. It will clone when `getState()` is called though even when `isProduction` is set in this version. Otherwise certain change detection scenarios won't work correctly in various libraries/frameworks. The same behavior in the original 2.0 release of cloning during `setState()` and `getState()` calls still applies. This change only affects production scenarios.
+
+#### 2.1.0 - October 24, 2019
+
+In order to allow `stateChanged` to be strongly-typed and also allow state changes with property diffs included to be strongly-typed as well, there are now 4 observable options to choose from when you want to know about changes to the store:
+
+```typescript
+// access state changes made by a service interacting with the store
+stateChanged: T   
+
+// access all state changes in the store
+globalStateChanged: T   
+
+// access state changes made by a service interacting with the 
+// store and include the properties that were changed (property diffs)
+stateWithChanges: StateWithChanges<T>    
+
+// access all state changes in the store and include the 
+// properties that were changed (property diffs)
+globalStateWithChanges: StateWithChanges<T> 
+````
+
+The `includeStateChangesOnSubscribe` is now deprecated since `stateWithPropertyChanges` or `globalStateWithPropertyChanges` can be used directly.
+
+Thanks to <a href="https://github.com/MichaelTurbe" target="_blank">Michael Turbe</a> for the feedback and discussion on these changes.
 
 

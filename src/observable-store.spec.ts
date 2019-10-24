@@ -1,6 +1,6 @@
 import { skip } from 'rxjs/operators';
 import { ObservableStore, stateFunc } from './observable-store';
-import { StateWithChanges } from './interfaces';
+import { StateWithPropertyChanges } from './interfaces';
 
 const Update_Prop1 = 'Update_Prop1';
 
@@ -144,8 +144,8 @@ describe('Observable Store', () => {
     // we will skip 1 to account for the initial BehaviorSubject<T> value
     it('should receive notification from stateChangedWithChanges', () => {
       let mockStore = new MockStore({});
-      let receivedData: StateWithChanges<MockState>;
-      const sub = mockStore.stateChangedWithChanges.pipe(skip(1)).subscribe(stateWithChanges => {
+      let receivedData: StateWithPropertyChanges<MockState>;
+      const sub = mockStore.stateWithPropertyChanges.pipe(skip(1)).subscribe(stateWithChanges => {
         receivedData = stateWithChanges;
       });
 
@@ -159,8 +159,8 @@ describe('Observable Store', () => {
     // we will skip 1 to account for the initial BehaviorSubject<T> value
     it('should receive notification from globalStateChangedWithChanges', () => {
       let mockStore = new MockStore({});
-      let receivedData: StateWithChanges<MockState>;
-      const sub = mockStore.globalStateChangedWithChanges.pipe(skip(1)).subscribe(stateWithChanges => {
+      let receivedData: StateWithPropertyChanges<MockState>;
+      const sub = mockStore.globalStateWithPropertyChanges.pipe(skip(1)).subscribe(stateWithChanges => {
         receivedData = stateWithChanges;
       });
 
