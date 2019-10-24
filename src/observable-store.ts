@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ObservableStoreSettings, StateHistory, ObservableStoreGlobalSettings } from './interfaces';
+import { ObservableStoreSettings, StateHistory, ObservableStoreGlobalSettings, StateWithChanges } from './interfaces';
 import ObservableStoreBase from './observable-store-base';
 
 /**
@@ -18,9 +18,12 @@ export class ObservableStore<T> {
     // private _stateDispatcher$ = new BehaviorSubject<T>(null);
     private _settings: ObservableStoreSettings;
     private _stateDispatcher$ = new BehaviorSubject<T>(null);
+    private _stateWithChangesDispatcher$ = new BehaviorSubject<StateWithChanges<T>>(null);
 
     stateChanged: Observable<T>;
-    globalStateChanged: Observable<any>;
+    stateChangedWithChanges: Observable<StateWithChanges<T>>;
+    globalStateChanged: Observable<T>;
+    globalStateChangedWithChanges: Observable<StateWithChanges<T>>;
     
     get stateHistory(): StateHistory<T>[] {
         return ObservableStoreBase.stateHistory;
@@ -29,7 +32,9 @@ export class ObservableStore<T> {
     constructor(settings: ObservableStoreSettings) {
         this._settings = { ...ObservableStoreBase.settingsDefaults, ...settings, ...ObservableStoreBase.globalSettings };        
         this.stateChanged = this._stateDispatcher$.asObservable();
+        this.stateChangedWithChanges = this._stateWithChangesDispatcher$.asObservable();
         this.globalStateChanged = ObservableStoreBase.globalStateDispatcher.asObservable();
+        this.globalStateChangedWithChanges = ObservableStoreBase.globalStateWithChangesDispatcher.asObservable();
     }
 
     static get globalSettings() {
@@ -120,7 +125,7 @@ export class ObservableStore<T> {
         return storeState;
     }
 
-    private _dispatchState(stateChanges: T) {
+    private _dispatchState(stateChanges: Partial<T>) {
         const stateOrSlice = this._getStateOrSlice();
         
         // Get store state or slice of state
@@ -129,13 +134,21 @@ export class ObservableStore<T> {
         //  Get full store state
         const clonedGlobalState = ObservableStoreBase.getStoreState();
 
+        // includeStateChangesOnSubscribe is deprecated
         if (this._settings.includeStateChangesOnSubscribe) {
+            console.log('includeStateChangesOnSubscribe is deprecated. ' +
+                        'Subscribe to stateChangedWithChanges or globalStateChangedWithChanges instead.');
             this._stateDispatcher$.next({ state: clonedStateOrSlice, stateChanges } as any);
             ObservableStoreBase.globalStateDispatcher.next({ state: clonedGlobalState, stateChanges });
         }
         else {
+            // send out standard state
             this._stateDispatcher$.next(clonedStateOrSlice);
             ObservableStoreBase.globalStateDispatcher.next(clonedGlobalState);
+
+            // send out StateWithChanges<T<
+            this._stateWithChangesDispatcher$.next({ state: clonedStateOrSlice, stateChanges });
+            ObservableStoreBase.globalStateWithChangesDispatcher.next({ state: clonedGlobalState, stateChanges });
         }
     }
 

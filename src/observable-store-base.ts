@@ -10,11 +10,13 @@ class ObservableStoreBase {
     settingsDefaults: ObservableStoreSettings = {
         trackStateHistory: false,
         logStateChanges: false,
+        // deprecated
         includeStateChangesOnSubscribe: false,
         stateSliceSelector: null
     };    
     stateHistory: any[] = [];
     globalStateDispatcher = new BehaviorSubject<any>(null);
+    globalStateWithChangesDispatcher = new BehaviorSubject<any>(null);
     globalSettings: ObservableStoreGlobalSettings = null;
 
     getStoreState() {

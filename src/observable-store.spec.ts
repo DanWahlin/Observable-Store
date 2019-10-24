@@ -127,11 +127,42 @@ describe('Observable Store', () => {
       sub.unsubscribe();
     });
 
+    // deprecated
     // we will skip 1 to account for the initial BehaviorSubject<T> value
-    it('should receive notification with state change information when state has been changed', () => {
+    it('should receive state notification when includeStateChangesOnSubscribe set [deprecated]', () => {
       let mockStore = new MockStore({ includeStateChangesOnSubscribe: true });
       let receivedData;
       const sub = mockStore.stateChanged.pipe(skip(1)).subscribe(stateWithChanges => receivedData = stateWithChanges);
+
+      mockStore.updateProp1('test');
+
+      expect(receivedData.state.prop1).toEqual('test');
+      expect(receivedData.stateChanges.prop1).toEqual('test');
+      sub.unsubscribe();
+    });
+
+    // we will skip 1 to account for the initial BehaviorSubject<T> value
+    it('should receive notification from stateChangedWithChanges', () => {
+      let mockStore = new MockStore({});
+      let receivedData: StateWithChanges<MockState>;
+      const sub = mockStore.stateChangedWithChanges.pipe(skip(1)).subscribe(stateWithChanges => {
+        receivedData = stateWithChanges;
+      });
+
+      mockStore.updateProp1('test');
+
+      expect(receivedData.state.prop1).toEqual('test');
+      expect(receivedData.stateChanges.prop1).toEqual('test');
+      sub.unsubscribe();
+    });
+
+    // we will skip 1 to account for the initial BehaviorSubject<T> value
+    it('should receive notification from globalStateChangedWithChanges', () => {
+      let mockStore = new MockStore({});
+      let receivedData: StateWithChanges<MockState>;
+      const sub = mockStore.globalStateChangedWithChanges.pipe(skip(1)).subscribe(stateWithChanges => {
+        receivedData = stateWithChanges;
+      });
 
       mockStore.updateProp1('test');
 
