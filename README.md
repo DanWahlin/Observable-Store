@@ -754,25 +754,27 @@ With this version Observable Store won't clone when adding state via `setState()
 
 #### 2.1.0 - October 24, 2019
 
-In order to allow `stateChanged` to be strongly-typed and also allow state changes with property diffs included to be strongly-typed as well, there are now 4 observable options to choose from when you want to know about changes to the store:
+In order to allow `stateChanged` to be strongly-typed and also allow state changes with property changes to return a strongly-typed object as well, there are now 4 observable options to choose from when you want to know about changes to the store:
 
 ```typescript
 // access state changes made by a service interacting with the store
-stateChanged: T   
+// allows access to slice of store state that service interacts with
+stateChanged: Observable<T>   
 
-// access all state changes in the store
-globalStateChanged: T   
+// access all state changes in the store regardless of where they're
+// made in the app
+globalStateChanged: Observable<any>  
 
 // access state changes made by a service interacting with the 
-// store and include the properties that were changed (property diffs)
-stateWithChanges: StateWithChanges<T>    
+// store and include the properties that were changed
+stateWithPropertyChanges: Observable<StateWithPropertyChanges<T>> 
 
 // access all state changes in the store and include the 
-// properties that were changed (property diffs)
-globalStateWithChanges: StateWithChanges<T> 
+// properties that were changed
+globalStateWithPropertyChanges: Observable<StateWithPropertyChanges<any>>
 ````
 
-The `includeStateChangesOnSubscribe` is now deprecated since `stateWithPropertyChanges` or `globalStateWithPropertyChanges` can be used directly.
+The `includeStateChangesOnSubscribe` property is now deprecated since `stateWithPropertyChanges` or `globalStateWithPropertyChanges` can be used directly.
 
 Thanks to <a href="https://github.com/MichaelTurbe" target="_blank">Michael Turbe</a> for the feedback and discussion on these changes.
 
