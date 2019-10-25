@@ -19,7 +19,7 @@ export class CustomersService extends ObservableStore<StoreState> {
   sorterService: SorterService;
 
   constructor(sorterService: SorterService) { 
-    super({ trackStateHistory: true });
+    super({ trackStateHistory: true, logStateChanges: true });
 
     const initialState = {
       customers: [{
