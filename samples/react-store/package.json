@@ -18,7 +18,7 @@
     "react-router-dom": "^5.1.1",
     "react-scripts": "3.1.2",
     "rxjs": "6.4.0",
-    "@codewithdan/observable-store": "^2.0.1"
+    "@codewithdan/observable-store": "^2.1.0"
   },
   "devDependencies": {
     "prettier": "^1.18.2"
