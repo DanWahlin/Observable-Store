@@ -78,10 +78,6 @@ export class ObservableStore<T> {
             default:
                 throw Error('Pass an object or a function for the state parameter when calling setState().');
         }
-        
-        if (dispatchState) {
-            this._dispatchState(state as any);
-        }
 
         if (this._settings.trackStateHistory) {
             ObservableStoreBase.stateHistory.push({ 
@@ -89,6 +85,10 @@ export class ObservableStore<T> {
                 beginState: previousState, 
                 endState: this.getState() 
             });
+        }
+        
+        if (dispatchState) {
+            this._dispatchState(state as any);
         }
 
         if (this._settings.logStateChanges) {

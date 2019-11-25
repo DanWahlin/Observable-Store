@@ -157,6 +157,20 @@ describe('Observable Store', () => {
     });
 
     // we will skip 1 to account for the initial BehaviorSubject<T> value
+    it('should receive notification from globalStateChanged', () => {
+      let mockStore = new MockStore({});
+      let receivedData = [];
+      const sub = mockStore.globalStateChanged.pipe(skip(1)).subscribe(state => {
+        receivedData.push(state);
+      });
+
+      mockStore.updateProp1('test');
+      expect(receivedData.length).toEqual(1);
+      expect(receivedData[0].prop1).toEqual('test');
+      sub.unsubscribe();
+    });
+
+    // we will skip 1 to account for the initial BehaviorSubject<T> value
     it('should receive notification from globalStateChangedWithChanges', () => {
       let mockStore = new MockStore({});
       let receivedData: StateWithPropertyChanges<MockState>;

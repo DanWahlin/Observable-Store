@@ -29,3 +29,12 @@ the package directly now though.
 1. Go into the target sample project and run `npm link @codewithdan/observable-store`
 
 When done you can unlink by running `npm unlink @codewithdan/observable-store` in the target sample project
+
+## Access Angular Zone Outside of Angular
+
+https://stackoverflow.com/questions/47619350/access-angular-ngzone-instance-from-window-object
+https://medium.com/nextfaze/devmod-probing-your-angular-application-for-fun-and-debugging-d7e07c688247
+
+Window object will have `ng` and `getAllAngularRootElements`:
+
+ng.probe(getAllAngularRootElements()[0]).injector.get(ng.coreTokens.NgZone)

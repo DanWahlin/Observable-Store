@@ -12,23 +12,32 @@ export class AppComponent implements OnInit, OnDestroy {
   customers: Customer[] | Observable<Customer[]>;
   stateHistory = null;
   isHistoryVisible = false;
-  sub: Subscription;
+  subs = new Subscription();
 
-  constructor(private customersService: CustomersService) { }
+  constructor(private customersService: CustomersService) {  }
 
   ngOnInit() {
     // Use Observable<Customer> if desired
     // this.customers$ = this.customersStore.stateChanged;
 
     // Can subscribe to stateChanged of store
-    this.sub = this.customersService.stateChanged.subscribe(state => {
-      if (state) {
+    // Will fire state changes caused by only this service
+    // this.subs.add(this.customersService.stateChanged.subscribe(state => {
+    //   if (state) {
+    //     this.customers = state.customers;
+    //   }
+    // }));
+
+    // Can subscribe to globalStateChanged
+    // Will fire state changes made by any service to the store
+    this.subs.add(this.customersService.globalStateChanged.subscribe(state => {
+      if (state && state.customers) {
         this.customers = state.customers;
       }
-    });
+    }));
 
     // Can call service/store to get data directly (won't fire when the store state changes)
-    //this.storeSub = this.customersStore.get().subscribe(custs => this.customers = custs);
+    // this.storeSub = this.customersStore.get().subscribe(custs => this.customers = custs);
   }
 
   addCustomer() {
@@ -59,6 +68,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.sub.unsubscribe();
+    this.subs.unsubscribe();
   }
 }
