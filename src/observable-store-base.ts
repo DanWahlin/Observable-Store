@@ -18,6 +18,8 @@ class ObservableStoreBase {
     globalStateDispatcher = new BehaviorSubject<any>(null);
     globalStateWithChangesDispatcher = new BehaviorSubject<StateWithPropertyChanges<any>>(null);
     globalSettings: ObservableStoreGlobalSettings = null;
+    // Track all services reading/writing to store
+    services: any[] = [];
 
     getStoreState() {
         if (!this.globalSettings || (this.globalSettings && !this.globalSettings.isProduction)) {

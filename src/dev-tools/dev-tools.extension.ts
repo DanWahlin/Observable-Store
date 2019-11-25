@@ -1,7 +1,7 @@
 import { ObservableStore } from '../observable-store';
 import { ReduxDevtoolsExtensionConnection, ReduxDevtoolsExtension, ReduxDevtoolsExtensionConfig } from './dev-tools.interfaces';
 import { EMPTY, Observable, Subscription } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import ObservableStoreBase from '../observable-store-base';
 
 export class DevToolsExtension extends ObservableStore<any>  {
     private window = (window as any);
@@ -37,14 +37,28 @@ export class DevToolsExtension extends ObservableStore<any>  {
     private setDevToolsState(state: any, action: string) {
         // #### Run in Angular zone if it's available
         if (this.window.ng && this.window.getAllAngularRootElements) {
-            const ngZone = this.window.ng.probe(this.window.getAllAngularRootElements()[0]).injector.get(this.window.ng.coreTokens.NgZone);
+            const ngZone = this.getNgZone();
             ngZone.run(() => {
-                this.setState(state, action);
+                for (let service of ObservableStoreBase.services) {
+                    service.setState(state, action, false);
+                    service.dispatchState(state, false);
+                }
+                // dispatch global state changes
+                this.dispatchState(state);
             });
         }
         else {
             this.setState(state, action);
         }
+
+
+        // trigger state change notifications
+        //this.dispatchState(state);
+    }
+
+    private getNgZone() {
+        return this.window.ng.probe(this.window.getAllAngularRootElements()[0])
+                   .injector.get(this.window.ng.coreTokens.NgZone);
     }
 
     private sync() {

@@ -22,19 +22,19 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Can subscribe to stateChanged of store
     // Will fire state changes caused by only this service
-    // this.subs.add(this.customersService.stateChanged.subscribe(state => {
-    //   if (state) {
-    //     this.customers = state.customers;
-    //   }
-    // }));
-
-    // Can subscribe to globalStateChanged
-    // Will fire state changes made by any service to the store
-    this.subs.add(this.customersService.globalStateChanged.subscribe(state => {
-      if (state && state.customers) {
+    this.subs.add(this.customersService.stateChanged.subscribe(state => {
+      if (state) {
         this.customers = state.customers;
       }
     }));
+
+    // Can subscribe to globalStateChanged
+    // Will fire state changes made by any service to the store
+    // this.subs.add(this.customersService.globalStateChanged.subscribe(state => {
+    //   if (state && state.customers) {
+    //     this.customers = state.customers;
+    //   }
+    // }));
 
     // Can call service/store to get data directly (won't fire when the store state changes)
     // this.storeSub = this.customersStore.get().subscribe(custs => this.customers = custs);

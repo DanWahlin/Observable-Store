@@ -36,6 +36,7 @@ export class ObservableStore<T> {
 
         this.stateWithPropertyChanges = this._stateWithChangesDispatcher$.asObservable();
         this.globalStateWithPropertyChanges = ObservableStoreBase.globalStateWithChangesDispatcher.asObservable();
+        ObservableStoreBase.services.push(this);
     }
 
     static get globalSettings() {
@@ -88,7 +89,7 @@ export class ObservableStore<T> {
         }
         
         if (dispatchState) {
-            this._dispatchState(state as any);
+            this.dispatchState(state as any);
         }
 
         if (this._settings.logStateChanges) {
@@ -125,7 +126,7 @@ export class ObservableStore<T> {
         return storeState;
     }
 
-    private _dispatchState(stateChanges: Partial<T>) {       
+    protected dispatchState(stateChanges: Partial<T>, dispatchGlobalState: boolean = true) {       
         // Get store state or slice of state
         const clonedStateOrSlice = this._getStateOrSlice();
 
@@ -140,13 +141,13 @@ export class ObservableStore<T> {
             ObservableStoreBase.globalStateDispatcher.next({ state: clonedGlobalState, stateChanges });
         }
         else {
-            // send out standard state
             this._stateDispatcher$.next(clonedStateOrSlice);
-            ObservableStoreBase.globalStateDispatcher.next(clonedGlobalState);
-
-            // send out StateWithChanges<T>
             this._stateWithChangesDispatcher$.next({ state: clonedStateOrSlice, stateChanges });
-            ObservableStoreBase.globalStateWithChangesDispatcher.next({ state: clonedGlobalState, stateChanges });
+
+            if (dispatchGlobalState) {
+                ObservableStoreBase.globalStateDispatcher.next(clonedGlobalState);
+                ObservableStoreBase.globalStateWithChangesDispatcher.next({ state: clonedGlobalState, stateChanges })
+            };
         }
     }
 
