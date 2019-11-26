@@ -3,7 +3,7 @@ import { ReduxDevtoolsExtensionConnection, ReduxDevtoolsExtensionConfig } from '
 import { EMPTY, Observable } from 'rxjs';
 import { ObservableStoreExtension } from '../../interfaces';
 
-export class DevToolsExtension extends ObservableStore<any> implements ObservableStoreExtension  {
+export class ReduxDevToolsExtension extends ObservableStore<any> implements ObservableStoreExtension  {
     private window = (window as any);
     private extensionConnection: ReduxDevtoolsExtensionConnection;
     private devtoolsExtension = (window as any)['__REDUX_DEVTOOLS_EXTENSION__'];
