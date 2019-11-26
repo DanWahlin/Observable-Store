@@ -798,13 +798,13 @@ The `includeStateChangesOnSubscribe` property is now deprecated since `stateWith
 
 Thanks to <a href="https://github.com/MichaelTurbe" target="_blank">Michael Turbe</a> for the feedback and discussion on these changes.
 
-#### 2.2.0 - [Not Published Yet]
+#### 2.2.0 - [Not Published to npm Yet]
 
-This version adds a [Redux DevTools Extension](#extensions). A BIG thanks to @brandonroberts (https://github.com/brandonroberts) of [NgRx](https://github.com/ngrx) fame for helping get me started integrating with the Redux DevTools.
+This version adds a [Redux DevTools Extension](#extensions). A BIG thank you to @brandonroberts (https://github.com/brandonroberts) of [NgRx](https://github.com/ngrx) fame for helping get me started integrating with the Redux DevTools.
 
 New APIs:
 
 * A static `allStoreServices` property is now available to access all services that extend ObservableStore and interact with the store. Used by the Redux DevTools extension and can be useful for future extensions.
-* Added static `addExtension()` function. Used to add the [Redux DevTools Extension](#extensions)
+* Added static `addExtension()` function. Used to add the [Redux DevTools Extension](#extensions) and any future extensions.
 
 
