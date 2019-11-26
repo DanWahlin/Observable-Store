@@ -22,7 +22,6 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
             const connection = this.devtoolsExtension.connect(config);
             this.extensionConnection = connection;
             connection.init(config);
-
             connection.subscribe((change: any) => subscriber.next(change));
             return connection.unsubscribe;
         }).subscribe((action: any) => {
@@ -35,7 +34,7 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
     }
 
     private setDevToolsState(state: any, action: string) {
-        // #### Run in Angular zone if it's available
+        // #### Run in Angular zone if it's loaded to help with change dectection
         if (this.window.ng && this.window.getAllAngularRootElements) {
             const ngZone = this.getNgZone();
             ngZone.run(() => {
