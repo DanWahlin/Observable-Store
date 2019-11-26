@@ -12,12 +12,7 @@ if (environment.production) {
 // Set Observable Store globalSettings here since 
 // it'll be called before the rest of the app loads
 ObservableStore.globalSettings = { isProduction: environment.production };
-
-// Init Observable Store devTools
-if (!ObservableStore.globalSettings.isProduction) {
-  const devTools = new DevToolsExtension();
-  devTools.init();
-}
+ObservableStore.addExtension(new DevToolsExtension());
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.log(err));

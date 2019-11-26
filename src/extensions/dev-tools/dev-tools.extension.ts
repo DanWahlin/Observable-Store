@@ -1,9 +1,9 @@
-import { ObservableStore } from '../observable-store';
-import { ReduxDevtoolsExtensionConnection, ReduxDevtoolsExtension, ReduxDevtoolsExtensionConfig } from './dev-tools.interfaces';
-import { EMPTY, Observable, Subscription } from 'rxjs';
-import ObservableStoreBase from '../observable-store-base';
+import { ObservableStore } from '../../observable-store';
+import { ReduxDevtoolsExtensionConnection, ReduxDevtoolsExtensionConfig } from './dev-tools.interfaces';
+import { EMPTY, Observable } from 'rxjs';
+import { ObservableStoreExtension } from '../../interfaces';
 
-export class DevToolsExtension extends ObservableStore<any>  {
+export class DevToolsExtension extends ObservableStore<any> implements ObservableStoreExtension  {
     private window = (window as any);
     private extensionConnection: ReduxDevtoolsExtensionConnection;
     private devtoolsExtension = (window as any)['__REDUX_DEVTOOLS_EXTENSION__'];
@@ -39,21 +39,25 @@ export class DevToolsExtension extends ObservableStore<any>  {
         if (this.window.ng && this.window.getAllAngularRootElements) {
             const ngZone = this.getNgZone();
             ngZone.run(() => {
-                for (let service of ObservableStoreBase.services) {
-                    service.setState(state, action, false);
-                    service.dispatchState(state, false);
-                }
-                // dispatch global state changes
-                this.dispatchState(state);
+                this.dispatchDevToolsState(state, action);
             });
-        }
-        else {
-            this.setState(state, action);
+            return;
         }
 
+        this.dispatchDevToolsState(state, action);
+    }
 
-        // trigger state change notifications
-        //this.dispatchState(state);
+    private dispatchDevToolsState(state: any, action: string) {
+        // Set devtools state for each service but don't dispatch state
+        // since it will also dispatch global state by default
+        for (let service of ObservableStore.allStoreServices) {
+            service.setState(state, action, false);
+            // dispatch service state but not global state
+            service.dispatchState(state, false);
+        }
+
+        // dispatch global state changes
+        this.dispatchState(state);
     }
 
     private getNgZone() {

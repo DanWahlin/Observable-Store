@@ -91,6 +91,8 @@ Here's a simple example of getting started using Observable Store. Note that if 
 
 [Observable Store Global Settings](#globalSettings)
 
+[Observable Store Extensions](#extensions)
+
 ### Running the Samples
 
 Open the `samples` folder available at the Github repo and follow the instructions provided in the readme file for any of the provided sample projects.
@@ -555,15 +557,18 @@ Observable Store provides a simple API that can be used to get/set state, subscr
 
  Functions                                      | Description
 | ----------------------------------------------| -----------------------------------------------------
+| `static addExtension(extension: ObservableStoreExtension)`                              | Used to add an extension into ObservableStore. The extension must implement the `ObservableStoreExtension` interface. 
+| `dispatchState(stateChanges: Partial<T>, dispatchGlobalState: boolean = true) : T`                              | Dispatch the store's state without modifying the store state. Service state can be dispatched as well as the global store state. If `dispatchGlobalState` is false then global state will not be dispatched to subscribers (defaults to `true`). 
 | `getState() : T`                              | Retrieve store's state. If using TypeScript (optional) then the state type defined when the store was created will be returned rather than `any`.                           
 | `logStateAction(state: any, action: string): void` | Add a custom state value and action into the state history. Assumes `trackStateHistory` setting was set on store or using the global settings.
-| `resetStateHistory(): void`                   | Reset the store's state history
+| `resetStateHistory(): void`                   | Reset the store's state history to an empty array.
 | `setState(state: T, action: string) : T`      | Set store state. Pass the state to be updated as well as the action that is occuring. The state value can be a function (see example below). The latest store state is returned.
 <br>
 
  Properties                                     | Description
 | ----------------------------------------------| -----------------------------------------------------
-| `globalSettings: ObservableStoreGlobalSettings`| get/set global settings throughout the application for ObservableStore. See the [Observable Store Settings](#settings) below for additional information. Note that global settings can only be set once as the application first loads.
+| `static allStoreServices: any[]`| Provides access to all services that interact with ObservableStore. Useful for extensions that need to be able to access a specific service.
+| `static globalSettings: ObservableStoreGlobalSettings`| get/set global settings throughout the application for ObservableStore. See the [Observable Store Settings](#settings) below for additional information. Note that global settings can only be set once as the application first loads.
 | `globalStateChanged: Observable<any>`         | Subscribe to global store changes i.e. changes in any slice of state of the store. The global store may consist of 'n' slices of state each managed by a particular service. This property notifies of a change in any of the 'n' slices of state. Returns an RxJS Observable containing the current store state. 
 | `globalStateWithPropertyChanges: Observable<StateWithPropertyChanges<any>>`         | Subscribe to global store changes i.e. changes in any slice of state of the store and also include the properties that changed as well. The global store may consist of 'n' slices of state each managed by a particular service. This property notifies of a change in any of the 'n' slices of state. Upon subscribing to `globalStateWithPropertyChanges` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
 | `stateChanged: Observable<T>`                 | Subscribe to store changes in the particlar slice of state updated by a Service. If the store contains 'n' slices of state each being managed by one of 'n' services, then changes in any of the other slices of state will not generate values in the stateChanged stream. Returns an RxJS Observable containing the current store state (or a specific slice of state if a stateSliceSelector has been specified). 
@@ -640,6 +645,7 @@ Global store settings are defined ONCE when the application **first initializes*
 ``` javascript
 ObservableStore.globalSettings = {  /* pass settings here */ };
 ```
+
 ##### <a name="isProduction"></a>The isProduction Property
 
 When `isProduction` is `false`, cloning will be used when calling `getState()` or `setState()` in order to enforce immutability of the store state. When `isProduction` is `true`, cloning will not be used in order to enhance performance. This works since any immutability issues would've been caught in development mode (other store solutions out there use this technique as well). While setting the `isProduction` property is optional, with large amounts of store data the cloning that is used could *potentially* impact performance so it's important to be aware of this property.
@@ -686,6 +692,19 @@ ObservableStore.globalSettings = {
 };
 
 ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+#### <a name="extensions"></a>Extensions
+
+Observable Store now supports extensions. These can be added when the application first loads by calling `ObservableStore.addExtension()`.
+
+The first built-in extension is for the [Redux DevTools](http://extension.remotedev.io/).
+
+``` javascript
+import { ReduxDevToolsExtension } from '@codewithdan/observable-store';
+...
+ObservableStore.globalSettings = {  /* pass settings here */ };
+ObservableStore.addExtension(new ReduxDevToolsExtension());
 ```
 
 ### Changes
@@ -778,5 +797,14 @@ globalStateWithPropertyChanges: Observable<StateWithPropertyChanges<any>>
 The `includeStateChangesOnSubscribe` property is now deprecated since `stateWithPropertyChanges` or `globalStateWithPropertyChanges` can be used directly.
 
 Thanks to <a href="https://github.com/MichaelTurbe" target="_blank">Michael Turbe</a> for the feedback and discussion on these changes.
+
+#### 2.2.0 - [Not Published Yet]
+
+This version adds a [Redux DevTools Extension](#extensions). A BIG thanks to @brandonroberts (https://github.com/brandonroberts) of [NgRx](https://github.com/ngrx) fame for helping get me started integrating with the Redux DevTools.
+
+New APIs:
+
+* A static `allStoreServices` property is now available to access all services that extend ObservableStore and interact with the store. Used by the Redux DevTools extension and can be useful for future extensions.
+* Added static `addExtension()` function. Used to add the [Redux DevTools Extension](#extensions)
 
 

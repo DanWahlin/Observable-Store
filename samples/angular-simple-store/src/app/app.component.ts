@@ -29,7 +29,8 @@ export class AppComponent implements OnInit, OnDestroy {
     }));
 
     // Can subscribe to globalStateChanged
-    // Will fire state changes made by any service to the store
+    // Will fire ANY state changes made by ANY service to the store. In other words,
+    // when the store is changed by anything this will send a notification to subscribers.
     // this.subs.add(this.customersService.globalStateChanged.subscribe(state => {
     //   if (state && state.customers) {
     //     this.customers = state.customers;
