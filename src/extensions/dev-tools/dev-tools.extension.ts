@@ -24,7 +24,8 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
             connection.init(config);
             connection.subscribe((change: any) => subscriber.next(change));
             return connection.unsubscribe;
-        }).subscribe((action: any) => {
+        })
+        .subscribe((action: any) => {
             if (action.type === 'DISPATCH') {
                 if (action.payload.type === 'JUMP_TO_STATE' && action.state) {
                     this.setDevToolsState(JSON.parse(action.state), 'DEVTOOLS_JUMP');
