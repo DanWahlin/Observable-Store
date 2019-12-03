@@ -24,6 +24,9 @@
       ],
       "rxjs/*": [
         "node_modules/rxjs/*"
+      ],
+      "@codewithdan/observable-store": [
+        "../../src"
       ]
    }
   },

@@ -4,9 +4,7 @@
       "module": "commonjs",
       "moduleResolution": "node",
       "baseUrl": "./",
-      // "outDir": "./samples/react-store/src/stores",
-      // "declaration": false,
-      "outDir": "dist/",
+      "outDir": "../../dist/",
       "declaration": true,
       "sourceMap": true,
       "noImplicitUseStrict": true,
@@ -16,8 +14,5 @@
         "es2015",
         "es2017"
       ]
-  },
-  "include": [
-    "src/**/*.ts"
-  ]
+  }
 }

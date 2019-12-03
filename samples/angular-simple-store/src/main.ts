@@ -1,6 +1,7 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { ObservableStore, ReduxDevToolsExtension } from '@codewithdan/observable-store';
+import { ObservableStore } from '@codewithdan/observable-store';
+import { ReduxDevToolsExtension } from '@codewithdan/observable-store-extensions';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';

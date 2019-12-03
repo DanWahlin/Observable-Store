@@ -21,8 +21,10 @@
   ],
   "scripts": {
     "tsc": "tsc",
-    "build": "rm -rf ./dist && tsc",
-    "build:w": "tsc --watch",
+    "build-store": "rm -rf ./dist && tsc --build ./src/observable-store/tsconfig.json",
+    "build-store:w": "tsc  --build ./src/observable-store/tsconfig.json --watch",
+    "build-store-extensions": "rm -rf ./dist-extensions && tsc --build ./src/observable-store-extensions/tsconfig.json",
+    "build-store-extensions:w": "tsc  --build ./src/observable-store-extensions/tsconfig.json --watch",
     "test": "jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json",
     "test:w": "nodemon --ext ts --exec 'jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json'"
   },
@@ -37,6 +39,5 @@
     "ts-node": ">=3.2.0 <8",
     "typescript": "^3.6.4",
     "rxjs": "^6.4.0"
-  },
-  "dependencies": {}
+  }
 }

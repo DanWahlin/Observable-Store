@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "outDir": "../../dist-extensions",
+    "declaration": true,
+    "sourceMap": true,
+    "noImplicitUseStrict": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "dom",
+      "es2015",
+      "es2017"
+    ],
+    "paths": {
+      "@codewithdan/observable-store": [
+        "../observable-store"
+      ]
+    }
+  }
+}

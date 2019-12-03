@@ -1,3 +1,13 @@
+## To build the project(s)
+
+To build Observable Store:  
+
+`npm run build-store` or `npm run build-store:w`
+
+To build Observable Store extensions:
+
+`npm run build-store-extensions` or `npm run build-store-extensions:w`
+
 ## To publish to npm
 
 1. Run `npm run build` to create the dist folder (ensure tsconfig.json is set to copy the build there)
