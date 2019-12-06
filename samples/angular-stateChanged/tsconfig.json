@@ -26,7 +26,10 @@
         "node_modules/rxjs/*"
       ],
       "@codewithdan/observable-store": [
-        "../../src"
+        "../../src/observable-store"
+      ],
+      "@codewithdan/observable-store-extensions": [
+        "../../src/observable-store-extensions"
       ]
    }
   },

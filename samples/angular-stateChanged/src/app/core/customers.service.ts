@@ -38,7 +38,7 @@ export class CustomersService extends ObservableStore<StoreState> {
         { id: 2, name: 'California' }
       ]
     }
-    this.setState(initialState, 'initialize_store');
+    this.setState(initialState, 'INITIALIZE_STORE');
   }
 
   getCustomers() {
@@ -48,7 +48,7 @@ export class CustomersService extends ObservableStore<StoreState> {
   addCustomer(customer: Customer) {
     let customers = this.getState().customers;
     customers.push(customer);
-    this.setState({ customers }, 'add_customer');
+    this.setState({ customers }, 'ADD_CUSTOMER');
   }
 
   updateCustomer(customer: Customer) {
@@ -60,7 +60,7 @@ export class CustomersService extends ObservableStore<StoreState> {
       }
       return c;
      });
-    this.setState({ customers }, 'update_customer');
+    this.setState({ customers }, 'UPDATE_CUSTOMER');
   }
 
 }
