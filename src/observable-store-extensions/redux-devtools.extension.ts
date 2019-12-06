@@ -64,6 +64,7 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
         // #### Run in Angular zone if it's loaded to help with change dectection
         if (this.angularExtension) {
             this.angularExtension.runInZone(() => this.dispatchDevToolsState(state, action));
+            return;
         }
 
         this.dispatchDevToolsState(state, action);

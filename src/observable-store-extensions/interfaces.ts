@@ -10,6 +10,14 @@ export interface ReduxDevtoolsExtensionConnection {
 
 export interface ReduxDevtoolsExtensionConfig {
   name?: string;
+  features?: object | boolean;
+  latency?: number;
+  maxAge?: number;
+  trace?: boolean;
+  traceLimit?: number;
+  serialize?: boolean | object;
+  actionSanitizer?: any;
+  stateSanitizer?: any;
   routerPropertyName?: string;
 }
 

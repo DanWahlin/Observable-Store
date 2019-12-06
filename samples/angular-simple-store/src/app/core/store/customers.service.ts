@@ -87,9 +87,9 @@ export interface StoreState {
 }
 
 export enum CustomersStoreActions {
-  InitializeState = 'initialize_state',
-  AddCustomer = 'add_customer',
-  RemoveCustomer = 'remove_customer',
-  GetCustomers = 'get_customers',
-  SortCustomers = 'sort_customers'
+  InitializeState = 'INITIALIZE_STATE',
+  AddCustomer = 'ADD_CUSTOMER',
+  RemoveCustomer = 'REMOVE_CUSTOMER',
+  GetCustomers = 'GET_CUSTOMERS',
+  SortCustomers = 'SORT_CUSTOMERS'
 }

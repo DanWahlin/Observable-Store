@@ -17,7 +17,9 @@ export class AngularDevToolsExtension {
         this.location = this.providers.find(p => p && p.constructor && p.constructor.name === 'Location');
 
         this.ngZone = this.getNgZone();
-        this.hookRouter();
+        if (this.router) {
+            this.hookRouter();
+        }
     }
 
     runInZone(action: any) {
@@ -54,7 +56,7 @@ export class AngularDevToolsExtension {
                     }),
                     distinctUntilChanged()
                 ).subscribe(router => {
-                    this.devToolsService.setState({ [this.routerPropertyName]: router }, 'ROUTE_NAVIGATION');
+                    this.devToolsService.setState({ [this.routerPropertyName]: router }, `ROUTE_NAVIGATION [${router.path}]`);
                 });
 
         }
