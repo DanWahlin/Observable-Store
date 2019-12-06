@@ -44,17 +44,20 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
             filter((action:any) => action.type === 'DISPATCH')
         )
         .subscribe((action: any) => {
+            // Called as user interacts with Redux Devtools controls
             if (action.payload.type === 'JUMP_TO_STATE' || action.payload.type === 'JUMP_TO_ACTION') {
                 if (action.state) {
-                    const state = JSON.parse(action.state);
-                    if (state[this.routerPropertyName]) {
-                        const path = state[this.routerPropertyName].path;
-                        // Angular
-                        if (this.angularExtension) {
-                            this.angularExtension.navigate(path);
+                    const actionState = JSON.parse(action.state);
+                    if (actionState.state) {
+                        if (actionState.state[this.routerPropertyName]) {
+                            const path = actionState.state[this.routerPropertyName].path;
+                            // Angular
+                            if (this.angularExtension) {
+                                this.angularExtension.navigate(path);
+                            }
                         }
+                        this.setDevToolsState(actionState.state, `${actionState.action} [REDUX_DEVTOOLS_JUMP]`);
                     }
-                    this.setDevToolsState(state, 'REDUX_DEVTOOLS_JUMP');
                 }
             }
         });
@@ -94,8 +97,8 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
             const lastItem = this.stateHistory[this.stateHistory.length - 1];
             const { action, endState } = lastItem;
 
-            if (action !== 'REDUX_DEVTOOLS_JUMP') {
-                this.extensionConnection.send(action, endState);
+            if (!action.endsWith('[REDUX_DEVTOOLS_JUMP]')) {
+                this.extensionConnection.send(action, { state: endState, action });
             }
         }
     }

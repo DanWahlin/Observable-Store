@@ -76,7 +76,7 @@ export class CustomersService extends ObservableStore<StoreState> {
       return { customers };
     }, CustomersStoreActions.SortCustomers);
 
-    console.log(this.stateHistory);
+    console.log('State History:', this.stateHistory);
   }
 
 }
