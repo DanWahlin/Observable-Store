@@ -1,6 +1,3 @@
-// For local testing
-// import { ObservableStore } from '../stores/observable-store';
-
 import { ObservableStore } from '@codewithdan/observable-store';
 
 class OrdersStore extends ObservableStore {
@@ -13,7 +10,7 @@ class OrdersStore extends ObservableStore {
         return fetch('/orders.json')
             .then(response => response.json())
             .then(orders => {
-                this.setState({ orders }, 'set_orders');
+                this.setState({ orders }, 'SET_ORDERS');
                 return orders;
             });
     }

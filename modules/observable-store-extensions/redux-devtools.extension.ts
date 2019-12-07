@@ -4,13 +4,22 @@ import { EMPTY, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ObservableStoreExtension } from './interfaces';
 import { AngularDevToolsExtension } from './angular/angular-devtools-extension';
+import { ReactDevToolsExtension } from './react/react-devtools-extension';
 
 export class ReduxDevToolsExtension extends ObservableStore<any> implements ObservableStoreExtension {
     private window = (window as any);
+    private require = this.window.require;
     private extensionConnection: ReduxDevtoolsExtensionConnection;
     private devtoolsExtension = (window as any)['__REDUX_DEVTOOLS_EXTENSION__'];
     private routerPropertyName: string = 'router';
     private angularExtension: AngularDevToolsExtension;
+    private reactExtension: ReactDevToolsExtension;
+    private isAngular = this.window.ng;
+    private isReact = (this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__ && 
+                       this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers && 
+                       this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers.length) || 
+                       this.window.__REACT_ERROR_OVERLAY_GLOBAL_HOOK__ || this.window.React || 
+                       (this.window.require && (this.require('react') || this.require('React')));
 
     constructor() {
         super({ trackStateHistory: true, logStateChanges: false });
@@ -23,8 +32,11 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
         }
 
         this.window.addEventListener('DOMContentLoaded', () => {
-            // Angular
-            if (this.window.ng) {
+            if (this.isReact) {
+                this.reactExtension = new ReactDevToolsExtension(this, this.routerPropertyName);
+            };
+
+            if (this.isAngular) {
                 this.angularExtension = new AngularDevToolsExtension(this, this.routerPropertyName);
             }
         });

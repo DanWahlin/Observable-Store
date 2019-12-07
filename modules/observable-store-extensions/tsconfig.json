@@ -5,7 +5,7 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "outDir": "../../dist-extensions",
-    "declaration": true,
+    "declaration": false,
     "sourceMap": true,
     "noImplicitUseStrict": true,
     "experimentalDecorators": true,

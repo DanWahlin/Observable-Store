@@ -18,21 +18,6 @@ To build Observable Store extensions:
 Have to run `npm install` at the root of the project as well as in the samples originally. Changed the sample to reference
 the package directly now though.
 
-## To run samples with local Observable Store Code for testing
-
-1. Run `npm install` at root of the project
-1. Remove `@codewithdan/observable-store` from `package.json` file for sample.
-1. Change the import in the service(s) from:
-
-    `import { ObservableStore } from '@codewithdan/observable-store';`
-
-    To:
-
-    `import { ObservableStore } from '../../../../../src/observable-store';`
-
-1. Delete `node_modules` and run `npm install` again for the sample project.
-1. Run `ng server -o`
-
 ## To run the Observable Store npm module locally without publishing to npm
 
 1. Run `npm link` at the root of the project
@@ -48,3 +33,18 @@ https://medium.com/nextfaze/devmod-probing-your-angular-application-for-fun-and-
 Window object will have `ng` and `getAllAngularRootElements`:
 
 ng.probe(getAllAngularRootElements()[0]).injector.get(ng.coreTokens.NgZone)
+
+## To run samples with local Observable Store Code for testing (old)
+
+1. Run `npm install` at root of the project
+1. Remove `@codewithdan/observable-store` from `package.json` file for sample.
+1. Change the import in the service(s) from:
+
+    `import { ObservableStore } from '@codewithdan/observable-store';`
+
+    To:
+
+    `import { ObservableStore } from '../../../../../src/observable-store';`
+
+1. Delete `node_modules` and run `npm install` again for the sample project.
+1. Run `ng server -o`

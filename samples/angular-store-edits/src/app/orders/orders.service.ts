@@ -76,5 +76,5 @@ export class OrdersService extends ObservableStore<StoreState> {
 }
 
 export enum OrdersStoreActions {
-    GetOrders = 'get_orders'
+    GetOrders = 'GET_ORDERS'
 }

@@ -1,6 +1,3 @@
-// For local testing
-// import { ObservableStore } from '../stores/observable-store';
-
 import { ObservableStore } from '@codewithdan/observable-store';
 
 class CustomersStore extends ObservableStore {
@@ -66,10 +63,10 @@ class CustomersStore extends ObservableStore {
 }
 
 const CustomersStoreActions = {
-    GetCustomers: 'get_customers',
-    GetCustomer: 'get_customer',
-    UpdateCustomer: 'update_customer',
-    DeleteCustomer: 'delete_customer'
+    GetCustomers: 'GET_CUSTOMERS',
+    GetCustomer: 'GET_CUSTOMER',
+    UpdateCustomer: 'UPDATE_CUSTOMER',
+    DeleteCustomer: 'DELETE_CUSTOMER'
 };
 
 export default new CustomersStore();
