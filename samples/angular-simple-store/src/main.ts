@@ -13,7 +13,9 @@ if (environment.production) {
 // Set Observable Store globalSettings here since 
 // it'll be called before the rest of the app loads
 ObservableStore.globalSettings = { isProduction: environment.production };
-ObservableStore.addExtension(new ReduxDevToolsExtension());
+if (!environment.production) {
+  ObservableStore.addExtension(new ReduxDevToolsExtension());
+}
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.log(err));

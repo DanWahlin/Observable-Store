@@ -3,7 +3,6 @@ import { ReduxDevtoolsExtensionConnection, ReduxDevtoolsExtensionConfig } from '
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { ObservableStoreExtension } from './interfaces';
 import { AngularDevToolsExtension } from './angular/angular-devtools-extension';
-import { ReactDevToolsExtension } from './react/react-devtools-extension';
 
 export class ReduxDevToolsExtension extends ObservableStore<any> implements ObservableStoreExtension {
     private window = (window as any);
@@ -12,36 +11,32 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
     private devtoolsExtension = (window as any)['__REDUX_DEVTOOLS_EXTENSION__'];
     private routerPropertyName: string = 'router';
     private angularExtension: AngularDevToolsExtension;
-    private reactExtension: ReactDevToolsExtension;
     private isAngular = this.window.ng;
     private isReact = this.checkIsReact();
+    private routeTriggeredByDevTools = false;
     private sub: Subscription;
 
     constructor(private config?: ReduxDevtoolsExtensionConfig) {
         super({ trackStateHistory: true, logStateChanges: false });
-        this.sync();
     }
 
     init() {
-        if (!this.devtoolsExtension) {
-            return EMPTY;
-        }
+        this.sync();
 
         this.window.addEventListener('DOMContentLoaded', () => {
-            if (this.isReact) {
-                this.reactExtension = new ReactDevToolsExtension(this, this.routerPropertyName, this.config?.reactRouterHistory);
-            };
-
             if (this.isAngular) {
-                this.angularExtension = new AngularDevToolsExtension(this, this.routerPropertyName);
+                this.angularExtension = new AngularDevToolsExtension();
             }
+
+            this.hookRouter();
         });
 
-        if (this.config?.routerPropertyName) {
-            this.routerPropertyName = this.config.routerPropertyName;
+        if (this.devtoolsExtension) {
+            if (this.config && this.config.routerPropertyName) {
+                this.routerPropertyName = this.config.routerPropertyName;
+            }
+            this.sub = this.connect();
         }
-
-        this.sub = this.connect();
     }
 
     private connect(config?: ReduxDevtoolsExtensionConfig) {
@@ -57,28 +52,38 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
 
     private processDevToolsAction(action: any) {
         // Called as user interacts with Redux Devtools controls
-        if (action.type === 'DISPATCH') {
-            if (action.payload.type === 'JUMP_TO_STATE' || action.payload.type === 'JUMP_TO_ACTION') {
+        if (action.type === Actions.DISPATCH) {
+            if (action.payload.type === Actions.JUMP_TO_STATE || action.payload.type === Actions.JUMP_TO_ACTION) {
                 if (action.state) {
                     const actionState = JSON.parse(action.state);
                     if (actionState.state) {
                         if (actionState.state[this.routerPropertyName]) {
                             const path = actionState.state[this.routerPropertyName].path;
-                            if (this.isAngular) {
-                                this.angularExtension.navigate(path);
-                            }
-                            if (this.isReact) {
-                                this.reactExtension.navigate(path);
+                            if (window.location.pathname !== path) {
+                                // Ensure route info doesn't make it into the devtool
+                                // since the devtool is actually triggering the route
+                                // rather than an end user interacting with the app.
+                                // It will be set to false in this.hookRouter().
+                                this.routeTriggeredByDevTools = true;
+
+                                if (this.isAngular) {
+                                    this.angularExtension.navigate(path);
+                                }
+
+                                if (this.isReact && (this.config && this.config.reactRouterHistory)) {
+                                    this.config.reactRouterHistory.push(path);
+                                }
                             }
                         }
-                        this.setDevToolsState(actionState.state, `${actionState.action} [REDUX_DEVTOOLS_JUMP]`);
+                        
+                        this.setStateFromDevTools(actionState.state, `${actionState.action} [${Actions.REDUX_DEVTOOLS_JUMP}]`);
                     }
                 }
             }
         }
     }
 
-    private setDevToolsState(state: any, action: string) {
+    private setStateFromDevTools(state: any, action: string) {
         // #### Run in Angular zone if it's loaded to help with change dectection
         if (this.angularExtension) {
             this.angularExtension.runInZone(() => this.dispatchDevToolsState(state, action));
@@ -108,11 +113,11 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
     }
 
     private sendStateToDevTool() {
-        if (this.stateHistory?.length) {
+        if (this.stateHistory && this.stateHistory.length) {
             const lastItem = this.stateHistory[this.stateHistory.length - 1];
             const { action, endState } = lastItem;
 
-            if (!action.endsWith('[REDUX_DEVTOOLS_JUMP]')) {
+            if (!action.endsWith(Actions.REDUX_DEVTOOLS_JUMP + ']')) {
                 this.devToolsExtensionConnection.send(action, { state: endState, action });
             }
         }
@@ -136,4 +141,52 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
         return isReact;
     }
 
+    private hookRouter() {
+        try {
+            if (this.isReact) {
+                const currentPath = window.location.pathname;
+                this.setState({ [this.routerPropertyName]: { path: currentPath } }, `${Actions.ROUTE_NAVIGATION} [${currentPath}]`);
+            }
+
+            window.history.pushState = (f => function pushState() {
+                var ret = f.apply(this, arguments);
+                window.dispatchEvent(new CustomEvent('pushstate', { detail: window.location.pathname }));
+                window.dispatchEvent(new CustomEvent('locationchange', { detail: window.location.pathname }));
+                return ret;
+            })(window.history.pushState);
+            
+            window.history.replaceState = (f => function replaceState() {
+                var ret = f.apply(this, arguments);
+                window.dispatchEvent(new CustomEvent('replacestate', { detail: window.location.pathname }));
+                window.dispatchEvent(new CustomEvent('locationchange', { detail: window.location.pathname }));
+                return ret;
+            })(window.history.replaceState);
+            
+            window.addEventListener('popstate', () => {
+                window.dispatchEvent(new CustomEvent('locationchange', { detail: window.location.pathname }));
+            });
+
+            window.addEventListener('locationchange', (e: CustomEvent) => {
+                if (!this.routeTriggeredByDevTools) {
+                    const path = e.detail;
+                    this.setState({ [this.routerPropertyName]: { path } }, `${Actions.ROUTE_NAVIGATION} [${path}]`);
+                }
+                else {
+                    this.routeTriggeredByDevTools = false;
+                }
+            });            
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+
+}
+
+enum Actions {
+    DISPATCH = 'DISPATCH',
+    JUMP_TO_STATE = 'JUMP_TO_STATE',
+    JUMP_TO_ACTION = 'JUMP_TO_ACTION',
+    REDUX_DEVTOOLS_JUMP = 'REDUX_DEVTOOLS_JUMP',
+    ROUTE_NAVIGATION = 'ROUTE_NAVIGATION'
 }

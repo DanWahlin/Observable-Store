@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { of, Observable } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
-// The following is for testing only
-// import { ObservableStore } from '../../../../../src/observable-store';
 import { ObservableStore } from '@codewithdan/observable-store';
 
 import { Customer } from '../core/model';

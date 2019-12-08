@@ -54,5 +54,5 @@ export interface ObservableStoreExtension {
     /**
      * Function used to initialize the extension.
      */
-    init(config?: any): Observable<never> | Subscription;
+    init(): void;
 }

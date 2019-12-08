@@ -1,4 +1,4 @@
-import { Observable, Subscription } from "rxjs";
+import { Observable, Subscription } from 'rxjs';
 
 export interface ReduxDevtoolsExtensionConnection {
   subscribe(listener: (change: any) => void): void;
@@ -20,18 +20,12 @@ export interface ReduxDevtoolsExtensionConfig {
   stateSanitizer?: any;
   routerPropertyName?: string;
   reactRouterHistory?: any;
-}
-
-export interface ReduxDevtoolsExtension {
-  connect(
-    options: ReduxDevtoolsExtensionConfig
-  ): ReduxDevtoolsExtensionConnection;
-  send(action: any, state: any, options: ReduxDevtoolsExtensionConfig): void;
+  angularRouter?: any;
 }
 
 export interface ObservableStoreExtension {
   /**
    * Function used to initialize the extension.
    */
-  init(config?: any): Observable<never> | Subscription;
+  init(): void;
 }
