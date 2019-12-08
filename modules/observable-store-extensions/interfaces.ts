@@ -19,6 +19,7 @@ export interface ReduxDevtoolsExtensionConfig {
   actionSanitizer?: any;
   stateSanitizer?: any;
   routerPropertyName?: string;
+  reactRouterHistory?: any;
 }
 
 export interface ReduxDevtoolsExtension {

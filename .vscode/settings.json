@@ -7,5 +7,6 @@
       "**/angular/src/**/*.js": true
       // "src/**/*.js.map": true,
       // "src/**/*.js": true,
-    }
+    },
+    "typescript.tsdk": "node_modules/typescript/lib"
 }

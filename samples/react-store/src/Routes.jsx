@@ -1,12 +1,15 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { Router, Route, Redirect } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 
 import CustomersContainer from './customers/CustomersContainer';
 import CustomerEdit from './customers/CustomerEdit';
 import OrdersContainer from './orders/OrdersContainer';
 
+export const history = createBrowserHistory();
+
 const Routes = () => (
-  <Router>
+  <Router history={history}>
     <div>
       <Route exact path="/"
         render={() => <Redirect exact from="/" to="/customers" />}

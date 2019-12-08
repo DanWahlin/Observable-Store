@@ -4,7 +4,7 @@
       "module": "commonjs",
       "moduleResolution": "node",
       "baseUrl": "./",
-      "outDir": "../../dist/",
+      "outDir": "../../dist",
       "declaration": true,
       "sourceMap": true,
       "noImplicitUseStrict": true,

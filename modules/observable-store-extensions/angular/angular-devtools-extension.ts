@@ -28,7 +28,7 @@ export class AngularDevToolsExtension {
         });
     }
 
-    navigate(path: any) {
+    navigate(path: string) {
         if (this.location.path() !== path) {
             this.runInZone(() => {
                 this.routeTriggered = true;
@@ -39,6 +39,9 @@ export class AngularDevToolsExtension {
 
     hookRouter() {
         try {
+            const currentPath = this.location.path();
+            this.devToolsService.setState({ [this.routerPropertyName]: { path: currentPath } }, `ROUTE_NAVIGATION [${currentPath}]`);
+
             this.router.events
                 .pipe(
                     filter(event => {

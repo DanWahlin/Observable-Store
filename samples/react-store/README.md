@@ -24,6 +24,11 @@ This shows how to use Observable Stores to maintain state in a React application
 
     `npm install`
 
+1. Run the following commands at the root of the app to build the source:
+
+    `npm run build-store`
+    `npm run build-store-extensions`
+
 1. Run the application:
 
     `npm start`

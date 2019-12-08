@@ -1,7 +1,18 @@
 export class ReactDevToolsExtension {
 
-    constructor(private devToolsService: any, private routerPropertyName: string) {
+    private location: string;
+    routeTriggered = false;
+
+    constructor(private devToolsService: any, private routerPropertyName: string, private history: any) {
         this.hookRouter();
+    }
+
+    navigate(path: string) {
+        if (window.location.pathname !== path) {
+            console.log('navigate', path);
+            this.routeTriggered = true;
+            this.history.push(path);
+        }
     }
 
     hookRouter() {
@@ -24,17 +35,22 @@ export class ReactDevToolsExtension {
             })(window.history.replaceState);
             
             window.addEventListener('popstate', () => {
-                window.dispatchEvent(new CustomEvent('locationchange', { detail: window.location.pathname }))
+                window.dispatchEvent(new CustomEvent('locationchange', { detail: window.location.pathname }));
             });
 
             window.addEventListener('locationchange', (e: CustomEvent) => {
-                const path = e.detail;
-                this.devToolsService.setState({ [this.routerPropertyName]: { path } }, `ROUTE_NAVIGATION [${path}]`);
-            });
-            
+                if (!this.routeTriggered) {
+                    const path = e.detail;
+                    this.devToolsService.setState({ [this.routerPropertyName]: { path } }, `ROUTE_NAVIGATION [${path}]`);
+                }
+                else {
+                    this.routeTriggered = false;
+                }
+            });            
         }
         catch (e) {
             console.log(e);
         }
     }
+
 }

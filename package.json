@@ -28,18 +28,21 @@
     "test": "jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json",
     "test:w": "nodemon --ext ts --exec 'jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json'"
   },
-  "dependencies": {},
+  "dependencies": {
+    "react": "^16.12.0",
+    "react-router-dom": "^5.1.2"
+  },
   "peerDependencies": {
     "rxjs": "^6.4.0"
   },
   "devDependencies": {
-    "@types/jasmine": "^3.4.4",
+    "@types/jasmine": "^3.5.0",
     "@types/history": "^4.7.3",
     "jasmine": "^3.5.0",
     "jasmine-spec-reporter": "^4.2.1",
     "jasmine-ts": "^0.3.0",
-    "ts-node": ">=3.2.0 <8",
-    "typescript": "^3.6.4",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.3",
     "rxjs": "^6.4.0"
   }
 }
