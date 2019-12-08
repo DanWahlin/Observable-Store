@@ -67,27 +67,28 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
                     const actionState = JSON.parse(action.state);
                     if (actionState.state) {
                         if (actionState.state[this.routerPropertyName]) {
-                            const path = actionState.state[this.routerPropertyName].path;
-                            if (window.location.pathname !== path) {
-                                // Ensure route info doesn't make it into the devtool
-                                // since the devtool is actually triggering the route
-                                // rather than an end user interacting with the app.
-                                // It will be set to false in this.hookRouter().
-                                this.routeTriggeredByDevTools = true;
-
-                                if (this.isAngular) {
-                                    this.angularExtension.navigate(path);
-                                }
-
-                                if (this.isReact && (this.config && this.config.reactRouterHistory)) {
-                                    this.config.reactRouterHistory.push(path);
-                                }
-                            }
-                        }
-                        
+                            this.navigateToPath(actionState);
+                        }                        
                         this.setStateFromDevTools(actionState.state, `${actionState.action} [${Actions.REDUX_DEVTOOLS_JUMP}]`);
                     }
                 }
+            }
+        }
+    }
+
+    private navigateToPath(actionState: any) {
+        const path = actionState.state[this.routerPropertyName].path;
+        if (window.location.pathname !== path) {
+            // Ensure route info doesn't make it into the devtool
+            // since the devtool is actually triggering the route
+            // rather than an end user interacting with the app.
+            // It will be set to false in this.hookRouter().
+            this.routeTriggeredByDevTools = true;
+            if (this.isAngular) {
+                this.angularExtension.navigate(path);
+            }
+            if (this.isReact && (this.config && this.config.reactRouterHistory)) {
+                this.config.reactRouterHistory.push(path);
             }
         }
     }
