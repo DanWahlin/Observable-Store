@@ -50,6 +50,15 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
         .subscribe((action: any) => this.processDevToolsAction(action));
     }
 
+    private disconnect() {
+        if (this.devtoolsExtension) {
+            this.devtoolsExtension.disconnect();
+            if (this.sub) {
+                this.sub.unsubscribe();
+            }
+        }        
+    }
+
     private processDevToolsAction(action: any) {
         // Called as user interacts with Redux Devtools controls
         if (action.type === Actions.DISPATCH) {
@@ -123,15 +132,6 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
         }
     }
 
-    disconnect() {
-        if (this.devtoolsExtension) {
-            this.devtoolsExtension.disconnect();
-            if (this.sub) {
-                this.sub.unsubscribe();
-            }
-        }        
-    }
-
     private checkIsReact() {
         const isReact = (this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__ &&
             this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers &&
@@ -148,14 +148,14 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
                 this.setState({ [this.routerPropertyName]: { path: currentPath } }, `${Actions.ROUTE_NAVIGATION} [${currentPath}]`);
             }
 
-            window.history.pushState = (f => function pushState() {
+            window.history.pushState = (f => function() {
                 var ret = f.apply(this, arguments);
                 window.dispatchEvent(new CustomEvent('pushstate', { detail: window.location.pathname }));
                 window.dispatchEvent(new CustomEvent('locationchange', { detail: window.location.pathname }));
                 return ret;
             })(window.history.pushState);
             
-            window.history.replaceState = (f => function replaceState() {
+            window.history.replaceState = (f => function() {
                 var ret = f.apply(this, arguments);
                 window.dispatchEvent(new CustomEvent('replacestate', { detail: window.location.pathname }));
                 window.dispatchEvent(new CustomEvent('locationchange', { detail: window.location.pathname }));

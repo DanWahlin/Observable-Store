@@ -1,5 +1,3 @@
-// import { filter, map, distinctUntilChanged } from "rxjs/operators";
-
 export class AngularDevToolsExtension {
     private window = (window as any);
     private rootElements: any;
