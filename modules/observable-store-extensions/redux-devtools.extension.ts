@@ -66,12 +66,12 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
             if (action.payload.type === Actions.JUMP_TO_STATE || action.payload.type === Actions.JUMP_TO_ACTION) {
                 if (action.state) {
                     const actionState = JSON.parse(action.state);
-                    if (actionState.state) {
+                    if (actionState && actionState.__devTools) {
                         // If we have a route then navigate to it
-                        if (actionState.state.__devTools.router) {
+                        if (actionState.__devTools.router) {
                             this.navigateToPath(actionState);
                         }                        
-                        this.setStateFromDevTools(actionState.state, `${actionState.state.__devTools.action} [${Actions.REDUX_DEVTOOLS_JUMP}]`);
+                        this.setStateFromDevTools(actionState, `${actionState.__devTools.action} [${Actions.REDUX_DEVTOOLS_JUMP}]`);
                     }
                 }
             }
@@ -79,7 +79,7 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
     }
 
     private navigateToPath(actionState: any) {
-        const path = actionState.state.__devTools.router.path;
+        const path = actionState.__devTools.router.path;
         if (window.location.pathname !== path) {
             // Ensure route info doesn't make it into the devtool
             // since the devtool is actually triggering the route
@@ -141,10 +141,8 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
                 // Adding action value here since there's no way to retrieve it when
                 // it's dispatched from the redux devtools
                 this.devToolsExtensionConnection.send(action, { 
-                    state: { 
-                        ...endState, 
-                        __devTools: { ...endState.__devTools, action } 
-                    }
+                    ...endState, 
+                    __devTools: { ...endState.__devTools, action } 
                 });
             }
         }
@@ -185,7 +183,8 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
                     const path = e.detail;
                     this.setState({ 
                         __devTools: { 
-                            router: { path, action: Actions.ROUTE_NAVIGATION } 
+                            router: { path },
+                            action: Actions.ROUTE_NAVIGATION
                         }
                     }, `${Actions.ROUTE_NAVIGATION} [${path}]`);
                 }
