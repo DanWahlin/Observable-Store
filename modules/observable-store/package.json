@@ -4,8 +4,8 @@
   "author": "Dan Wahlin",
   "description": "Observable Store provides a simple way to store and retrieve state in Angular, React, Vue.js and other front-end applications.",
   "license": "MIT",
-  "main": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
+  "main": "../../dist/observable-store/index.js",
+  "typings": "../../dist/observable-store/index.d.ts",
   "repository": {
     "url": "https://github.com/danwahlin/observable-store"
   },
@@ -21,12 +21,11 @@
   ],
   "scripts": {
     "tsc": "tsc",
-    "build": "rm -rf ../../dist && tsc --build ./tsconfig.json",
+    "build": "rm -rf ../../dist/observable-store && tsc --build ./tsconfig.json",
     "build:w": "tsc  --build ./tsconfig.json --watch",
     "test": "jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json",
     "test:w": "nodemon --ext ts --exec 'jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json'"
   },
-  "dependencies": {},
   "peerDependencies": {
     "rxjs": "^6.4.0"
   },

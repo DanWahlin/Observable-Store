@@ -2,21 +2,16 @@
 
 To build Observable Store:  
 
-`npm run build-store` or `npm run build-store:w`
+`npm run build` or `npm run build:w`
 
-To build Observable Store extensions:
+To build Observable Store extensions cd into the folder and run:
 
-`npm run build-store-extensions` or `npm run build-store-extensions:w`
+`npm run build` or `npm run build:w`
 
 ## To publish to npm
 
 1. Run `npm run build` to create the dist folder (ensure tsconfig.json is set to copy the build there)
 1. Run `npm publish --access public` and enter the 2FA code for npm in 1Password
-
-## Running directly gives RxJs error
-
-Have to run `npm install` at the root of the project as well as in the samples originally. Changed the sample to reference
-the package directly now though.
 
 ## To run the Observable Store npm module locally without publishing to npm
 
