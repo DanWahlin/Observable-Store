@@ -20,7 +20,7 @@ export interface ReduxDevtoolsExtensionConfig {
   stateSanitizer?: any;
   routerPropertyName?: string;
   reactRouterHistory?: any;
-  angularRouter?: any;
+  customRouteNavigator?: CustomReduxDevtoolsRouteNavigator;
 }
 
 export interface ObservableStoreExtension {
@@ -28,4 +28,8 @@ export interface ObservableStoreExtension {
    * Function used to initialize the extension.
    */
   init(): void;
+}
+
+export interface CustomReduxDevtoolsRouteNavigator {
+  navigate(path: string): void;
 }

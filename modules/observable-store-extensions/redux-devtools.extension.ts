@@ -9,9 +9,10 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
     private require = this.window.require;
     private devToolsExtensionConnection: ReduxDevtoolsExtensionConnection;
     private devtoolsExtension = (window as any)['__REDUX_DEVTOOLS_EXTENSION__'];
-    private routerPropertyName: string = 'router';
+    private routerPropertyName = '__router';
+    private devToolsActionName = '__action';
     private angularExtension: AngularDevToolsExtension;
-    private isAngular = this.window.ng;
+    private isAngular = this.checkIsAngular();
     private isReact = this.checkIsReact();
     private routeTriggeredByDevTools = false;
     private sub: Subscription;
@@ -66,10 +67,11 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
                 if (action.state) {
                     const actionState = JSON.parse(action.state);
                     if (actionState.state) {
-                        if (actionState.state[this.routerPropertyName]) {
+                        // If we have a route then navigate to it
+                        if (actionState.state.__devTools.router) {
                             this.navigateToPath(actionState);
                         }                        
-                        this.setStateFromDevTools(actionState.state, `${actionState.action} [${Actions.REDUX_DEVTOOLS_JUMP}]`);
+                        this.setStateFromDevTools(actionState.state, `${actionState.state.__devTools.action} [${Actions.REDUX_DEVTOOLS_JUMP}]`);
                     }
                 }
             }
@@ -77,18 +79,26 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
     }
 
     private navigateToPath(actionState: any) {
-        const path = actionState.state[this.routerPropertyName].path;
+        const path = actionState.state.__devTools.router.path;
         if (window.location.pathname !== path) {
             // Ensure route info doesn't make it into the devtool
             // since the devtool is actually triggering the route
             // rather than an end user interacting with the app.
             // It will be set to false in this.hookRouter().
             this.routeTriggeredByDevTools = true;
+            if (this.config && this.config.customRouteNavigator) {
+                this.config.customRouteNavigator.navigate(path);
+                return;
+            }
+
             if (this.isAngular) {
                 this.angularExtension.navigate(path);
+                return;
             }
+            
             if (this.isReact && (this.config && this.config.reactRouterHistory)) {
                 this.config.reactRouterHistory.push(path);
+                return;
             }
         }
     }
@@ -128,25 +138,28 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
             const { action, endState } = lastItem;
 
             if (!action.endsWith(Actions.REDUX_DEVTOOLS_JUMP + ']')) {
-                this.devToolsExtensionConnection.send(action, { state: endState, action });
+                // Adding action value here since there's no way to retrieve it when
+                // it's dispatched from the redux devtools
+                this.devToolsExtensionConnection.send(action, { 
+                    state: { 
+                        ...endState, 
+                        __devTools: { ...endState.__devTools, action } 
+                    }
+                });
             }
         }
-    }
-
-    private checkIsReact() {
-        const isReact = (this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__ &&
-            this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers &&
-            this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers.length) ||
-            this.window.__REACT_ERROR_OVERLAY_GLOBAL_HOOK__ || this.window.React ||
-            (this.window.require && (this.require('react') || this.require('React')));
-        return isReact;
     }
 
     private hookRouter() {
         try {
             if (this.isReact) {
                 const currentPath = window.location.pathname;
-                this.setState({ [this.routerPropertyName]: { path: currentPath } }, `${Actions.ROUTE_NAVIGATION} [${currentPath}]`);
+                this.setState({ 
+                    __devTools: { 
+                        router: { path: currentPath },
+                        action: Actions.ROUTE_NAVIGATION
+                    }
+                }, `${Actions.ROUTE_NAVIGATION} [${currentPath}]`);
             }
 
             window.history.pushState = (f => function() {
@@ -170,7 +183,11 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
             window.addEventListener('locationchange', (e: CustomEvent) => {
                 if (!this.routeTriggeredByDevTools) {
                     const path = e.detail;
-                    this.setState({ [this.routerPropertyName]: { path } }, `${Actions.ROUTE_NAVIGATION} [${path}]`);
+                    this.setState({ 
+                        __devTools: { 
+                            router: { path, action: Actions.ROUTE_NAVIGATION } 
+                        }
+                    }, `${Actions.ROUTE_NAVIGATION} [${path}]`);
                 }
                 else {
                     this.routeTriggeredByDevTools = false;
@@ -180,6 +197,19 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
         catch (e) {
             console.log(e);
         }
+    }
+
+    private checkIsReact() {
+        const isReact = (this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__ &&
+            this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers &&
+            this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers.length) ||
+            this.window.__REACT_ERROR_OVERLAY_GLOBAL_HOOK__ || this.window.React ||
+            (this.window.require && (this.require('react') || this.require('React')));
+        return isReact;
+    }
+
+    private checkIsAngular() {
+        return this.window.ng;
     }
 
 }
