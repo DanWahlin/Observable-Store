@@ -15,7 +15,7 @@ To build Observable Store extensions cd into the folder and run:
 
 ## To run the Observable Store npm module locally without publishing to npm
 
-1. Run `npm link` at the root of the project
+1. Run `npm link` at the root of the `observable-store` project
 1. Go into the target sample project and run `npm link @codewithdan/observable-store`
 
 When done you can unlink by running `npm unlink @codewithdan/observable-store` in the target sample project
