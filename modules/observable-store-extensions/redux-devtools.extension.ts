@@ -150,15 +150,13 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
 
     private hookRouter() {
         try {
-            if (this.isReact) {
-                const currentPath = window.location.pathname;
-                this.setState({ 
-                    __devTools: { 
-                        router: { path: currentPath },
-                        action: Actions.ROUTE_NAVIGATION
-                    }
-                }, `${Actions.ROUTE_NAVIGATION} [${currentPath}]`);
-            }
+            const path = window.location.pathname;
+            this.setState({ 
+                __devTools: { 
+                    router: { path },
+                    action: Actions.ROUTE_NAVIGATION
+                }
+            }, `${Actions.ROUTE_NAVIGATION} [${path}]`);
 
             window.history.pushState = (f => function() {
                 var ret = f.apply(this, arguments);
