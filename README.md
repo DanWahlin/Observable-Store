@@ -28,11 +28,11 @@ Here's a simple example of getting started using Observable Store. Note that if 
 
     `npm install @codewithdan/observable-store`
 
-1. Install RxJS - a required peer dependency:
+1. Install RxJS - a required peer dependency if your project doesn't already reference it:
 
     `npm install rxjs`
 
-1. Create a class that extends `ObservableStore`. Optionally pass settings into `super()` in your class's constructor ([view Observable Store settings](#settings)).
+1. Create a class that extends `ObservableStore`. Optionally pass settings into `super()` in your class's constructor ([view Observable Store settings](#settings)). While this shows a pure JavaScript approach, ObservableStore also accepts a generic that represents the store type. See the Angular example below for more details.
 
     ``` javascript
     export class CustomersStore extends ObservableStore {
@@ -113,10 +113,6 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 
     `npm install @codewithdan/observable-store`
 
-1. Install RxJS (a required peer dependency):
-
-    `npm install rxjs`
-
 1. Add an interface or model object that represents the shape of the data you'd like to add to your store. Here's an example of an interface to store customer state:
 
     ``` typescript
@@ -156,7 +152,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
                 customer: null
             }
             super({ trackStateHistory: true });
-            this.setState(initialState, 'init_state');
+            this.setState(initialState, 'INIT_STATE');
             this.sorterService = sorterService;
         }
 
@@ -175,19 +171,19 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
         add(customer: Customer) {
             let state = this.getState();
             state.customers.push(customer);
-            this.setState({ customers: state.customers }, 'add_customer');
+            this.setState({ customers: state.customers }, 'ADD_CUSTOMER');
         }
 
         remove() {
             let state = this.getState();
             state.customers.splice(state.customers.length - 1, 1);
-            this.setState({ customers: state.customers }, 'remove_customer');
+            this.setState({ customers: state.customers }, 'REMOVE_CUSTOMER');
         }
         
         sort(property: string = 'id') {
             let state = this.getState();
             const sortedState = this.sorterService.sort(state.customers, property);
-            this.setState({ customers: sortedState }, 'sort_customers');
+            this.setState({ customers: sortedState }, 'SORT_CUSTOMERS');
         }
 
     }
@@ -197,10 +193,10 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 
     ``` typescript
         export enum CustomersStoreActions {
-            AddCustomer = 'add_customer',
-            RemoveCustomer = 'remove_customer',
-            GetCustomers = 'get_customers',
-            SortCustomers = 'sort_customers'
+            AddCustomer = 'ADD_CUSTOMER',
+            RemoveCustomer = 'REMOVE_CUSTOMER',
+            GetCustomers = 'GET_CUSTOMERS',
+            SortCustomers = 'SORT_CUSTOMERS'
         }
 
         // Example of using the enum in a store
@@ -223,7 +219,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
     // example stateHistory output
     [
         {
-            "action": "initialize_state",
+            "action": "INIT_STATE",
             "beginState": null,
             "endState": {
                 "customers": [
@@ -242,7 +238,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
             }
         },
         {
-            "action": "add_customer",
+            "action": "ADD_CUSTOMER",
             "beginState": {
                 "customers": [
                     {
@@ -369,7 +365,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
             return fetch('/customers')
                 .then(response => response.json())
                 .then(customers => {
-                    this.setState({ customers }, 'get_customers');
+                    this.setState({ customers }, 'GET_CUSTOMERS');
                     return customers;
                 });
         }
@@ -391,7 +387,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
                 .then(custs => {
                     let filteredCusts = custs.filter(cust => cust.id === id);
                     const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
-                    this.setState({ customer }, 'get_customer');
+                    this.setState({ customer }, 'GET_CUSTOMER');
                     return customer;
                 });
         }
@@ -408,8 +404,8 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 
     ``` javascript
     const CustomersStoreActions = {
-        GetCustomers: 'get_customers',
-        GetCustomer: 'get_customer'
+        GetCustomers: 'GET_CUSTOMERS',
+        GetCustomer: 'GET_CUSTOMER'
     };
 
         // Example of using the enum in a store
@@ -439,7 +435,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
     // example stateHistory output
     [
         {
-            "action": "initialize_state",
+            "action": "INIT_STATE",
             "beginState": null,
             "endState": {
                 "customers": [
@@ -458,7 +454,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
             }
         },
         {
-            "action": "add_customer",
+            "action": "ADD_CUSTOMER",
             "beginState": {
                 "customers": [
                     {
@@ -585,7 +581,7 @@ Here's an example of passing a function to `setState()`. This allows the previou
 ``` javascript
 this.setState(prevState => { 
     return { customers: this.sorterService.sort(prevState.customers, property) };
-}, 'sort_customers');
+}, 'SORT_CUSTOMERS');
 ```
 
 ### <a name="settings"></a>Store Settings (per service)
@@ -698,10 +694,11 @@ ReactDOM.render(<App />, document.getElementById('root'));
 
 Observable Store now supports extensions. These can be added when the application first loads by calling `ObservableStore.addExtension()`.
 
-The first built-in extension is for the [Redux DevTools](http://extension.remotedev.io/).
+The first built-in extension is for the [Redux DevTools](http://extension.remotedev.io/) and is in the `@codewithdan/observable-store-extensions` package.
 
 ``` javascript
-import { ReduxDevToolsExtension } from '@codewithdan/observable-store';
+import { ObservableStore } from '@codewithdan/observable-store';
+import { ReduxDevToolsExtension } from '@codewithdan/observable-store-extensions';
 ...
 ObservableStore.globalSettings = {  /* pass settings here */ };
 ObservableStore.addExtension(new ReduxDevToolsExtension());
@@ -806,5 +803,12 @@ New APIs:
 
 * A static `allStoreServices` property is now available to access all services that extend ObservableStore and interact with the store. Used by the Redux DevTools extension and can be useful for future extensions.
 * Added static `addExtension()` function. Used to add the [Redux DevTools Extension](#extensions) and any future extensions.
+* Added new `@codewithdan/observable-store-extensions` package for the redux devtools support.
+
+### Building the Project
+
+1. `cd` into the `modules/observable-store` folder.
+1. Run `npm install`
+1. Run `npm run build` or `npm run build:w`
 
 
