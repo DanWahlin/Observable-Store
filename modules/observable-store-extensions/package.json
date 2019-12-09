@@ -27,15 +27,17 @@
   },
   "dependencies": {
     "rxjs": "^6.4.0",
-    "@codewithdan/observable-store": "^2.2.0"
+    "@codewithdan/observable-store": "2.1.0"
   },
+  "peerDependencies": {},
   "devDependencies": {
     "@types/jasmine": "^3.5.0",
     "@types/history": "^4.7.3",
     "jasmine": "^3.5.0",
     "jasmine-spec-reporter": "^4.2.1",
     "jasmine-ts": "^0.3.0",
-    "ts-node": "^8.5.4",
-    "typescript": "^3.7.3"
+    "ts-node": ">=3.2.0 <8",
+    "typescript": "3.6.4",
+    "rxjs": "^6.4.0"
   }
 }
