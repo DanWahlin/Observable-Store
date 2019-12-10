@@ -63,16 +63,42 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
     private processDevToolsAction(action: any) {
         // Called as user interacts with Redux Devtools controls
         if (action.type === Actions.DISPATCH) {
-            if (action.payload.type === Actions.JUMP_TO_STATE || action.payload.type === Actions.JUMP_TO_ACTION) {
-                if (action.state) {
-                    const actionState = JSON.parse(action.state);
-                    if (actionState && actionState.__devTools) {
-                        // If we have a route then navigate to it
-                        if (actionState.__devTools.router) {
-                            this.navigateToPath(actionState);
-                        }                        
-                        this.setStateFromDevTools(actionState, `${actionState.__devTools.action} [${Actions.REDUX_DEVTOOLS_JUMP}]`);
+            switch (action.payload.type) {
+                case Actions.JUMP_TO_STATE:
+                case Actions.JUMP_TO_ACTION:
+                    if (action.state) {
+                        const actionState = JSON.parse(action.state);
+                        if (actionState && actionState.__devTools) {
+                            // If we have a route then navigate to it
+                            if (actionState.__devTools.router) {
+                                this.navigateToPath(actionState);
+                            }                        
+                            this.setStateFromDevTools(actionState, `${actionState.__devTools.action} [${Actions.REDUX_DEVTOOLS_JUMP}]`);
+                        }
                     }
+                    break;
+                case Actions.IMPORT_STATE:
+                    this.loadState(action);
+                    break;
+            }
+        }
+    }
+
+    private loadState(action: any) {
+        // clear existing state from devtools
+        this.disconnect();
+        this.connect();
+        if (action.payload) {
+            const nextLiftedState = action.payload.nextLiftedState;
+            if (nextLiftedState && nextLiftedState.computedStates) {
+                let i = 0;
+                for (let computedState of nextLiftedState.computedStates) {
+                    if (i > 0) {
+                        if (computedState.state && computedState.state.__devTools) {
+                            this.devToolsExtensionConnection.send(computedState.state.__devTools.action, computedState.state);
+                        }
+                    }
+                    i++;
                 }
             }
         }
@@ -216,5 +242,6 @@ enum Actions {
     JUMP_TO_STATE = 'JUMP_TO_STATE',
     JUMP_TO_ACTION = 'JUMP_TO_ACTION',
     REDUX_DEVTOOLS_JUMP = 'REDUX_DEVTOOLS_JUMP',
-    ROUTE_NAVIGATION = 'ROUTE_NAVIGATION'
+    ROUTE_NAVIGATION = 'ROUTE_NAVIGATION',
+    IMPORT_STATE = 'IMPORT_STATE'
 }
