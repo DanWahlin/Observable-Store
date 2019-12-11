@@ -91,14 +91,11 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
         if (action.payload) {
             const nextLiftedState = action.payload.nextLiftedState;
             if (nextLiftedState && nextLiftedState.computedStates) {
-                let i = 0;
-                for (let computedState of nextLiftedState.computedStates) {
-                    if (i > 0) {
-                        if (computedState.state && computedState.state.__devTools) {
-                            this.devToolsExtensionConnection.send(computedState.state.__devTools.action, computedState.state);
-                        }
+                nextLiftedState.computedStates.shift();
+                for (const computedState of nextLiftedState.computedStates) {
+                    if (computedState.state && computedState.state.__devTools) {
+                        this.devToolsExtensionConnection.send(computedState.state.__devTools.action, computedState.state);
                     }
-                    i++;
                 }
             }
         }
