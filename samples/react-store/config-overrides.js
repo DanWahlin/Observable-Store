@@ -10,7 +10,8 @@ const path = require('path');
 module.exports = (config, env) => {
     config.resolve.plugins = config.resolve.plugins.filter(plugin => !(plugin instanceof ModuleScopePlugin));
     // config = rewireAliases.aliasesOptions({
-		// '@codewithdan': path.resolve('../../dist') // path.resolve(__dirname, `${paths.appSrc}/components/`)
+    // '@codewithdan/observable-store': path.resolve('../../modules/observable-store/dist') // path.resolve(__dirname, `${paths.appSrc}/components/`)
+    // '@codewithdan/observable-store-extensions': path.resolve('../../modules/observable-store-extensions/dist')
     // })(config, env);
     return config;
 };
