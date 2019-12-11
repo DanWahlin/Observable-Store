@@ -1,0 +1,3 @@
+## Observable Store Extensions
+
+[Observable Store](https://github.com/DanWahlin/Observable-Store) is a front-end state management library that provides a simple yet powerful way to manage state in front-end applications. This package can be used to integrate Observable Store with the [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd). View more details about using the extensions at https://github.com/DanWahlin/Observable-Store.

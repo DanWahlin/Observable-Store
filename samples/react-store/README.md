@@ -1,33 +1,26 @@
 # React Core Concepts
 
-This shows how to use Observable Stores to maintain state in a React application. See the stores folder for examples.
+This shows how to use Observable Stores to maintain state in a React application. 
 
-## Running the Project
+1. Run `npm install`
 
-1. Install Node.js (https://nodejs.org)
+1. Run `npm start`
 
-1. Install create-react-app:
+## To use the local version of Observable Store (for trying out the local version of the packages)
 
-    `npx install -g create-react-app`
+1. Remove the `@codewithdan` packages from `package.json`.
 
-1. If you want to use Yarn then install it for your OS:
+1. Run `npm install`
 
-    Mac:      https://yarnpkg.com/en/docs/install#mac-tab
+1. Uncomment the 3 `@codewithdan` lines in `config-overrides.js` to define the alias.
 
-    Windows:  https://yarnpkg.com/en/docs/install#windows-tab
+1. Run the following command in `module/observable-store` to generate a `dist/observable-store` bundle:
 
-1. If using Yarn, run the following to install the application dependencies:
+    `npm run build`
 
-    `yarn`
+1. Run the following command in `module/observable-store-extensions` to generate a `dist/observable-store-extensions` bundle:
 
-1. If using npm, run the following to install the application dependencies:
-
-    `npm install`
-
-1. Run the following commands at the root of the app to build the source:
-
-    `npm run build-store`
-    `npm run build-store-extensions`
+    `npm run build`
 
 1. Run the application:
 

@@ -4,7 +4,7 @@
       "module": "commonjs",
       "moduleResolution": "node",
       "baseUrl": "./",
-      "outDir": "../../dist/observable-store",
+      "outDir": "./dist",
       "declaration": true,
       "sourceMap": true,
       "noImplicitUseStrict": true,

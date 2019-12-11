@@ -9,7 +9,7 @@
 
 ## Publishing Extensions Project
 
-1. Open `modules/observable-store` and run `npm link` to setup linking to `@codewithdan/observable-store`. Alternatively, you can uncomments the lines in modules/observable-store-extensions/tsconfig.json`.
+1. Open `modules/observable-store` and run `npm link` to setup linking to `@codewithdan/observable-store`. Alternatively, you can uncomments the lines in modules/observable-store-extensions/tsconfig.json` to work with it locally.
 
 1. Open `modules/observable-store-extensions` and run `npm link @codewithdan/observable-store`
 

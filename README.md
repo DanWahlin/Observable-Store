@@ -3,7 +3,7 @@
 
 ## Observable Store - State Management for Front-End Applications (Angular, React, Vue.js, or any other)
 
-Observable Store is a tiny front-end state management library that provides a lot of functionality. Front-end state management has become so complex that many of us spend more hours working on the state management code than on the rest of the application. Observable Store has one overall goal -   "keep it simple".
+Observable Store is a front-end state management library that provides a simple yet powerful way to manage state in front-end applications. Front-end state management has become so complex that many of us spend more hours working on the state management code than on the rest of the application. Observable Store has one overall goal -   "keep it simple".
 
 The goal of observable store is to provide a small, simple, and consistent way to manage state in any front-end application (Angular, React, Vue.js or any other) while achieving many of the [key goals](#goals) offered by more complex state management solutions. While many front-end frameworks/libraries provide state management functionality, many can be overly complex and are only useable with the target framework/library. Observable Store is simple and can be used with any front-end JavaScript codebase.
 
@@ -19,6 +19,7 @@ The goal of observable store is to provide a small, simple, and consistent way t
 1. Track state change history
 1. Easy to understand with a minimal amount of code required to get started
 1. Works with any front-end project built with JavaScript or TypeScript (Angular, React, Vue, or anything else)
+1. Integrate with the Redux DevTools (Angular and React currently supported)
 
 ### Steps to use Observable Store
 
@@ -696,13 +697,81 @@ Observable Store now supports extensions. These can be added when the applicatio
 
 The first built-in extension is for the [Redux DevTools](http://extension.remotedev.io/) and is in the `@codewithdan/observable-store-extensions` package.
 
-``` javascript
+**Integrating Angular with the Redux DevTools**
+
+See the example in the `samples/angular-store-edits` folder.
+
+Install the extensions package:
+
+`npm install @codewithdan/observable-store-extensions`
+
+Add the following into `main.ts`:
+
+``` typescript
 import { ObservableStore } from '@codewithdan/observable-store';
 import { ReduxDevToolsExtension } from '@codewithdan/observable-store-extensions';
+
 ...
-ObservableStore.globalSettings = {  /* pass settings here */ };
+
+ObservableStore.globalSettings = {  
+    trackStateHistory: true
+};
 ObservableStore.addExtension(new ReduxDevToolsExtension());
 ```
+
+Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd), run your Angular application, and open the Redux DevTools extension.
+
+**Integrating React with the Redux DevTools**
+
+See the example in the `samples/react-store` folder.
+
+Install the extensions package:
+
+`npm install @codewithdan/observable-store-extensions`
+
+Add the `history` prop to your router:
+
+```jsx
+import React from 'react';
+import { Router, Route, Redirect } from 'react-router-dom';
+import { createBrowserHistory } from 'history';|
+
+export const history = createBrowserHistory();
+
+...
+
+const Routes = () => (
+  <Router history={history}>
+    <div>
+       <!-- Routes go here -->
+    </div>
+  </Router>
+);
+
+export default Routes;
+
+```
+
+Add the following into `index.js` and ensure that you set `trackStateHistory` to `true` and pass the `history` object into the `ReduxDevToolsExtension` constructor as shown:
+
+``` javascript
+import Routes, { history } from './Routes';
+import { ObservableStore } from '@codewithdan/observable-store';
+import { ReduxDevToolsExtension } from '@codewithdan/observable-store-extensions';
+
+...
+
+ObservableStore.globalSettings = {  
+    trackStateHistory: true
+};
+ObservableStore.addExtension(new ReduxDevToolsExtension({ 
+    reactRouterHistory: history 
+}));
+
+ReactDOM.render(<Routes />, document.getElementById('root'));
+```
+
+Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd), run your React application, and open the Redux DevTools extension.
 
 ### Changes
 
@@ -795,7 +864,7 @@ The `includeStateChangesOnSubscribe` property is now deprecated since `stateWith
 
 Thanks to <a href="https://github.com/MichaelTurbe" target="_blank">Michael Turbe</a> for the feedback and discussion on these changes.
 
-#### 2.2.0 - [Not Published to npm Yet]
+#### 2.2.2 - December 10, 2019
 
 This version adds a [Redux DevTools Extension](#extensions). A BIG thank you to @brandonroberts (https://github.com/brandonroberts) of [NgRx](https://github.com/ngrx) fame for helping get me started integrating with the Redux DevTools.
 
@@ -807,8 +876,6 @@ New APIs:
 
 ### Building the Project
 
-1. `cd` into the `modules/observable-store` folder.
-1. Run `npm install`
-1. Run `npm run build` or `npm run build:w`
+See the `README.md` file in the `modules` folder.
 
 

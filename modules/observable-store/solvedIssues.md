@@ -10,6 +10,7 @@ To build Observable Store extensions cd into the folder and run:
 
 ## To publish to npm
 
+1. Copy the root `README.md` file into the `modules/observable-store` folder
 1. Run `npm run build` to create the dist folder (ensure tsconfig.json is set to copy the build there)
 1. Run `npm publish --access public` and enter the 2FA code for npm in 1Password
 

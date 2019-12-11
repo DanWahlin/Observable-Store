@@ -9,8 +9,8 @@ const path = require('path');
 
 module.exports = (config, env) => {
     config.resolve.plugins = config.resolve.plugins.filter(plugin => !(plugin instanceof ModuleScopePlugin));
-    config = rewireAliases.aliasesOptions({
-		'@codewithdan': path.resolve('../../dist-extensions') // path.resolve(__dirname, `${paths.appSrc}/components/`)
-    })(config, env);
+    // config = rewireAliases.aliasesOptions({
+		// '@codewithdan': path.resolve('../../dist') // path.resolve(__dirname, `${paths.appSrc}/components/`)
+    // })(config, env);
     return config;
 };

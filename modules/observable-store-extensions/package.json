@@ -1,11 +1,11 @@
 {
   "name": "@codewithdan/observable-store-extensions",
-  "version": "2.2.0",
+  "version": "2.2.2",
   "author": "Dan Wahlin",
   "description": "Observable Store redux devtools extension.",
   "license": "MIT",
-  "main": "../../dist/observable-store-extensions/index.js",
-  "typings": "../../dist/observable-store-extensions/index.d.ts",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "repository": {
     "url": "https://github.com/danwahlin/observable-store"
   },
@@ -22,14 +22,14 @@
   ],
   "scripts": {
     "tsc": "tsc",
-    "build": "rm -rf ../../dist/observable-store-extensions && tsc --build ./tsconfig.json",
+    "build": "rm -rf ./dist && tsc --build ./tsconfig.json",
     "build:w": "tsc  --build ./tsconfig.json --watch"
   },
-  "dependencies": {
+  "dependencies": {},
+  "peerDependencies": {
     "rxjs": "^6.4.0",
-    "@codewithdan/observable-store": "2.1.0"
+    "@codewithdan/observable-store": "2.2.0"
   },
-  "peerDependencies": {},
   "devDependencies": {
     "@types/jasmine": "^3.5.0",
     "@types/history": "^4.7.3",
