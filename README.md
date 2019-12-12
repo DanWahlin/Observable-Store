@@ -695,7 +695,12 @@ ReactDOM.render(<App />, document.getElementById('root'));
 
 Observable Store now supports extensions. These can be added when the application first loads by calling `ObservableStore.addExtension()`.
 
-The first built-in extension is for the [Redux DevTools](http://extension.remotedev.io/) and is in the `@codewithdan/observable-store-extensions` package.
+**Redux DevTools Extension**
+
+The first built-in extension adds [Redux DevTools](http://extension.remotedev.io/) integration into applications that use Observable Store. The extension can be found in the `@codewithdan/observable-store-extensions` package.
+
+![Integrating the Redux DevTools](images/reduxDevTools.png)
+
 
 **Integrating Angular with the Redux DevTools**
 
