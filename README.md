@@ -691,7 +691,7 @@ ObservableStore.globalSettings = {
 ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
-#### <a name="extensions"></a>Extensions
+### <a name="extensions"></a>Extensions
 
 Observable Store now supports extensions. These can be added when the application first loads by calling `ObservableStore.addExtension()`.
 
