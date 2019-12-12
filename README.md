@@ -710,7 +710,7 @@ Install the extensions package:
 
 `npm install @codewithdan/observable-store-extensions`
 
-Add the following into `main.ts`:
+Add the following into `main.ts` and ensure that you set `trackStateHistory` to `true`:
 
 ``` typescript
 import { ObservableStore } from '@codewithdan/observable-store';
