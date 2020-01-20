@@ -726,6 +726,10 @@ ObservableStore.addExtension(new ReduxDevToolsExtension());
 
 Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd), run your Angular application, and open the Redux DevTools extension.
 
+**Note about the `__devTools` Store Property:** 
+
+When the Redux DevTools extension is enabled it will add routing information into your store using a property called `__devTools`. This property is used to enable the Redux DevTools time travel feature and can be useful for associating different action states with a given route when manually looking at store data using the DevTools. If the Redux DevTools extension is not enabled (such as in production scenarios) then the `__devTools` property will not be added into your store.
+
 **Integrating React with the Redux DevTools**
 
 See the example in the `samples/react-store` folder.
