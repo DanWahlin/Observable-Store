@@ -728,7 +728,7 @@ ObservableStore.globalSettings = {
 ObservableStore.addExtension(new ReduxDevToolsExtension());
 ```
 
-Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd), run your Angular application, and open the Redux DevTools extension.
+Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your Angular application, and open the Redux DevTools extension.
 
 
 **Integrating React with the Redux DevTools**
@@ -781,7 +781,7 @@ ObservableStore.addExtension(new ReduxDevToolsExtension({
 ReactDOM.render(<Routes />, document.getElementById('root'));
 ```
 
-Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd), run your React application, and open the Redux DevTools extension.
+Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your React application, and open the Redux DevTools extension.
 
 ### Changes
 
