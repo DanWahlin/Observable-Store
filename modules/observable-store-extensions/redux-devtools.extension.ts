@@ -151,7 +151,9 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
 
     private sync() {
         this.globalStateChanged.subscribe(() => {
-            this.sendStateToDevTool();
+            if (this.devToolsExtensionConnection) {
+                this.sendStateToDevTool(); 
+            }
         });
     }
 
