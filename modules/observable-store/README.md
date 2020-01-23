@@ -701,6 +701,10 @@ The first built-in extension adds [Redux DevTools](http://extension.remotedev.io
 
 ![Integrating the Redux DevTools](images/reduxDevTools.png)
 
+**Note about the `__devTools` Store Property:** 
+
+When the Redux DevTools extension is enabled it will add routing information into your store using a property called `__devTools`. This property is used to enable the Redux DevTools time travel feature and can be useful for associating different action states with a given route when manually looking at store data using the DevTools. If the Redux DevTools extension is not enabled (such as in production scenarios) then the `__devTools` property will not be added into your store.
+
 
 **Integrating Angular with the Redux DevTools**
 
@@ -724,7 +728,8 @@ ObservableStore.globalSettings = {
 ObservableStore.addExtension(new ReduxDevToolsExtension());
 ```
 
-Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd), run your Angular application, and open the Redux DevTools extension.
+Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your Angular application, and open the Redux DevTools extension.
+
 
 **Integrating React with the Redux DevTools**
 
@@ -776,7 +781,32 @@ ObservableStore.addExtension(new ReduxDevToolsExtension({
 ReactDOM.render(<Routes />, document.getElementById('root'));
 ```
 
-Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd), run your React application, and open the Redux DevTools extension.
+Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your React application, and open the Redux DevTools extension.
+
+### Redux DevTools and Production
+
+While you can enable the Redux DevTools extension in production it's normally recommended that you remove it. That can be done through a custom build process or by checking the environment where your code is running.
+
+**Angular Example**
+
+```typescript
+import { environment } from './environments/environment';
+
+if (!environment.production) {
+    ObservableStore.addExtension(new ReduxDevToolsExtension());
+}
+```
+
+
+**React Example**
+
+```typescript
+if (process.env.NODE_ENV !== 'production') {
+    ObservableStore.addExtension(new ReduxDevToolsExtension({ 
+        reactRouterHistory: history 
+    }));
+}
+```
 
 ### Changes
 
@@ -878,6 +908,12 @@ New APIs:
 * A static `allStoreServices` property is now available to access all services that extend ObservableStore and interact with the store. Used by the Redux DevTools extension and can be useful for future extensions.
 * Added static `addExtension()` function. Used to add the [Redux DevTools Extension](#extensions) and any future extensions.
 * Added new `@codewithdan/observable-store-extensions` package for the redux devtools support.
+
+#### 2.2.4 - January 23, 2019
+
+Minor updates to the Observable Store docs. Fixed a bug in the Redux DevTools extension that would throw an error when the extension wasn't installed or available. Updated readme to discuss how to disable extensions for production scenarios.
+
+Thanks to <a href="https://github.com/riscie" target="_blank">Matthias Langhard</a> for the feedback and discussion on these changes.
 
 ### Building the Project
 
