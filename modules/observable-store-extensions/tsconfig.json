@@ -14,10 +14,10 @@
       "es2015",
       "es2017"
     ],
-    "paths": {
-      "@codewithdan/observable-store": [
-        "../observable-store"
-      ]
-    }
+    // "paths": {
+    //   "@codewithdan/observable-store": [
+    //     "../observable-store"
+    //   ]
+    // }
   }
 }

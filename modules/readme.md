@@ -8,6 +8,8 @@
 
 1. Open a sample project in `samples` to test it out.
 
+1. Run `npm publish --access public` and enter the 2FA code for npm
+
 
 ## Publishing Extensions Project
 
@@ -18,6 +20,8 @@
 1. Open `modules/observable-store-extensions/tsconfig.json` and comment out the `paths` property
 
 1. Open `modules/observable-store-extensions` and run `npm run build` or `npm run build:w`.
+
+1. Copy the root `readme.md` file into `modules/observable-store` (need to update the build to automate this).
 
 1. Run `npm publish --access public` and enter the 2FA code for npm
 
