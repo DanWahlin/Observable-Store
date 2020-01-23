@@ -8,7 +8,7 @@
 
 1. Open a sample project in `samples` to test it out.
 
-1. Run `npm publish --access public` and enter the 2FA code for npm
+1. Run `npm publish --access public` in the root of the `modules/observable-store` and `modules/observable-store-extensions` folders (enter the 2FA code for npm).
 
 
 ## Publishing Extensions Project
