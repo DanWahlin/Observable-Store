@@ -1,6 +1,6 @@
 import { ObservableStore } from '@codewithdan/observable-store';
 import { ReduxDevtoolsExtensionConnection, ReduxDevtoolsExtensionConfig } from './interfaces';
-import { EMPTY, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ObservableStoreExtension } from './interfaces';
 import { AngularDevToolsExtension } from './angular/angular-devtools-extension';
 
@@ -9,8 +9,6 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
     private require = this.window.require;
     private devToolsExtensionConnection: ReduxDevtoolsExtensionConnection;
     private devtoolsExtension = (window as any)['__REDUX_DEVTOOLS_EXTENSION__'];
-    private routerPropertyName = '__router';
-    private devToolsActionName = '__action';
     private angularExtension: AngularDevToolsExtension;
     private isAngular = this.checkIsAngular();
     private isReact = this.checkIsReact();
@@ -32,23 +30,20 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
             this.hookRouter();
         });
 
-        if (this.devtoolsExtension) {
-            if (this.config && this.config.routerPropertyName) {
-                this.routerPropertyName = this.config.routerPropertyName;
-            }
-            this.sub = this.connect();
-        }
+        this.connect();
     }
 
     private connect(config?: ReduxDevtoolsExtensionConfig) {
-        return new Observable(subscriber => {
-            const connection = this.devtoolsExtension.connect(config);
-            this.devToolsExtensionConnection = connection;
-            connection.init(config);
-            connection.subscribe((change: any) => subscriber.next(change));
-            return connection.unsubscribe;
-        })
-        .subscribe((action: any) => this.processDevToolsAction(action));
+        if (this.devtoolsExtension) {
+            this.sub = new Observable(subscriber => {
+                const connection = this.devtoolsExtension.connect(config);
+                this.devToolsExtensionConnection = connection;
+                connection.init(config);
+                connection.subscribe((change: any) => subscriber.next(change));
+                return connection.unsubscribe;
+            })
+            .subscribe((action: any) => this.processDevToolsAction(action));
+        }
     }
 
     private disconnect() {
@@ -62,13 +57,15 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
 
     private processDevToolsAction(action: any) {
         // Called as user interacts with Redux Devtools controls
-        if (action.type === Actions.DISPATCH) {
+        if (action && action.type === Actions.DISPATCH) {
             switch (action.payload.type) {
                 case Actions.JUMP_TO_STATE:
                 case Actions.JUMP_TO_ACTION:
                     if (action.state) {
                         const actionState = JSON.parse(action.state);
                         if (actionState && actionState.__devTools) {
+                            // Track that we're "debugging" with the devtools so the state/action doesn't get sent back to the devtools
+                            actionState.__devTools.debugging = true;
                             // If we have a route then navigate to it
                             if (actionState.__devTools.router) {
                                 this.navigateToPath(actionState);
@@ -150,9 +147,17 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
     }
 
     private sync() {
-        this.globalStateChanged.subscribe(() => {
+        this.globalStateChanged.subscribe((state) => {
             if (this.devToolsExtensionConnection) {
-                this.sendStateToDevTool(); 
+                // See if we're debugging (time travel or jump actions) using the redux devtools
+                // If we're debugging then don't send the state back to the devtools or it'll be duplicated
+                if (state && state.__devTools && state.__devTools.debugging) {
+                    // delete debugging property to avoid clutter in __devTools property
+                    delete state.__devTools.debugging;
+                }
+                else {
+                    this.sendStateToDevTool(); 
+                }
             }
         });
     }
