@@ -1,13 +1,16 @@
 export class AngularDevToolsExtension {
-    private window = (window as any);
-    private rootElements: any;
+    private window = window as any;
+    private testability: any;
     private router: any;
     private ngZone: any;
 
     constructor() {
-        this.rootElements = this.window.ng.probe(this.window.getAllAngularRootElements()[0]);
-        const providers = this.rootElements.injector.view.root.ngModule._providers;        
-        this.router = providers.find(p => p && p.constructor && p.constructor.name === 'Router');
+        this.testability = this.window.getAllAngularTestabilities()[0];
+
+        this.router = this.testability.findProviders(
+            this.window.getAllAngularRootElements()[0],
+            'Router'
+        );
 
         this.ngZone = this.getNgZone();
     }
@@ -30,11 +33,9 @@ export class AngularDevToolsExtension {
 
     private getNgZone() {
         try {
-            return this.rootElements.injector.get(this.window.ng.coreTokens.NgZone);
-        }
-        catch (e) {
+            return this.testability._ngZone;
+        } catch (e) {
             console.log(e);
         }
     }
-
 }
