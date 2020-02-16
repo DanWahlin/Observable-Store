@@ -703,7 +703,7 @@ The first built-in extension adds [Redux DevTools](http://extension.remotedev.io
 
 **Note about Angular 9/Ivy and the Redux DevTools Support**
 
-While the <a href="https://github.com/DanWahlin/Observable-Store/blob/master/modules/observable-store-extensions/redux-devtools.extension.ts" target="_blank">code is in place</a> to support it, The Observable Store Redux DevTools currently do not work with Angular 9 and Ivy. Once the `findProviders()` API is fully implemented and released by Angular then support will be finalized for the Redux DevTools.
+While the [code is in place](https://github.com/DanWahlin/Observable-Store/blob/master/modules/observable-store-extensions/angular/angular-devtools-extension.ts) to support it, The Observable Store Redux DevTools currently do not work with Angular 9 and Ivy. Once the `findProviders()` API is fully implemented and released by Angular then support will be finalized for the Redux DevTools.
 
 **Note about the `__devTools` Store Property:** 
 
