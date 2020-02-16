@@ -10,7 +10,6 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
     private devToolsExtensionConnection: ReduxDevtoolsExtensionConnection;
     private devtoolsExtension = (window as any)['__REDUX_DEVTOOLS_EXTENSION__'];
     private angularExtension: AngularDevToolsExtension;
-    private isAngular = this.checkIsAngular();
     private isReact = this.checkIsReact();
     private routeTriggeredByDevTools = false;
     private sub: Subscription;
@@ -23,7 +22,7 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
         this.sync();
 
         this.window.addEventListener('DOMContentLoaded', () => {
-            if (this.isAngular) {
+            if (this.checkIsAngular()) {
                 this.angularExtension = new AngularDevToolsExtension();
             }
 
@@ -111,7 +110,7 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
                 return;
             }
 
-            if (this.isAngular) {
+            if (this.checkIsAngular()) {
                 this.angularExtension.navigate(path);
                 return;
             }
