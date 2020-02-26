@@ -1,79 +1,25 @@
 import { skip } from 'rxjs/operators';
-import { ObservableStore, stateFunc } from './observable-store';
-import { StateWithPropertyChanges } from './interfaces';
+import { ObservableStore, stateFunc } from '../observable-store';
+import { StateWithPropertyChanges } from '../interfaces';
+import { MockStore, UserStore, MockState, user } from './mocks';
 
-const Update_Prop1 = 'Update_Prop1';
+let mockStore = null;
+let userStore = null;
 
-interface MockUser {
-  name: string;
-  address?: MockAddress;
-}
-
-interface MockAddress {
-  city: string;
-  state: string;
-  zip: number;
-}
-
-interface MockState {
-  prop1: string;
-  prop2: string;
-  user: MockUser;
-  users: MockUser[];
-}
-
-class MockStore extends ObservableStore<MockState> {
-  updateProp1(value: string) {
-    this.setState({ prop1: value }, Update_Prop1);
-  }
-
-  updateForTestAction(value: string, action: string) {
-    this.setState({ prop1: value }, action);
-  }
-
-  updateUsingAFunction(func: stateFunc<MockState>) {
-    this.setState(prevState => {
-      return func(prevState);
-    });
-  }
-
-  get currentState() {
-    return this.getState();
-  }
-}
-
-let user = { name: 'foo', address: { city: 'Phoenix', state: 'AZ', zip: 85349 } };
-
-class UserStore extends ObservableStore<MockState> {
-  constructor(settings) {
-    super(settings);
-    this.setState(null, 'Initialize');
-    this.resetStateHistory();
-  }
-
-  updateUser(user: MockUser) {
-    this.setState({ user }, 'Update User');
-  }
-
-  addToUsers(user: MockUser) {
-    const state = this.getState();
-    let users = (state && state.users) ? state.users : [];
-    users.push(user);
-    this.setState({ users }, 'Update Users');
-  }
-
-  get currentState() {
-    return this.getState();
-  }
-}
+beforeEach(() => {
+    ObservableStore['isTesting'] = true;
+    mockStore = new MockStore({ trackStateHistory: true });
+    userStore = new UserStore(null);
+    // Clear all existing store state
+    mockStore.setState(null, 'Reinitialize State For Each Test');
+});
 
 describe('Observable Store', () => {
-  let mockStore = new MockStore({ trackStateHistory: true });
 
   describe('Changing state', () => {
+
     it('should change a single property', () => {
       mockStore.updateProp1('test');
-
       expect(mockStore.currentState.prop1).toEqual('test');
     });
 
@@ -93,6 +39,9 @@ describe('Observable Store', () => {
 
     it('should execute an anonymous function on a slice of data', () => {
       const updateUser: stateFunc<MockState> = (state: MockState) => {
+        if (!state) { 
+          state = { prop1: null, prop2: null, user: null, users: null } ;
+        }
         state.user = { name: 'fred' };
         return { user: state.user };
       };
@@ -197,7 +146,7 @@ describe('Observable Store', () => {
 
   describe('SliceSelector', () => {
 
-    const userStore = new UserStore({
+    userStore = new UserStore({
       stateSliceSelector: state => {
         if (state) {
           return { user: state.user };
@@ -221,11 +170,9 @@ describe('Observable Store', () => {
   describe('Deep Clone', () => {
     // Custom setting that can be used to allow globalSettings to be passed
     // more than once
-    ObservableStore['isTesting'] = true;
 
     it('should be deep clone when not production', () => {
       ObservableStore.globalSettings = { isProduction: false }; // will deep clone while in dev
-      const userStore = new UserStore(null);
       userStore.updateUser(user);
       user.address.city = 'Las Vegas';
       expect(userStore.currentState.user.address.city).toEqual('Phoenix');
@@ -233,7 +180,6 @@ describe('Observable Store', () => {
 
     it('should not deep clone when production', () => {
       ObservableStore.globalSettings = { isProduction: true }; // will not deep clone because not in dev
-      const userStore = new UserStore(null);
       userStore.updateUser(user);
       user.address.city = 'Las Vegas';
       expect(userStore.currentState.user.address.city).toEqual('Las Vegas');
@@ -241,16 +187,15 @@ describe('Observable Store', () => {
 
     it('should be deep clone with matching number of keys', () => {
       ObservableStore.globalSettings = { isProduction: false }; // will deep clone while in dev
-      const userStore = new UserStore(null);
       userStore.updateUser(user);
       userStore.addToUsers(user);
+      console.log(userStore.currentState);
       const stateKeys = Object.getOwnPropertyNames(userStore.currentState);
       expect(stateKeys.length).toEqual(2);
     });
 
     it('should deep clone multiple items when not production', () => {
       ObservableStore.globalSettings = { isProduction: false }; // will deep clone while in dev
-      const userStore = new UserStore(null);
       for (let i=0;i<10;i++) {
         userStore.addToUsers(user);
       }
@@ -275,6 +220,26 @@ describe('Observable Store', () => {
       }
     });
 
+    it('should set initial state', () => {
+      ObservableStore.initializeState({ user: { name: 'Fred' } });
+      const state = userStore.currentState;
+      expect(state.user.name).toEqual('Fred');
+    });
+
+    it('should error when setting initial state and state already exists', () => {
+      // Update store state
+      mockStore.updateProp1();
+      try {
+        // Try to initialize state (should throw)
+        ObservableStore.initializeState({ user: { name: 'Fred' } });
+      }
+      catch (e) {
+        expect(e.message).toEqual('The store state has already been initialized. initializeStoreState() can ' +
+                                  'only be called once BEFORE any store state has been set.');
+      }
+
+    });
+
     it('should error when global settings passed more than once', () => {
       ObservableStore.globalSettings = { trackStateHistory: true };
       try {
@@ -291,7 +256,7 @@ describe('Observable Store', () => {
 
     it('should set trackHistory through global settings', () => {
       ObservableStore.globalSettings = { trackStateHistory: true };
-      const userStore = new UserStore(null);
+      userStore = new UserStore(null);
       userStore.updateUser(user);
       userStore.updateUser(user);
       expect(userStore.stateHistory.length).toEqual(2);
@@ -299,7 +264,7 @@ describe('Observable Store', () => {
 
     it('should turn off trackHistory through global settings', () => {
       ObservableStore.globalSettings = { trackStateHistory: false };
-      const userStore = new UserStore(null);
+      userStore = new UserStore(null);
       userStore.updateUser(user);
       userStore.updateUser(user);
       expect(userStore.stateHistory.length).toEqual(0);
@@ -307,7 +272,7 @@ describe('Observable Store', () => {
 
     it('should turn on trackHistory through settings', () => {
       ObservableStore.globalSettings = {};
-      const userStore = new UserStore({ trackStateHistory: true });
+      userStore = new UserStore({ trackStateHistory: true });
       userStore.updateUser(user);
       userStore.updateUser(user);
       expect(userStore.stateHistory.length).toEqual(2);
@@ -315,7 +280,7 @@ describe('Observable Store', () => {
 
     it('should turn off trackHistory through settings', () => {
       ObservableStore.globalSettings = {};
-      const userStore = new UserStore({ trackStateHistory: false });
+      userStore = new UserStore({ trackStateHistory: false });
       userStore.updateUser(user);
       expect(userStore.stateHistory.length).toEqual(0);
     });

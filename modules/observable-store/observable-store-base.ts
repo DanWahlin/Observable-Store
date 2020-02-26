@@ -21,14 +21,25 @@ class ObservableStoreBase {
     globalSettings: ObservableStoreGlobalSettings = null;
     services: any[] = []; // Track all services reading/writing to store. Useful for extensions like DevToolsExtension.
 
-    getStoreState() {
-        if (!this.globalSettings || (this.globalSettings && !this.globalSettings.isProduction)) {
-            // Deep clone in dev
-            return this.deepClone(this._storeState);
+    initializeState(state: any) {
+        if (this._storeState) {
+            throw Error('The store state has already been initialized. initializeStoreState() can ' +
+                        'only be called once BEFORE any store state has been set.');
         }
+        return this.setStoreState(state);
+    }
 
-        // Do NOT deep clone if not dev for performance
-        return { ...this._storeState };
+    getStoreState() {
+        if (this._storeState) {
+            if (!this.globalSettings || (this.globalSettings && !this.globalSettings.isProduction)) {
+                // Deep clone in dev
+                return this.deepClone(this._storeState);
+            }
+
+            // Do NOT deep clone if not dev for performance
+            return { ...this._storeState };
+        }
+        return null;
     }
 
     setStoreState(state) {

@@ -106,6 +106,14 @@ export class ObservableStore<T> {
     }
 
     /**
+     * Used to initailize the store's starting state. An error will be thrown if this is called and store state already exists. 
+     * No notifications are sent out when the store state is initialized by calling initializeStoreState().
+     */
+    static initializeState(state: any) {
+        ObservableStoreBase.initializeState(state);
+    }
+
+    /**
      * Retrieve store's state. If using TypeScript (optional) then the state type defined when the store 
      * was created will be returned rather than `any`.
      */
