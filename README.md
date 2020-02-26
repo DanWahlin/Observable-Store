@@ -920,13 +920,13 @@ Minor updates to the Observable Store docs. Fixed a bug in the Redux DevTools ex
 
 Thanks to <a href="https://github.com/riscie" target="_blank">Matthias Langhard</a> for the feedback and discussion on these changes.
 
-### Building the Project
-
-See the `README.md` file in the `modules` folder.
-
 #### 2.2.5 - February 26, 2020
 
 - Added `ObservableStore.initializeState()` API. 
 - Refactored unit tests.
+
+### Building the Project
+
+See the `README.md` file in the `modules` folder.
 
 
