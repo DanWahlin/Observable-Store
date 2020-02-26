@@ -106,7 +106,7 @@ export class ObservableStore<T> {
     }
 
     /**
-     * Used to initailize the store's starting state. An error will be thrown if this is called and store state already exists. 
+     * Used to initialize the store's starting state. An error will be thrown if this is called and store state already exists. 
      * No notifications are sent out when the store state is initialized by calling initializeStoreState().
      */
     static initializeState(state: any) {
@@ -125,6 +125,7 @@ export class ObservableStore<T> {
      * Set store state. Pass the state to be updated as well as the action that is occuring. 
      * The state value can be a function [(see example)](https://github.com/danwahlin/observable-store#store-api). 
      * The latest store state is returned.
+     * The dispatchState parameter can be set to false if you do not want to send state change notifications to subscribers.
      */
     protected setState(state: Partial<T> | stateFunc<T>, 
         action?: string, 

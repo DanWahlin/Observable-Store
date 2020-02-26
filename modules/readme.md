@@ -4,6 +4,8 @@
 
 1. Open `modules/observable-store` and run `npm run build` or `npm run build:w`.
 
+1. Run `npm run test` in `modules/observable-store` and ensure all tests pass.
+
 1. Open one of the samples and uncomment the lines in `tsconfig.json` for `@codewithdan` (makes local testing easier).
 
 1. Open a sample project in `samples` to test it out.

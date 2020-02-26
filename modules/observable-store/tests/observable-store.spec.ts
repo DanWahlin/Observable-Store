@@ -189,7 +189,6 @@ describe('Observable Store', () => {
       ObservableStore.globalSettings = { isProduction: false }; // will deep clone while in dev
       userStore.updateUser(user);
       userStore.addToUsers(user);
-      console.log(userStore.currentState);
       const stateKeys = Object.getOwnPropertyNames(userStore.currentState);
       expect(stateKeys.length).toEqual(2);
     });

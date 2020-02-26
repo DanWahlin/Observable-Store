@@ -546,7 +546,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 
 ### <a name="vue"></a>Using Observable Store with Vue.js
 
-Coming Soon...
+....
 
 ### <a name="api"></a>Store API
 
@@ -555,11 +555,12 @@ Observable Store provides a simple API that can be used to get/set state, subscr
  Functions                                      | Description
 | ----------------------------------------------| -----------------------------------------------------
 | `static addExtension(extension: ObservableStoreExtension)`                              | Used to add an extension into ObservableStore. The extension must implement the `ObservableStoreExtension` interface. 
-| `dispatchState(stateChanges: Partial<T>, dispatchGlobalState: boolean = true) : T`                              | Dispatch the store's state without modifying the store state. Service state can be dispatched as well as the global store state. If `dispatchGlobalState` is false then global state will not be dispatched to subscribers (defaults to `true`). 
+| `static initializeState(state: any)`                              | Used to initialize the store's state. An error will be thrown if this is called and store state already exists so this should be set when the application first loads. No notifications are sent out to store subscribers when the store state is initialized.
+| `dispatchState(stateChanges: Partial<T>, dispatchGlobalState: boolean = true) : T`                              | Dispatch the store's state without modifying the  state. Service state can be dispatched as well as the global store state. If `dispatchGlobalState` is false then global state will not be dispatched to subscribers (defaults to `true`). 
 | `getState() : T`                              | Retrieve store's state. If using TypeScript (optional) then the state type defined when the store was created will be returned rather than `any`.                           
 | `logStateAction(state: any, action: string): void` | Add a custom state value and action into the state history. Assumes `trackStateHistory` setting was set on store or using the global settings.
 | `resetStateHistory(): void`                   | Reset the store's state history to an empty array.
-| `setState(state: T, action: string) : T`      | Set store state. Pass the state to be updated as well as the action that is occuring. The state value can be a function (see example below). The latest store state is returned.
+| `setState(state: T, action: string, dispatchState: boolean = true) : T`      | Set the store state. Pass the state to be updated as well as the action that is occuring. The state value can be a function (see example below). The latest store state is returned and any store subscribers are notified of the state change. The dispatchState parameter can be set to `false` if you do not want to send state change notifications to subscribers.
 <br>
 
  Properties                                     | Description
@@ -922,5 +923,10 @@ Thanks to <a href="https://github.com/riscie" target="_blank">Matthias Langhard<
 ### Building the Project
 
 See the `README.md` file in the `modules` folder.
+
+#### 2.2.5 - February 26, 2020
+
+- Added `ObservableStore.initializeState()` API. 
+- Refactored unit tests.
 
 
