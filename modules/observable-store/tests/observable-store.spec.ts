@@ -23,10 +23,14 @@ describe('Observable Store', () => {
       expect(mockStore.currentState.prop1).toEqual('test');
     });
 
-    it('should change reset the store state', () => {
+    it('should reset the store state', () => {
+      let newState = { prop1: 'reset prop1 state', prop2: null, user: 'reset user state', users: null };
       mockStore.updateProp1('test');
-      ObservableStore.resetState(null);
-      expect(mockStore.currentState).toBe(null);
+      ObservableStore.resetState(newState);
+      expect(mockStore.currentState.prop1).toEqual('reset prop1 state');
+      expect(mockStore.currentState.user).toEqual('reset user state');
+      expect(userStore.currentState.prop1).toEqual('reset prop1 state');
+      expect(userStore.currentState.user).toEqual('reset user state');
     });
 
     it('should execute an anonymous function', () => {
