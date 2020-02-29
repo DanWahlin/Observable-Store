@@ -926,6 +926,11 @@ Thanks to <a href="https://github.com/riscie" target="_blank">Matthias Langhard<
 - Added `ObservableStore.initializeState()` API. 
 - Refactored unit tests.
 
+#### 2.2.6 - February 29, 2020
+
+- Added `ObservableStore.resetState()` API.
+- Added unit tests for `resetState()`.
+
 ### Building the Project
 
 See the `README.md` file in the `modules` folder.
