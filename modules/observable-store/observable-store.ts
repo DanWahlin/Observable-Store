@@ -114,6 +114,23 @@ export class ObservableStore<T> {
     }
 
     /**
+     * Used to reset the state of the store to a desired value for all services that derive 
+     * from ObservableStore<T> to a desired value. 
+     * A state change notification and global state change notification is sent out to subscribers if the dispatchState parameter is true (the default value).
+     */
+    static resetState(state: any, dispatchState: boolean = true) {
+        ObservableStoreBase.setStoreState(state);
+        if (dispatchState) {
+            const services = ObservableStore.allStoreServices;
+            if (services) {
+                for (const service of services) {
+                    service.dispatchState(state);
+                }
+            }
+        }
+    }
+
+    /**
      * Retrieve store's state. If using TypeScript (optional) then the state type defined when the store 
      * was created will be returned rather than `any`.
      */

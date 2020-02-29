@@ -23,6 +23,12 @@ describe('Observable Store', () => {
       expect(mockStore.currentState.prop1).toEqual('test');
     });
 
+    it('should change reset the store state', () => {
+      mockStore.updateProp1('test');
+      ObservableStore.resetState(null);
+      expect(mockStore.currentState).toBe(null);
+    });
+
     it('should execute an anonymous function', () => {
       const capitalizeProp1: stateFunc<MockState> = (state: MockState) => {
         state.prop1 = state.prop1.toLocaleUpperCase();
@@ -73,6 +79,23 @@ describe('Observable Store', () => {
       mockStore.updateProp1('test');
 
       expect(receiveUpdate).toBeTruthy();
+      sub.unsubscribe();
+    });
+
+    // we will skip 1 to account for the initial BehaviorSubject<T> value
+    it('should receive notification when state has been reset', () => {
+      let receivedUpdate = false;
+      let receivedState = null;
+      const sub = mockStore.stateChanged.pipe(skip(1)).subscribe((state) => {
+        receivedUpdate = true;
+        receivedState = state;
+      });
+      mockStore.updateProp1('initial state');
+      ObservableStore.resetState({ prop1: 'state reset', prop2: null, user: null, users: null });
+
+      expect(receivedUpdate).toBeTruthy();
+      expect(receivedState.prop1).toEqual('state reset');
+      expect(receivedState.prop2).toBe(null);
       sub.unsubscribe();
     });
 
