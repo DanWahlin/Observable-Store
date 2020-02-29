@@ -931,6 +931,8 @@ Thanks to <a href="https://github.com/riscie" target="_blank">Matthias Langhard<
 - Added `ObservableStore.resetState()` API.
 - Added unit tests for `resetState()`.
 
+Feedback from <a href="https://github.com/svehera" target="_blank">Severgyn</a> and <a href="https://github.com/LuizFilipeMedeira" target="_blank">Luiz Filipe</a> influenced this feature. Thanks folks!
+
 ### Building the Project
 
 See the `README.md` file in the `modules` folder.
