@@ -235,7 +235,7 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
     }
 
     private checkIsAngular() {
-        return this.window.ng;
+        return this.window.ng || this.window.getAllAngularTestabilities;
     }
 
 }

@@ -1,6 +1,6 @@
 {
   "name": "@codewithdan/observable-store-extensions",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "author": "Dan Wahlin",
   "description": "Observable Store redux devtools extension.",
   "license": "MIT",
