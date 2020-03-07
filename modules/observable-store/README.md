@@ -933,7 +933,7 @@ Thanks to <a href="https://github.com/riscie" target="_blank">Matthias Langhard<
 
 Feedback from <a href="https://github.com/svehera" target="_blank">Severgyn</a> and <a href="https://github.com/LuizFilipeMedeira" target="_blank">Luiz Filipe</a> influenced this feature. Thanks folks!
 
-#### 2.2.7 - February 29, 2020
+#### 2.2.7 - March 6, 2020
 
 - Fixed bug where Redux DevTools code for Angular v8 or lower was also calling code intended for Angular v9 (which is still a work in progress as noted in the Redux DevTools section above).
 
