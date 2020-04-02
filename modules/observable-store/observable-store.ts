@@ -146,7 +146,10 @@ export class ObservableStore<T> {
 
     /**
      * Retrieve store's state. If using TypeScript (optional) then the state type defined when the store 
-     * was created will be returned rather than `any`.
+     * was created will be returned rather than `any`. The deepCloneReturnedState boolean parameter (default is true) can be used
+     * to determine if the returned state will be deep cloned or not. If set to false, a reference to the store state will 
+     * be returned and it's up to the user to ensure the state isn't change from outside the store. Setting it to false can be
+     * useful in cases where read-only cached data is stored and must be retrieved as quickly as possible without any cloning.
      */
     protected getState(deepCloneReturnedState: boolean = true) : T {
         return this._getStateOrSlice(deepCloneReturnedState);
@@ -167,6 +170,9 @@ export class ObservableStore<T> {
      * The state value can be a function [(see example)](https://github.com/danwahlin/observable-store#store-api). 
      * The latest store state is returned.
      * The dispatchState parameter can be set to false if you do not want to send state change notifications to subscribers.
+     * The deepCloneReturnedState boolean parameter (default is true) can be used
+     * to determine if the state will be deep cloned before it is added to the store. Setting it to false can be
+     * useful in cases where read-only cached data is stored and must added to the store as quickly as possible without any cloning.
      */
     protected setState(state: Partial<T> | stateFunc<T>, 
         action?: string, 
