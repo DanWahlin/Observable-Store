@@ -555,11 +555,13 @@ Observable Store provides a simple API that can be used to get/set state, subscr
  Functions                                      | Description
 | ----------------------------------------------| -----------------------------------------------------
 | `dispatchState(stateChanges: Partial<T>, dispatchGlobalState: boolean = true) : T`                              | Dispatch the store's state without modifying the  state. Service state can be dispatched as well as the global store state. If `dispatchGlobalState` is false then global state will not be dispatched to subscribers (defaults to `true`). 
-| `getState() : T`                              | Retrieve store's state. If using TypeScript (optional) then the state type defined when the store was created will be returned rather than `any`.                           
+| `getState() : T`                              | Retrieve store's state. If using TypeScript (optional) then the state type defined when the store was created will be returned rather than `any`. 
+| `getStateProperty<TProp>(propertyName: string, deepCloneReturnedState: boolean = true) : TProp`| Retrieve a specific property from the store's state which can be more efficient than getState() since only the defined property value will be returned (and cloned) rather than the entire store value. If using TypeScript (optional) then the generic property type used with the function call will be the return type.                           
 | `logStateAction(state: any, action: string): void` | Add a custom state value and action into the state history. Assumes `trackStateHistory` setting was set on store or using the global settings.
 | `resetStateHistory(): void`                   | Reset the store's state history to an empty array.
 | `setState(state: T, action: string, dispatchState: boolean = true) : T`      | Set the store state. Pass the state to be updated as well as the action that is occuring. The state value can be a function (see example below). The latest store state is returned and any store subscribers are notified of the state change. The dispatchState parameter can be set to `false` if you do not want to send state change notifications to subscribers.
 | `static addExtension(extension: ObservableStoreExtension)`                              | Used to add an extension into ObservableStore. The extension must implement the `ObservableStoreExtension` interface. 
+| `static clearState(): void`| Clear/null the store state across all services that use it.
 | `static initializeState(state: any)`                              | Used to initialize the store's state. An error will be thrown if this is called and store state already exists so this should be set when the application first loads. No notifications are sent out to store subscribers when the store state is initialized.
 | `static resetState(state, dispatchState: boolean = true)`                              | Used to reset the state of the store to a desired value for all services that derive from ObservableStore<T>. A state change notification and global state change notification is sent out to subscribers if the dispatchState parameter is true (the default value).
 <br>
@@ -938,6 +940,16 @@ Feedback from <a href="https://github.com/svehera" target="_blank">Severgyn</a> 
 - Fixed bug where Redux DevTools code for Angular v8 or lower was also calling code intended for Angular v9 (which is still a work in progress as noted in the Redux DevTools section above).
 
 Thanks to <a href="https://github.com/trentsteel84" target="_blank">trentsteel84</a> for reporting the issue.
+
+##### 2.2.8 - April 2, 2020
+
+- All calls to getState() and setState() clone data now due to edge issues that can arise otherwise with external references. Previously, it would
+selectively clone based on dev or prod. All functions that get/set state now provide an optional `deepClone` type of boolean property that can be used in cases where
+it's not desirable to clone state (large amount of data being added to the store for caching for example).
+
+- Added `ObservableStore.clearState()` API to null the store across all services that use it.
+- Added `getStateProperty<T>(propName: string)` to retrieve a specific property from the store versus retrieving the entire store
+as `getState()` does.
 
 ### Building the Project
 

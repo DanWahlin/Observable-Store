@@ -19,7 +19,7 @@
     "@angular/platform-browser": "^9.0.0",
     "@angular/platform-browser-dynamic": "^9.0.0",
     "@angular/router": "^9.0.0",
-    "@codewithdan/observable-store": "^2.2.7",
+    "@codewithdan/observable-store": "^2.2.8",
     "@codewithdan/observable-store-extensions": "^2.2.7",
     "core-js": "^2.5.4",
     "rxjs": "^6.5.3",

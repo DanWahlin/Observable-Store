@@ -121,11 +121,25 @@ export class ObservableStore<T> {
     static resetState(state: any, dispatchState: boolean = true) {
         ObservableStoreBase.setStoreState(state);
         if (dispatchState) {
-            const services = ObservableStore.allStoreServices;
-            if (services) {
-                for (const service of services) {
-                    service.dispatchState(state);
-                }
+            ObservableStore.dispatchToAllServices(state);
+        }
+    }
+
+    /**
+     * Clear/null the store state for all services that use it.
+     */
+    static clearState(dispatchState: boolean = true) {
+        ObservableStoreBase.clearStoreState();
+        if (dispatchState) {
+            ObservableStore.dispatchToAllServices(null);
+        }
+    }
+
+    private static dispatchToAllServices(state: any) {
+        const services = ObservableStore.allStoreServices;
+        if (services) {
+            for (const service of services) {
+                service.dispatchState(state);
             }
         }
     }
@@ -134,8 +148,18 @@ export class ObservableStore<T> {
      * Retrieve store's state. If using TypeScript (optional) then the state type defined when the store 
      * was created will be returned rather than `any`.
      */
-    protected getState() : T {
-        return this._getStateOrSlice();
+    protected getState(deepCloneReturnedState: boolean = true) : T {
+        return this._getStateOrSlice(deepCloneReturnedState);
+    }
+
+    /**
+     * Retrieve a specific property from the store's state which can be more efficient than getState() 
+     * since only the defined property value will be returned (and cloned) rather than the entire 
+     * store value. If using TypeScript (optional) then the generic property type used with the 
+     * function call will be the return type.
+     */
+    protected getStateProperty<TProp>(propertyName: string, deepCloneReturnedState: boolean = true) : TProp {
+        return ObservableStoreBase.getStoreState(propertyName, deepCloneReturnedState);
     }
 
     /**
@@ -146,7 +170,8 @@ export class ObservableStore<T> {
      */
     protected setState(state: Partial<T> | stateFunc<T>, 
         action?: string, 
-        dispatchState: boolean = true) : T { 
+        dispatchState: boolean = true,
+        deepCloneState: boolean = true) : T { 
 
         // Needed for tracking below (don't move or delete)
         const previousState = this.getState();
@@ -154,10 +179,10 @@ export class ObservableStore<T> {
         switch (typeof state) {
             case 'function':
                 const newState = state(this.getState());
-                this._updateState(newState);
+                this._updateState(newState, deepCloneState);
                 break;
             case 'object':
-                this._updateState(state);
+                this._updateState(state, deepCloneState);
                 break;
             default:
                 throw Error('Pass an object or a function for the state parameter when calling setState().');
@@ -180,7 +205,7 @@ export class ObservableStore<T> {
             console.log('%cSTATE CHANGED', 'font-weight: bold', '\r\nAction: ', action, caller, '\r\nState: ', state);
         }
 
-        return this.getState();
+        return this.getState(deepCloneState);
     }
 
     /**
@@ -204,12 +229,12 @@ export class ObservableStore<T> {
         ObservableStoreBase.stateHistory = [];
     }
 
-    private _updateState(state: Partial<T>) {
-        ObservableStoreBase.setStoreState(state);
+    private _updateState(state: Partial<T>, deepCloneState: boolean) {
+        ObservableStoreBase.setStoreState(state, deepCloneState);
     }
 
-    private _getStateOrSlice(): Readonly<Partial<T>> {
-        const storeState = ObservableStoreBase.getStoreState();
+    private _getStateOrSlice(deepCloneReturnedState: boolean): Readonly<Partial<T>> {
+        const storeState = ObservableStoreBase.getStoreState(null, deepCloneReturnedState);
         if (this._settings.stateSliceSelector) {
             return this._settings.stateSliceSelector(storeState);
         }
@@ -222,14 +247,14 @@ export class ObservableStore<T> {
      */
     protected dispatchState(stateChanges: Partial<T>, dispatchGlobalState: boolean = true) {       
         // Get store state or slice of state
-        const clonedStateOrSlice = this._getStateOrSlice();
+        const clonedStateOrSlice = this._getStateOrSlice(true);
 
         //  Get full store state
         const clonedGlobalState = ObservableStoreBase.getStoreState();
 
         // includeStateChangesOnSubscribe is deprecated
         if (this._settings.includeStateChangesOnSubscribe) {
-            console.log('includeStateChangesOnSubscribe is deprecated. ' +
+            console.warn('includeStateChangesOnSubscribe is deprecated. ' +
                         'Subscribe to stateChangedWithChanges or globalStateChangedWithChanges instead.');
             this._stateDispatcher$.next({ state: clonedStateOrSlice, stateChanges } as any);
             ObservableStoreBase.globalStateDispatcher.next({ state: clonedGlobalState, stateChanges });

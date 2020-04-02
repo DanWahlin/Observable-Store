@@ -1,17 +1,17 @@
 import { skip } from 'rxjs/operators';
 import { ObservableStore, stateFunc } from '../observable-store';
 import { StateWithPropertyChanges } from '../interfaces';
-import { MockStore, UserStore, MockState, user } from './mocks';
+import { MockStore, UserStore, MockState, getUser, MockUser } from './mocks';
 
-let mockStore = null;
-let userStore = null;
+let mockStore: any = null;
+let userStore: any = null;
 
 beforeEach(() => {
-    ObservableStore['isTesting'] = true;
-    mockStore = new MockStore({ trackStateHistory: true });
-    userStore = new UserStore(null);
-    // Clear all existing store state
-    mockStore.setState(null, 'Reinitialize State For Each Test');
+  ObservableStore['isTesting'] = true;
+  mockStore = new MockStore({ trackStateHistory: true });
+  userStore = new UserStore(null);
+  // Clear all existing store state
+  ObservableStore.clearState(null);
 });
 
 describe('Observable Store', () => {
@@ -31,6 +31,15 @@ describe('Observable Store', () => {
       expect(mockStore.currentState.user).toEqual('reset user state');
       expect(userStore.currentState.prop1).toEqual('reset prop1 state');
       expect(userStore.currentState.user).toEqual('reset user state');
+    });
+
+    it('should clear the store state', () => {
+      let newState = { prop1: 'reset prop1 state', prop2: null, user: 'reset user state', users: null };
+      mockStore.updateProp1('test');
+      ObservableStore.resetState(newState);
+      ObservableStore.clearState();
+      expect(mockStore.currentState).toBeNull();
+      expect(userStore.currentState).toBeNull();
     });
 
     it('should execute an anonymous function', () => {
@@ -171,17 +180,29 @@ describe('Observable Store', () => {
     });
   });
 
+  describe('getStateProperty', () => {
+
+    it('should retrieve single user property when string property name passed', () => {
+      userStore.setState({ user: getUser() });
+      expect(userStore.currentState.user).toBeTruthy();
+      let state = userStore.getStateProperty('user');
+      expect(state.name).toBeTruthy();
+      expect(state.users).toBeUndefined();
+    });
+    
+  });
+
   describe('SliceSelector', () => {
 
-    userStore = new UserStore({
-      stateSliceSelector: state => {
-        if (state) {
-          return { user: state.user };
-        }
-      }
-    });
-
     it('should only have MockUser when requesting state', () => {
+      userStore = new UserStore({
+        stateSliceSelector: state => {
+          if (state) {
+            return { user: state.user };
+          }
+        }
+      });
+
       userStore.updateUser({ name: 'foo', address: { city: 'Phoenix', state: 'AZ', zip: 85349 } });
 
       const state = userStore.currentState;
@@ -194,43 +215,62 @@ describe('Observable Store', () => {
 
   });
 
-  describe('Deep Clone', () => {
-    // Custom setting that can be used to allow globalSettings to be passed
-    // more than once
+  describe('Cloning', () => {
+    let user = null;
 
-    it('should be deep clone when not production', () => {
-      ObservableStore.globalSettings = { isProduction: false }; // will deep clone while in dev
-      userStore.updateUser(user);
-      user.address.city = 'Las Vegas';
-      expect(userStore.currentState.user.address.city).toEqual('Phoenix');
+    beforeEach(() => {
+      user = getUser();
     });
 
-    it('should not deep clone when production', () => {
-      ObservableStore.globalSettings = { isProduction: true }; // will not deep clone because not in dev
+    it('should deep clone when setState called', () => {
+      ObservableStore.globalSettings = { isProduction: true }; 
       userStore.updateUser(user);
+      user.address.city = 'Las Vegas';
+      expect(userStore.currentState.user.address.city).not.toEqual('Las Vegas');
+    });
+
+    it('should NOT deep clone when setState called', () => {
+      ObservableStore.globalSettings = { isProduction: true }; 
+      userStore.updateUser(user, false); // don't clone when setting state
       user.address.city = 'Las Vegas';
       expect(userStore.currentState.user.address.city).toEqual('Las Vegas');
     });
 
+    it('should NOT deep clone when setState or getState called', () => {
+      ObservableStore.globalSettings = { isProduction: true }; 
+      // Set state but don't clone
+      userStore.updateUser(user, false);
+      // Get state but don't clone
+      let nonClonedUserState = userStore.getCurrentState(false);
+      // Update user which should also update store
+      nonClonedUserState.user.address.city = 'Las Vegas';
+      // Ensure user was updated by reference
+      expect(userStore.currentState.user.address.city).toEqual('Las Vegas');
+    });
+
+    it('should deep clone when setState or getState called', () => {
+      ObservableStore.globalSettings = { isProduction: true }; 
+      // Set state but don't clone
+      userStore.updateUser(user);
+      // Get state but don't clone
+      let nonClonedUserState = userStore.getCurrentState();
+      // Update user which should also update store
+      // nonClonedUserState.user.address.city = 'Las Vegas';
+      // Ensure user was updated by reference
+      expect(userStore.currentState.user.address.city).not.toEqual('Las Vegas');
+    });
+
     it('should be deep clone with matching number of keys', () => {
-      ObservableStore.globalSettings = { isProduction: false }; // will deep clone while in dev
       userStore.updateUser(user);
       userStore.addToUsers(user);
       const stateKeys = Object.getOwnPropertyNames(userStore.currentState);
       expect(stateKeys.length).toEqual(2);
     });
 
-    it('should deep clone multiple items when not production', () => {
-      ObservableStore.globalSettings = { isProduction: false }; // will deep clone while in dev
-      for (let i=0;i<10;i++) {
-        userStore.addToUsers(user);
-      }
-      expect(userStore.currentState.users.length).toEqual(10);
-    });
-
   });
 
   describe('globalSettings', () => {
+
     it('should store global settings', () => {
       ObservableStore.globalSettings = { trackStateHistory: true, isProduction: true };
       const settingsKeys = Object.getOwnPropertyNames(ObservableStore.globalSettings);
@@ -279,6 +319,12 @@ describe('Observable Store', () => {
   });
 
   describe('trackHistory', () => {
+
+    let user = null;
+
+    beforeEach(() => {
+      user = getUser();
+    });
 
     it('should set trackHistory through global settings', () => {
       ObservableStore.globalSettings = { trackStateHistory: true };

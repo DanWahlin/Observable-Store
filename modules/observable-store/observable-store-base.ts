@@ -29,29 +29,39 @@ class ObservableStoreBase {
         return this.setStoreState(state);
     }
 
-    getStoreState() {
+    getStoreState(propertyName: string = null, deepCloneReturnedState: boolean = true) {
+        let state = null;
         if (this._storeState) {
-            if (!this.globalSettings || (this.globalSettings && !this.globalSettings.isProduction)) {
-                // Deep clone in dev
-                return this.deepClone(this._storeState);
+            // See if a specific property of the store should be returned via getStateProperty<T>()
+            if (propertyName) {
+                if (this._storeState.hasOwnProperty(propertyName)) {
+                    state = this._storeState[propertyName];  
+                }
+            }
+            else {
+                state = this._storeState;
             }
 
-            // Do NOT deep clone if not dev for performance
-            return { ...this._storeState };
+            if (state && deepCloneReturnedState) {
+                state = this.deepClone(state);
+            }
         }
-        return null;
+
+        return state;
     }
 
-    setStoreState(state) {
-        let clonedState = (state) ? { ...this.getStoreState(), ...state } : null;
-
-        if (!this.globalSettings || (this.globalSettings && !this.globalSettings.isProduction)) {
-            // Clone in dev
-            clonedState = this.deepClone(clonedState);
+    setStoreState(state, deepCloneState: boolean = true) {
+        const currentStoreState = this.getStoreState(null, deepCloneState);
+        if (deepCloneState) {
+            this._storeState = { ...currentStoreState, ...this.deepClone(state) }
         }
-        
-        // Do NOT clone if in something other than dev for performance
-        this._storeState = clonedState;
+        else {
+            this._storeState = { ...currentStoreState, ...state };
+        }
+    }
+
+    clearStoreState() {
+        this._storeState = null;
     }
 
     deepClone(obj: any) {
