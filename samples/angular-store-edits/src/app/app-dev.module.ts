@@ -11,7 +11,7 @@ import { InMemoryDataService } from './core/in-memory-data.service';
     AppModule,
     HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, {
       dataEncapsulation: false,
-      delay: 200,
+      delay: 100,
       passThruUnknownUrl: true,
       post204: false,
       put204: false

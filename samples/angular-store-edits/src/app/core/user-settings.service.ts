@@ -5,7 +5,7 @@ import { Theme, Actions } from '../shared/enums';
 import { ObservableStore } from '@codewithdan/observable-store';
 import { StoreState, UserSettings } from '../shared/interfaces';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +41,16 @@ export class UserSettingsService extends ObservableStore<StoreState> {
             }),
             catchError(this.handleError)
         );
-}
+  }
+
+  userSettingsChanged() : Observable<UserSettings> {
+    return this.stateChanged
+      .pipe(
+        // stateSliceSelector added to UserSettingsService which only returns userSettings
+        // Could case `state as UserSettings` if wanted for intellisense
+        map((state: any) => state as UserSettings) 
+      );
+  }
 
   private handleError(error: any) {
     console.error('server error:', error);

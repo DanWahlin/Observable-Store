@@ -2,13 +2,11 @@ import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
 import { CustomersService } from './customers/customers.service';
-import { Customer } from './core/model';
-import { SubSink } from 'subsink';
 import { UserSettingsService } from './core/user-settings.service';
 import { Theme } from './shared/enums';
 import { UserSettings } from './shared/interfaces';
 import { Observable, of, merge } from 'rxjs';
-import { map, switchMap, mergeMap, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -26,14 +24,10 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.userSettings$ = merge(
       this.userSettingsService.getUserSettings(),
-      this.userSettingsService.stateChanged
-      .pipe(
-        // stateSliceSelector added to UserSettingsService which only returns userSettings
-        // Could case `state as UserSettings` if wanted for intellisense
-        map((state: any) => {
-          return this.updateTheme(state);
-        })
-      )
+      this.userSettingsService.userSettingsChanged()
+        .pipe(
+          map(userSettings => this.updateTheme(userSettings))
+        )
     );
 
     this.customersLength$ = this.customersService.stateChanged
@@ -46,11 +40,9 @@ export class AppComponent implements OnInit {
         );
   }
 
-  updateTheme(userSettings: UserSettings) {
-      if (userSettings) {
-        this.document.documentElement.className = (userSettings.theme === Theme.Light) ? 'light-theme' : 'dark-theme';
-        return userSettings;
-      }
+  updateTheme(userSettings: UserSettings) {      
+      this.document.documentElement.className = (userSettings && userSettings.theme === Theme.Dark) ? 'dark-theme' : 'light-theme';
+      return userSettings;
   }
 
 }
