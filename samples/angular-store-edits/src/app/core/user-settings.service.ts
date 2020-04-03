@@ -5,7 +5,7 @@ import { Theme, Actions } from '../shared/enums';
 import { ObservableStore } from '@codewithdan/observable-store';
 import { StoreState, UserSettings } from '../shared/interfaces';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,15 +15,16 @@ export class UserSettingsService extends ObservableStore<StoreState> {
   apiUrl = 'api/userSettings';
 
   constructor(private http: HttpClient) {
-    super({ stateSliceSelector: state => state.userSettings });
+    // Can add a stateSliceSelector to filter all incoming data to stateChanged, etc.
+    super({ /* stateSliceSelector: state => state.userSettings */ });
   }
 
-  getUserSettings() {
+  getUserSettings() : Observable<UserSettings> {
     return this.http.get<UserSettings>(this.apiUrl)
       .pipe(
         map(userSettings => {
-          let settings = userSettings[0]; // in-memory API returns an array but we want one item
-          this.setState({ userSettings: settings }, Actions.SetUserSettings);
+          let settings = userSettings[0]; // in-memory API returns an array but we only want one item
+          this.setState({ userSettings: settings }, Actions.SetUserSettings, false); // false will stop stageChanged notifications from going out
           return settings;
         }),
         catchError(this.handleError)
@@ -46,9 +47,12 @@ export class UserSettingsService extends ObservableStore<StoreState> {
   userSettingsChanged() : Observable<UserSettings> {
     return this.stateChanged
       .pipe(
-        // stateSliceSelector added to UserSettingsService which only returns userSettings
-        // Could case `state as UserSettings` if wanted for intellisense
-        map((state: any) => state as UserSettings) 
+        // stateSliceSelector could be added to UserSettingsService contructor to filter the store down to userSettings
+        map(state => {
+          if (state) {
+            return state.userSettings;
+          }
+        }) 
       );
   }
 

@@ -5,8 +5,8 @@ import { CustomersService } from './customers/customers.service';
 import { UserSettingsService } from './core/user-settings.service';
 import { Theme } from './shared/enums';
 import { UserSettings } from './shared/interfaces';
-import { Observable, of, merge } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, merge } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -23,9 +23,10 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.userSettings$ = merge(
-      this.userSettingsService.getUserSettings(),
-      this.userSettingsService.userSettingsChanged()
+      this.userSettingsService.getUserSettings(),     // Get initial data
+      this.userSettingsService.userSettingsChanged()  // Handle any changes
         .pipe(
+          // tap(userSettings => console.log('userSettingsChanged: ', userSettings)),
           map(userSettings => this.updateTheme(userSettings))
         )
     );

@@ -15,7 +15,7 @@ export class CustomersService extends ObservableStore<StoreState> {
     apiUrl = 'api/customers';
 
     constructor(private http: HttpClient) { 
-        super({ trackStateHistory: true, logStateChanges: true });
+        super({ });
     }
 
     private fetchCustomers() {
