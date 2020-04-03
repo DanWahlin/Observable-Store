@@ -1,0 +1,42 @@
+.title {
+  margin-right: 1em;
+}
+
+.preferred-name {
+  color: #fff;
+  place-self: center;
+  margin-right: 30px;
+  font-size: 15pt;
+}
+
+.circle {
+  place-self: center;
+  height:25px;
+  width:25px;
+  border-radius: 50px;
+  background: red;
+  color: white;
+  margin-right: 10px;
+  font-size: 13pt;
+  text-align: center;
+  cursor: pointer;
+}
+
+.settings {
+  color: #fff;
+  font-size: 15pt;
+  margin-left: 15px;
+}
+
+header {
+  background-color: #007bff;
+}
+
+:host-context(.light-theme) header{
+  background-color: #007bff;
+}
+
+:host-context(.dark-theme) header{
+  background-color: #000;
+}
+

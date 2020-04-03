@@ -1,0 +1,53 @@
+html {
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+main {
+    position: relative;
+    padding-top: 70px;
+}
+
+/* Ensure display:flex and others don't override a [hidden] */
+[hidden] { display: none !important; }
+
+footer {
+    margin-top: 15px;
+}
+
+th {
+    cursor: pointer;
+}
+
+td {
+    width:33%;
+}
+
+.app-title {
+    line-height:50px;
+    font-size:20px;
+    color: white;
+}
+
+.light-theme body {
+    background-color: #fff;
+    color: #000;
+}
+    
+.light-theme thead {
+    background-color: #efefef;
+}
+
+.dark-theme body {
+    background-color: #3f3f3f;
+    color: #fff;
+}
+
+.dark-theme thead {
+        background-color: #000;
+}
+
+
+.white {
+    color: white;
+}

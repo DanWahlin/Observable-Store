@@ -1,0 +1,20 @@
+<header class="navbar fixed-top">
+    <nav class="container">
+        <div>
+          <span class="navbar-brand"><a routerLink="/customers" class="white">Home</a></span>
+        </div>
+        <div class="d-flex">
+            <span class="preferred-name">Welcome {{ (userSettings$ | async)?.preferredName }}!</span>
+            <strong *ngIf="(customersLength$ | async ) as length" class="circle" routerLink="/customers">
+                {{ length }}
+            </strong>
+            <a routerLink="/settings" class="p-2 settings">
+                <i class="fas fa-cog" aria-hidden="true"></i>
+             </a>
+        </div>
+    </nav>
+</header>
+
+<div class="container">
+    <router-outlet></router-outlet>
+</div>
