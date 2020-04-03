@@ -1,11 +1,17 @@
-<header class="navbar fixed-top navbar-dark bg-primary">
+<header class="navbar fixed-top">
     <nav class="container">
         <div>
-          <span class="navbar-brand"><a href="/customers" class="white">Angular and Observable Store</a></span>
+          <span class="navbar-brand"><a routerLink="/customers" class="white">Angular and Observable Store</a></span>
         </div>
-        <strong *ngIf="customers" class="pull-right circle">
-            {{ customers.length }}
-        </strong>
+        <div class="d-flex">
+            <span class="preferred-name">{{ (userSettings$ | async)?.preferredName }}</span>
+            <strong *ngIf="(customersLength$ | async ) as length" class="circle">
+                {{ length }}
+            </strong>
+            <a routerLink="/settings" class="p-2 settings">
+                <i class="fas fa-cog" aria-hidden="true"></i>
+             </a>
+        </div>
     </nav>
 </header>
 

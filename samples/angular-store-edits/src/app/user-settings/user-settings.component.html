@@ -1,0 +1,22 @@
+<h1>User Settings</h1>
+<div class="form-group">
+    <label>Preferred Name</label>
+    <div class="">
+        <input type="text" [(ngModel)]="userSettings.preferredName" (blur)="updateUserSettings()">
+    </div>
+</div>
+
+<div class="form-group">
+    <label>Email</label>
+    <div class="">
+        <input type="text" [(ngModel)]="userSettings.email" (blur)="updateUserSettings()">
+    </div>
+</div>
+
+<div class="form-group">
+    <label>Theme</label>
+    <div class="">
+        <p-selectButton [options]="themes" [(ngModel)]="userSettings.theme" (onChange)="updateUserSettings()"></p-selectButton>
+    </div>
+</div>
+

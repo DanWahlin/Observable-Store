@@ -12,7 +12,11 @@ if (environment.production) {
 
 // Set ObservableStore globalSettings here since 
 // it'll be called before the rest of the app loads
-ObservableStore.globalSettings = { isProduction: environment.production };
+ObservableStore.globalSettings = { 
+  isProduction: environment.production,
+  trackStateHistory: true,
+  logStateChanges: true
+};
 
 // Optional: Initialize store state
 ObservableStore.initializeState({});

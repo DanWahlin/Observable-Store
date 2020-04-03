@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ngrx-data": {
+    "angular-store-edits": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -20,7 +20,10 @@
               "includePaths": ["src/styles"]
             },
             "assets": ["src/assets", "src/favicon.ico"],
-            "styles": [],
+            "styles": [              
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/themes/nova-light/theme.css",
+              "node_modules/primeng/resources/primeng.min.css"],
             "scripts": []
           },
           "configurations": {
@@ -46,18 +49,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ngrx-data:build"
+            "browserTarget": "angular-store-edits:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "ngrx-data:build:production"
+              "browserTarget": "angular-store-edits:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ngrx-data:build"
+            "browserTarget": "angular-store-edits:build"
           }
         },
         "test": {
@@ -85,7 +88,7 @@
         }
       }
     },
-    "ngrx-data-e2e": {
+    "angular-store-edits-e2e": {
       "root": "",
       "sourceRoot": "",
       "projectType": "application",
@@ -94,7 +97,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "ngrx-data:serve"
+            "devServerTarget": "angular-store-edits:serve"
           }
         },
         "lint": {
@@ -107,7 +110,7 @@
       }
     }
   },
-  "defaultProject": "ngrx-data",
+  "defaultProject": "angular-store-edits",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

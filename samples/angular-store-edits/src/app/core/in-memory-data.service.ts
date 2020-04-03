@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { RequestInfo, InMemoryDbService } from 'angular-in-memory-web-api';
 import { Customer } from './model/customer';
 import { Order } from './model/order';
+import { Theme } from '../shared/enums';
+import { UserSettings } from '../shared/interfaces';
 
 /** In-memory database data */
 interface Db {
@@ -18,7 +20,7 @@ export class InMemoryDataService implements InMemoryDbService {
 
   /** Create the in-memory database. Sample data is found below. */
   createDb(reqInfo?: RequestInfo) {
-    return { customers, orders };
+    return { customers, orders, userSettings };
   }
 
   /**
@@ -27,13 +29,20 @@ export class InMemoryDataService implements InMemoryDbService {
    * Seed grows by highest id seen in any of the collections.
    */
   genId(collection: { id: number }[], collectionName: string) {
-    this.maxId =
-      1 +
-      collection.reduce((prev, cur) => Math.max(prev, cur.id || 0), this.maxId);
+    this.maxId = 1 + collection.reduce((prev, cur) => Math.max(prev, cur.id || 0), this.maxId);
     return this.maxId;
   }
 
 }
+
+const userSettings: UserSettings[] = [
+  {
+    'id': 1,
+    'preferredName': 'Jimbo',
+    'email': 'jim@test.com',
+    'theme': 0
+  }
+];
 
 const customers: Customer[] = [
   {
