@@ -22,6 +22,10 @@ export class ClonerService {
                     result = this.newRegExp(value);
                     return result;
                 }
+                else if (value instanceof Map) {
+                    result = new Map(value);
+                    return result;
+                }
 
                 result = JSON.parse(JSON.stringify(value));
                 this.fixTypes(value, result);
