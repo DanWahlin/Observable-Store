@@ -12,19 +12,14 @@ if (environment.production) {
 
 // Set ObservableStore globalSettings here since 
 // it'll be called before the rest of the app loads
-ObservableStore.globalSettings = { 
-  isProduction: environment.production,
-  trackStateHistory: !environment.production,
-  logStateChanges: !environment.production
-};
+
+
 
 // Optional: Initialize store state
-ObservableStore.initializeState({});
+
 
 // Add Redux DevTools extensions support
-if (!environment.production) {
-  ObservableStore.addExtension(new ReduxDevToolsExtension());
-}
+
 
 // platformBrowserDynamic().bootstrapModule(AppModule)
 // Bootstrap dev module that uses HttpClientInMemoryWebApiModule

@@ -4,6 +4,6 @@ export enum Theme {
 }
 
 export enum Actions {
-    SetUserSettings = 'SET_USER_SETTINGS',
-    UpdateUserSettingsTheme = 'UPDATE_USERSETTINGS_THEME'
+    AddUserSettings = 'SET_USER_SETTINGS',
+    UpdateUserSettings = 'UPDATE_USERSETTINGS'
 }

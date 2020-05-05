@@ -10,13 +10,12 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class UserSettingsService extends ObservableStore<StoreState> {
+export class UserSettingsService {
 
   apiUrl = 'api/userSettings';
 
   constructor(private http: HttpClient) {
-    // Can add a stateSliceSelector to filter all incoming data to stateChanged, etc.
-    super({ /* stateSliceSelector: state => state.userSettings */ });
+
   }
 
   getUserSettings() : Observable<UserSettings> {
@@ -24,7 +23,9 @@ export class UserSettingsService extends ObservableStore<StoreState> {
       .pipe(
         map(userSettings => {
           let settings = userSettings[0]; // in-memory API returns an array but we only want one item
-          this.setState({ userSettings: settings }, Actions.SetUserSettings, false); // false will stop stageChanged notifications from going out
+          // Add State to Store Here
+
+
           return settings;
         }),
         catchError(this.handleError)
@@ -35,9 +36,9 @@ export class UserSettingsService extends ObservableStore<StoreState> {
     return this.http.put(this.apiUrl + '/' + userSettings.id, userSettings)
         .pipe(
             switchMap(settings => {
-                // update local store with updated settings data
-                // not required of course unless the store cache is needed 
-                this.setState( { userSettings }, Actions.UpdateUserSettingsTheme);
+                // Update userSettings Here
+
+                
                 return this.getUserSettings();
             }),
             catchError(this.handleError)
