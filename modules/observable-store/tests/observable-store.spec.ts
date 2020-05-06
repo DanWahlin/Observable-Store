@@ -24,13 +24,13 @@ describe('Observable Store', () => {
     });
 
     it('should reset the store state', () => {
-      let newState = { prop1: 'reset prop1 state', prop2: null, user: 'reset user state', users: null };
+      let newState = { prop1: 'reset prop1 state', prop2: null, user: { name: 'reset user state' }, users: null };
       mockStore.updateProp1('test');
       ObservableStore.resetState(newState);
       expect(mockStore.currentState.prop1).toEqual('reset prop1 state');
-      expect(mockStore.currentState.user).toEqual('reset user state');
+      expect(mockStore.currentState.user.name).toEqual('reset user state');
       expect(userStore.currentState.prop1).toEqual('reset prop1 state');
-      expect(userStore.currentState.user).toEqual('reset user state');
+      expect(userStore.currentState.user.name).toEqual('reset user state');
     });
 
     it('should clear the store state', () => {
@@ -220,6 +220,17 @@ describe('Observable Store', () => {
 
     beforeEach(() => {
       user = getUser();
+    });
+
+    it('should clone Map object added to store', ()=> {
+      let map = new Map();
+      map.set('key1', 22);
+      map.set('key2', 32);
+      userStore.updateMap(map);
+      let state = userStore.getCurrentState();
+      expect(map).toBe(map);
+      expect(state.map).not.toBe(map);
+      expect (state.map.size).toEqual(map.size);
     });
 
     it('should deep clone when setState called', () => {

@@ -15,6 +15,27 @@ describe('ClonerService', () => {
     expect(clonedFake.prop2).toEqual('bar');
   });
 
+  it('should clone a Map', () => {
+    let map = new Map();
+    map.set('key', 22);
+    const cloneService = new ClonerService();
+    const clonedMap = cloneService.deepClone(map);
+    expect(map).toBe(map);
+    expect(clonedMap).not.toBe(map);
+    expect (clonedMap.size).toEqual(map.size);
+  });
+
+  it('should clone a Set', () => {
+    let set = new Set();
+    set.add('value1');
+    set.add('value2');
+    const cloneService = new ClonerService();
+    const clonedSet = cloneService.deepClone(set);
+    expect(set).toBe(set);
+    expect(clonedSet).not.toBe(set);
+    expect (clonedSet.size).toEqual(clonedSet.size);
+  });
+
   it('should not be the original class that was cloned', () => {
     const fake = new FakeClass('foo', 'bar');
 

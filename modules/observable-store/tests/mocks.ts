@@ -20,6 +20,7 @@ export interface MockState {
     prop2: string;
     user: MockUser;
     users: MockUser[];
+    map?: Map<any, any>;
 }
 
 export class MockStore extends ObservableStore<MockState> {
@@ -58,6 +59,10 @@ export class UserStore extends ObservableStore<MockState> {
 
     updateUser(user: MockUser, deepCloneState: boolean = true) {
         this.setState({ user }, 'Update User', true, deepCloneState);
+    }
+
+    updateMap(map: Map<any, any>, deepCloneState: boolean = true) {
+        this.setState({ map }, 'Update Map', true, deepCloneState);
     }
 
     addToUsers(user: MockUser, deepCloneState: boolean = true) {
