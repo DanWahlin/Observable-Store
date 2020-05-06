@@ -951,6 +951,10 @@ it's not desirable to clone state (large amount of data being added to the store
 - Added `getStateProperty<T>(propName: string)` to retrieve a specific property from the store versus retrieving the entire store
 as `getState()` does.
 
+##### 2.2.9 - May 5, 2020
+
+Added support for cloning Map and Set objects in the interal cloner service used by Observable Store. Thanks to <a href="https://github.com/chrisjandrade" target="_blank">Chris Andrade</a> for the initial contribution. 
+
 ### Building the Project
 
 See the `README.md` file in the `modules` folder.
