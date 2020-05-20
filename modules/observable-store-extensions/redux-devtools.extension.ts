@@ -23,7 +23,7 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
 
         this.window.addEventListener('DOMContentLoaded', () => {
             if (this.checkIsAngular()) {
-                this.angularExtension = new AngularDevToolsExtension();
+                this.angularExtension = new AngularDevToolsExtension(this.config);
             }
 
             this.hookRouter();

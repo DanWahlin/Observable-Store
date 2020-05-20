@@ -21,6 +21,8 @@ export interface ReduxDevtoolsExtensionConfig {
   routerPropertyName?: string;
   reactRouterHistory?: any;
   customRouteNavigator?: CustomReduxDevtoolsRouteNavigator;
+  router?: any;
+  ngZone?: any;
 }
 
 export interface ObservableStoreExtension {

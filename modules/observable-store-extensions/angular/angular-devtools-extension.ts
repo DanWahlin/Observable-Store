@@ -1,9 +1,11 @@
+import { ReduxDevtoolsExtensionConfig } from "interfaces";
+
 export class AngularDevToolsExtension {
     private window = (window as any);
     private router: any;
     private ngZone: any;
 
-    constructor() {
+    constructor(private config?: ReduxDevtoolsExtensionConfig) {
         
         // Angular with NO Ivy
         if (this.window.ng.probe && this.window.getAllAngularRootElements) {
@@ -20,11 +22,12 @@ export class AngularDevToolsExtension {
         }
 
         // Angular with Ivy
-        if (this.window.getAllAngularTestabilities && this.window.getAllAngularRootElements) {
-            const testabilities = this.window.getAllAngularTestabilities()[0];
-            this.router = testabilities.findProviders(this.window.getAllAngularRootElements()[0], 'Router');
+        if (this.window.ng.getInjector && this.window.getAllAngularRootElements && 
+            this.config && this.config.router && this.config.ngZone) {
             try {
-                this.ngZone = testabilities._ngZone;
+                const injector = this.window.ng.getInjector(this.window.getAllAngularRootElements()[0]);
+                this.router = injector.get(this.config.router);
+                this.ngZone = injector.get(this.config.ngZone);
             }
             catch (e) {
                 console.log(e);
