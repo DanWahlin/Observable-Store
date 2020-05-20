@@ -180,11 +180,11 @@ export class ObservableStore<T> {
         deepCloneState: boolean = true) : T { 
 
         // Needed for tracking below (don't move or delete)
-        const previousState = this.getState();
+        const previousState = this.getState(deepCloneState);
 
         switch (typeof state) {
             case 'function':
-                const newState = state(this.getState());
+                const newState = state(this.getState(deepCloneState));
                 this._updateState(newState, deepCloneState);
                 break;
             case 'object':
@@ -198,7 +198,7 @@ export class ObservableStore<T> {
             ObservableStoreBase.stateHistory.push({ 
                 action, 
                 beginState: previousState, 
-                endState: this.getState() 
+                endState: this.getState(deepCloneState) 
             });
         }
         
