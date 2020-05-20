@@ -263,17 +263,37 @@ describe('Observable Store', () => {
       ObservableStore.globalSettings = { isProduction: true }; 
       // Set state but don't clone
       userStore.updateUser(user);
-      // Get state but don't clone
-      let nonClonedUserState = userStore.getCurrentState();
-      // Update user which should also update store
-      // nonClonedUserState.user.address.city = 'Las Vegas';
-      // Ensure user was updated by reference
+      let clonedUserState = userStore.getCurrentState();
+      clonedUserState.user.address.city = 'Las Vegas';
       expect(userStore.currentState.user.address.city).not.toEqual('Las Vegas');
     });
 
-    it('should be deep clone with matching number of keys', () => {
+    it('should deep clone array', () => {
+      userStore.addToUsers(user);
+      let users = userStore.getCurrentState().users;
+      // Should NOT affect store users array since it would be cloned
+      users.push({ name: 'user2', address: { city: 'Chandler', state: 'AZ', zip: 85249 } });
+      expect(users.length).toEqual(2);
+      expect(userStore.currentState.users.length).toEqual(1);
+    });
+
+    it('should NOT deep clone array', () => {
+      userStore.addToUsers(user, false);
+      let users = userStore.getCurrentState(false).users;
+      users.push({ name: 'user2', address: { city: 'Chandler', state: 'AZ', zip: 85249 } });
+      expect(userStore.currentState.users.length).toEqual(2);
+    });
+
+    it('should deep clone with matching number of keys', () => {
       userStore.updateUser(user);
       userStore.addToUsers(user);
+      const stateKeys = Object.getOwnPropertyNames(userStore.currentState);
+      expect(stateKeys.length).toEqual(2);
+    });
+
+    it('should NOT deep clone but have matching number of keys', () => {
+      userStore.updateUser(user, false);
+      userStore.addToUsers(user, false);
       const stateKeys = Object.getOwnPropertyNames(userStore.currentState);
       expect(stateKeys.length).toEqual(2);
     });
