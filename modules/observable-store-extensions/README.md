@@ -21,6 +21,21 @@ import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 
 if (!environment.production) {
+    ObservableStore.addExtension(new ReduxDevToolsExtension());
+}
+```
+
+#### 2.2.8 - May 20, 2020
+
+Added support for Angular Ivy with the Redux DevTools. Breaking changes in Ivy prevented this functionality initially, but thanks to help from
+<a href="https://https://github.com/atscott" target="_blank">Andrew Scott</a> and <a href="https://https://https://github.com/Coly010" target="_blank">Colum Ferry</a> it's now working with the following code:
+
+```typescript
+import { environment } from './environments/environment';
+import { NgZone } from '@angular/core';
+import { Router } from '@angular/router';
+
+if (!environment.production) {
     ObservableStore.addExtension(new ReduxDevToolsExtension({ router: Router, ngZone: NgZone }));
 }
 ```

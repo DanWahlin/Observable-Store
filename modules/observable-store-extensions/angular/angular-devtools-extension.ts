@@ -25,9 +25,9 @@ export class AngularDevToolsExtension {
         if (this.window.ng.getInjector && this.window.getAllAngularRootElements && 
             this.config && this.config.router && this.config.ngZone) {
             try {
-                // const injector = this.window.ng.getInjector(this.window.getAllAngularRootElements()[0]);
-                // this.router = injector.get(this.config.router);
-                // this.ngZone = injector.get(this.config.ngZone);
+                const injector = this.window.ng.getInjector(this.window.getAllAngularRootElements()[0]);
+                this.router = injector.get(this.config.router);
+                this.ngZone = injector.get(this.config.ngZone);
             }
             catch (e) {
                 console.log(e);

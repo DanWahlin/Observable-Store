@@ -705,10 +705,6 @@ The first built-in extension adds [Redux DevTools](http://extension.remotedev.io
 
 ![Integrating the Redux DevTools](images/reduxDevTools.png)
 
-**Note about Angular 9/Ivy and the Redux DevTools Support**
-
-While the [code is in place](https://github.com/DanWahlin/Observable-Store/blob/master/modules/observable-store-extensions/angular/angular-devtools-extension.ts) to support it, The Observable Store Redux DevTools currently do not work with Angular 9 and Ivy. Once the [`findProviders()` API](https://github.com/angular/angular/blob/cd9ae66b357bd4b5f97aa60cea38e48acb015325/packages/core/src/testability/testability.ts#L221) is fully implemented and released by Angular then support will be finalized for the Redux DevTools.
-
 **Note about the `__devTools` Store Property:** 
 
 When the Redux DevTools extension is enabled it will add routing information into your store using a property called `__devTools`. This property is used to enable the Redux DevTools time travel feature and can be useful for associating different action states with a given route when manually looking at store data using the DevTools. If the Redux DevTools extension is not enabled (such as in production scenarios) then the `__devTools` property will not be added into your store.
@@ -725,16 +721,23 @@ Install the extensions package:
 Add the following into `main.ts` and ensure that you set `trackStateHistory` to `true`:
 
 ``` typescript
+import { NgZone } from '@angular/core';
+import { Router } from '@angular/router';
 import { ObservableStore } from '@codewithdan/observable-store';
 import { ReduxDevToolsExtension } from '@codewithdan/observable-store-extensions';
-
+import { environment } from './environments/environment';
 ...
 
 ObservableStore.globalSettings = {  
     trackStateHistory: true
 };
-ObservableStore.addExtension(new ReduxDevToolsExtension());
+
+if (!environment.production) {
+    ObservableStore.addExtension(new ReduxDevToolsExtension({ router: Router, ngZone: NgZone }));   
+}
 ```
+
+Ensure that `RouterModule.forRoot()` is called in your root module.
 
 Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your Angular application, and open the Redux DevTools extension.
 
@@ -782,39 +785,17 @@ import { ReduxDevToolsExtension } from '@codewithdan/observable-store-extensions
 ObservableStore.globalSettings = {  
     trackStateHistory: true
 };
-ObservableStore.addExtension(new ReduxDevToolsExtension({ 
-    reactRouterHistory: history 
-}));
+if (process.env.NODE_ENV !== 'production') {
+    ObservableStore.addExtension(new ReduxDevToolsExtension({ 
+        reactRouterHistory: history 
+    }));
+}
 
 ReactDOM.render(<Routes />, document.getElementById('root'));
 ```
 
 Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your React application, and open the Redux DevTools extension.
 
-### Redux DevTools and Production
-
-While you can enable the Redux DevTools extension in production it's normally recommended that you remove it. That can be done through a custom build process or by checking the environment where your code is running.
-
-**Angular Example**
-
-```typescript
-import { environment } from './environments/environment';
-
-if (!environment.production) {
-    ObservableStore.addExtension(new ReduxDevToolsExtension());
-}
-```
-
-
-**React Example**
-
-```typescript
-if (process.env.NODE_ENV !== 'production') {
-    ObservableStore.addExtension(new ReduxDevToolsExtension({ 
-        reactRouterHistory: history 
-    }));
-}
-```
 
 ### Changes
 
