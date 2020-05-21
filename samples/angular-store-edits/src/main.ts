@@ -1,5 +1,7 @@
 import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { platformBrowser } from '@angular/platform-browser';
+import { NgZone } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { environment } from './environments/environment';
 import { AppDevModule } from './app/app-dev.module';
@@ -23,11 +25,11 @@ ObservableStore.initializeState({});
 
 // Add Redux DevTools extensions support
 if (!environment.production) {
-  ObservableStore.addExtension(new ReduxDevToolsExtension());
+  ObservableStore.addExtension(new ReduxDevToolsExtension({ router: Router, ngZone: NgZone }));
 }
 
 // platformBrowserDynamic().bootstrapModule(AppModule)
 // Bootstrap dev module that uses HttpClientInMemoryWebApiModule
-platformBrowserDynamic()
+platformBrowser()
   .bootstrapModule(AppDevModule)
   .catch(err => console.log(err));

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@codewithdan/observable-store": "^2.2.10",
-    "@codewithdan/observable-store-extensions": "^2.2.7",
+    "@codewithdan/observable-store-extensions": "^2.2.8",
     "lodash.isequal": "^4.5.0",
     "lodash.orderby": "^4.6.0",
     "prop-types": "^15.7.2",
