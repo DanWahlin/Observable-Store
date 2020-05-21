@@ -1,6 +1,6 @@
 {
   "name": "@codewithdan/observable-store",
-  "version": "2.2.9",
+  "version": "2.2.10",
   "author": "Dan Wahlin",
   "description": "Observable Store provides a simple way to store and retrieve state in Angular, React, Vue.js and other front-end applications.",
   "license": "MIT",
@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "tsc": "tsc",
-    "build": "rm -rf ./dist && tsc --build ./tsconfig.json",
+    "build": "cp ../../README.md ./ && rm -rf ./dist && tsc --build ./tsconfig.json",
     "build:w": "tsc  --build ./tsconfig.json --watch",
     "test": "jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json",
     "test:w": "nodemon --ext ts --exec 'jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json'"

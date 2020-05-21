@@ -17,7 +17,8 @@ if (environment.production) {
 // it'll be called before the rest of the app loads
 ObservableStore.globalSettings = { isProduction: environment.production };
 if (!environment.production) {
-  ObservableStore.addExtension(new ReduxDevToolsExtension({ router: Router, ngZone: NgZone }));
+  // Future for Angular 9: ObservableStore.addExtension(new ReduxDevToolsExtension({ router: Router, ngZone: NgZone }));
+  ObservableStore.addExtension(new ReduxDevToolsExtension());
 }
 
 platformBrowserDynamic().bootstrapModule(AppModule)

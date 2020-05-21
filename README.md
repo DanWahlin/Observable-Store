@@ -955,6 +955,11 @@ as `getState()` does.
 
 Added support for cloning Map and Set objects in the interal cloner service used by Observable Store. Thanks to <a href="https://github.com/chrisjandrade" target="_blank">Chris Andrade</a> for the initial contribution. 
 
+##### 2.2.10 - May 20, 2020
+
+External APIs supported turning off cloning but internal APIs still cloned which isn't optimal for people storing a lot of data in the store. Thanks to 
+ <a href="https://github.com/Steve-RW" target="_blank">Steve-RW</a> for asking about it and for the PR that fixed it.
+
 ### Building the Project
 
 See the `README.md` file in the `modules` folder.

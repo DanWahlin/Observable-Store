@@ -10,7 +10,7 @@ To build Observable Store extensions cd into the folder and run:
 
 ## To publish to npm
 
-1. Copy the root `README.md` file into the `modules/observable-store` folder
+1. Update the version in `package.json`.
 1. Run `npm run build` to create the dist folder (ensure tsconfig.json is set to copy the build there)
 1. Run `npm publish --access public` and enter the 2FA code for npm in 1Password
 
@@ -44,3 +44,7 @@ ng.probe(getAllAngularRootElements()[0]).injector.get(ng.coreTokens.NgZone)
 
 1. Delete `node_modules` and run `npm install` again for the sample project.
 1. Run `ng server -o`
+
+## Copy README.md from root into modules/observable-store folder
+
+`npm run build` now automatically copies the file into the folder for deployment. Any updates should be made to the root README.md.
