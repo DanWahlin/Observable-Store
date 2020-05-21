@@ -634,65 +634,16 @@ export class CustomersService extends ObservableStore<StoreState> {
 
 #### <a name="globalSettings"></a>Global Store Settings
 
-You can set the following Observable Store settings globally for the entire application if desired. For details, view the [Observable Store Settings](#settings) section. This allows you to define the settings once and all services that extend Observable Store will automatically pick these settings up. You can override these properties (except the isProduction property) at the service level as well which is nice when you want a particular service to have more logging (as an example) while other services don't.
+You can set the following Observable Store settings globally for the entire application if desired. For details, view the [Observable Store Settings](#settings) section. This allows you to define the settings once and all services that extend Observable Store will automatically pick these settings up. You can override these properties at the service level as well which is nice when you want a particular service to have more logging (as an example) while other services don't.
 
 * `trackStateHistory`
 * `logStateChanges`
 * `includeStateChangesOnSubscribe` [DEPRECATED]
-* `isProduction`
 
 Global store settings are defined ONCE when the application **first initializes** and BEFORE the store has been used:
 
 ``` javascript
 ObservableStore.globalSettings = {  /* pass settings here */ };
-```
-
-##### <a name="isProduction"></a>The isProduction Property
-
-When `isProduction` is `false`, cloning will be used when calling `getState()` or `setState()` in order to enforce immutability of the store state. When `isProduction` is `true`, cloning will not be used in order to enhance performance. This works since any immutability issues would've been caught in development mode (other store solutions out there use this technique as well). While setting the `isProduction` property is optional, with large amounts of store data the cloning that is used could *potentially* impact performance so it's important to be aware of this property.
-
-Example of using `isProduction` with **Angular** in `main.ts`:
-
-``` typescript
-// main.ts
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { ObservableStore } from '@codewithdan/observable-store';
-
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
-
-if (environment.production) {
-  enableProdMode();
-}
-
-// Set ObservableStore globalSettings here since 
-// it'll be called before the rest of the app loads
-ObservableStore.globalSettings = { 
-    isProduction: environment.production 
-};
-
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.log(err));
-```
-
-Example of using `isProduction` with **React** in `index.js`:
-
-``` javascript
-// index.js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
-
-// Set ObservableStore globalSettings here since 
-// it'll be called before the rest of the app loads
-ObservableStore.globalSettings = { 
-    isProduction: process.env.NODE_ENV === 'production'
-};
-
-ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
 ### <a name="extensions"></a>Extensions
@@ -704,6 +655,10 @@ Observable Store now supports extensions. These can be added when the applicatio
 The first built-in extension adds [Redux DevTools](http://extension.remotedev.io/) integration into applications that use Observable Store. The extension can be found in the `@codewithdan/observable-store-extensions` package.
 
 ![Integrating the Redux DevTools](images/reduxDevTools.png)
+
+**Note about Angular 9/Ivy and the Redux DevTools Support**
+
+While the [code is in place](https://github.com/DanWahlin/Observable-Store/blob/master/modules/observable-store-extensions/angular/angular-devtools-extension.ts) to support it, The Observable Store Redux DevTools currently do not work with Angular 9 and Ivy. Once the [`findProviders()` API](https://github.com/angular/angular/blob/cd9ae66b357bd4b5f97aa60cea38e48acb015325/packages/core/src/testability/testability.ts#L221) is fully implemented and released by Angular then support will be finalized for the Redux DevTools.
 
 **Note about the `__devTools` Store Property:** 
 
@@ -721,23 +676,16 @@ Install the extensions package:
 Add the following into `main.ts` and ensure that you set `trackStateHistory` to `true`:
 
 ``` typescript
-import { NgZone } from '@angular/core';
-import { Router } from '@angular/router';
 import { ObservableStore } from '@codewithdan/observable-store';
 import { ReduxDevToolsExtension } from '@codewithdan/observable-store-extensions';
-import { environment } from './environments/environment';
+
 ...
 
 ObservableStore.globalSettings = {  
     trackStateHistory: true
 };
-
-if (!environment.production) {
-    ObservableStore.addExtension(new ReduxDevToolsExtension({ router: Router, ngZone: NgZone }));   
-}
+ObservableStore.addExtension(new ReduxDevToolsExtension());
 ```
-
-Ensure that `RouterModule.forRoot()` is called in your root module.
 
 Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your Angular application, and open the Redux DevTools extension.
 
@@ -785,17 +733,39 @@ import { ReduxDevToolsExtension } from '@codewithdan/observable-store-extensions
 ObservableStore.globalSettings = {  
     trackStateHistory: true
 };
-if (process.env.NODE_ENV !== 'production') {
-    ObservableStore.addExtension(new ReduxDevToolsExtension({ 
-        reactRouterHistory: history 
-    }));
-}
+ObservableStore.addExtension(new ReduxDevToolsExtension({ 
+    reactRouterHistory: history 
+}));
 
 ReactDOM.render(<Routes />, document.getElementById('root'));
 ```
 
 Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your React application, and open the Redux DevTools extension.
 
+### Redux DevTools and Production
+
+While you can enable the Redux DevTools extension in production it's normally recommended that you remove it. That can be done through a custom build process or by checking the environment where your code is running.
+
+**Angular Example**
+
+```typescript
+import { environment } from './environments/environment';
+
+if (!environment.production) {
+    ObservableStore.addExtension(new ReduxDevToolsExtension());
+}
+```
+
+
+**React Example**
+
+```typescript
+if (process.env.NODE_ENV !== 'production') {
+    ObservableStore.addExtension(new ReduxDevToolsExtension({ 
+        reactRouterHistory: history 
+    }));
+}
+```
 
 ### Changes
 
@@ -854,13 +824,13 @@ Internal type additions and tests contributed by @elAndyG (https://github.com/el
 
 1. Added more strongly-typed information for `stateChanged` and the overall API to provide better code help while using Observable Store.
 1. RxJS is now a peer dependency (RxJS 6.4.0 or higher is required). This avoids reported versioning issues that have come up when a project already has RxJS in it. The 1.x version of Observable Store added RxJS as a dependency. Starting with 2.0.0 this is no longer the case.
-1. Added an `ObservableStore.globalSettings` property to allow store settings to be defined once if desired for an entire application rather than per service that uses the store. The global settings also support an `isProduction` property that controls if store state cloning is used (see the next item for more details).
-1. `getState()` and `setState()` now clone when the global settings `isProduction` property is false (`ObservableStore.globalSettings = { isProduction: false }`). When running in production mode no cloning is used in order to enhance performance since mutability issues would've been detected at development time. This technique is used with other store solutions as well.
+1. Added an `ObservableStore.globalSettings` property to allow store settings to be defined once if desired for an entire application rather than per service that uses the store. 
+1. `getState()` and `setState()` now clone when the global settings `isProduction` property is false (`ObservableStore.globalSettings = { isProduction: false }`). When running in production mode no cloning is used in order to enhance performance since mutability issues would've been detected at development time. This technique is used with other store solutions as well. NOTE: isProduction is no longer used. See 2.0.1 below.
 1. Changed TypeScript module compilation to CommonJS instead of ES2015 to aid with testing scenarios (such as Jest) where the project doesn't automatically handle ES2015 module conventions without extra configuration.
 
 #### 2.0.1 - October 14, 2019
 
-With this version Observable Store won't clone when adding state via `setState()` if `isProduction` is `true` for `globalSettings`. It will clone when `getState()` is called though even when `isProduction` is set in this version. Otherwise certain change detection scenarios won't work correctly in various libraries/frameworks. The same behavior in the original 2.0 release of cloning during `setState()` and `getState()` calls still applies. This change only affects production scenarios.
+Due to edge cases cloning is used in development and production. The `isProduction` property is left in so builds are not broken, but currently isn't used.
 
 #### 2.1.0 - October 24, 2019
 
@@ -940,6 +910,10 @@ Added support for cloning Map and Set objects in the interal cloner service used
 
 External APIs supported turning off cloning but internal APIs still cloned which isn't optimal for people storing a lot of data in the store. Thanks to 
  <a href="https://github.com/Steve-RW" target="_blank">Steve-RW</a> for asking about it and for the PR that fixed it.
+
+##### 2.2.11 - May 21, 2020
+
+Updates to documentation.
 
 ### Building the Project
 

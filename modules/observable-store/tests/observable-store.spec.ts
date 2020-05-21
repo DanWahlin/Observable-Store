@@ -234,21 +234,18 @@ describe('Observable Store', () => {
     });
 
     it('should deep clone when setState called', () => {
-      ObservableStore.globalSettings = { isProduction: true }; 
       userStore.updateUser(user);
       user.address.city = 'Las Vegas';
       expect(userStore.currentState.user.address.city).not.toEqual('Las Vegas');
     });
 
     it('should NOT deep clone when setState called', () => {
-      ObservableStore.globalSettings = { isProduction: true }; 
       userStore.updateUser(user, false); // don't clone when setting state
       user.address.city = 'Las Vegas';
       expect(userStore.currentState.user.address.city).toEqual('Las Vegas');
     });
 
     it('should NOT deep clone when setState or getState called', () => {
-      ObservableStore.globalSettings = { isProduction: true }; 
       // Set state but don't clone
       userStore.updateUser(user, false);
       // Get state but don't clone
@@ -260,7 +257,6 @@ describe('Observable Store', () => {
     });
 
     it('should deep clone when setState or getState called', () => {
-      ObservableStore.globalSettings = { isProduction: true }; 
       // Set state but don't clone
       userStore.updateUser(user);
       let clonedUserState = userStore.getCurrentState();
@@ -303,9 +299,9 @@ describe('Observable Store', () => {
   describe('globalSettings', () => {
 
     it('should store global settings', () => {
-      ObservableStore.globalSettings = { trackStateHistory: true, isProduction: true };
+      ObservableStore.globalSettings = { trackStateHistory: true };
       const settingsKeys = Object.getOwnPropertyNames(ObservableStore.globalSettings);
-      expect(settingsKeys.length).toEqual(2);
+      expect(settingsKeys.length).toEqual(1);
     });
 
     it('should error when no global settings passed', () => {

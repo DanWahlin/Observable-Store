@@ -32,9 +32,7 @@ export interface ObservableStoreSettings extends BaseStoreSettings, StateSliceSe
 
 export interface ObservableStoreGlobalSettings extends BaseStoreSettings {
     /**
-     * When `false`, cloning will be used when calling `getState()` or `setState()` in order to enforce 
-     * immutability of the store state. When `true`, cloning will not be used in order to enhance performance.
-     * [Additionl details](https://github.com/danwahlin/observable-store#the-isproduction-property).
+     * Not currently used. Reserved for future use.
      */
     isProduction?: boolean;
 }
