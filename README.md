@@ -639,6 +639,7 @@ You can set the following Observable Store settings globally for the entire appl
 * `trackStateHistory`
 * `logStateChanges`
 * `includeStateChangesOnSubscribe` [DEPRECATED]
+* `isProduction` [RESERVED FOR FUTURE USE]
 
 Global store settings are defined ONCE when the application **first initializes** and BEFORE the store has been used:
 
