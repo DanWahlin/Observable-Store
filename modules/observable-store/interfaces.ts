@@ -26,6 +26,12 @@ export interface BaseStoreSettings {
      * DEPRECATED. Since this is deprecated, use `stateWithPropertyChanges` or `globalStateWithPropertyChanges` instead.
      */
     includeStateChangesOnSubscribe?: boolean;
+
+    /**
+     * Can be used to determine if the returned state will be deep cloned or not in global area. Uses as default parameter
+     * for all methods which has `deepCloneReturnedState` parameter
+     */
+    deepCloneReturnedState?: boolean;
 }
 
 export interface ObservableStoreSettings extends BaseStoreSettings, StateSliceSelector { }

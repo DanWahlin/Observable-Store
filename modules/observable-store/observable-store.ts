@@ -57,7 +57,7 @@ export class ObservableStore<T> {
     }
 
     constructor(settings: ObservableStoreSettings) {
-        this._settings = { ...ObservableStoreBase.settingsDefaults, ...settings, ...ObservableStoreBase.globalSettings };        
+        this._settings = { ...ObservableStoreBase.settingsDefaults, ...ObservableStoreBase.globalSettings, ...settings };
         this.stateChanged = this._stateDispatcher$.asObservable();
         this.globalStateChanged = ObservableStoreBase.globalStateDispatcher.asObservable();
 
@@ -67,8 +67,8 @@ export class ObservableStore<T> {
     }
 
     /**
-     * get/set global settings throughout the application for ObservableStore. 
-     * See the [Observable Store Settings](https://github.com/danwahlin/observable-store#store-settings-per-service) documentation 
+     * get/set global settings throughout the application for ObservableStore.
+     * See the [Observable Store Settings](https://github.com/danwahlin/observable-store#store-settings-per-service) documentation
      * for additional information. Note that global settings can only be set once as the application first loads.
      */
     static get globalSettings() {
@@ -79,7 +79,10 @@ export class ObservableStore<T> {
         // ObservableStore['isTesting'] used so that unit tests can set globalSettings 
         // multiple times during a suite of tests
         if (settings && (ObservableStore['isTesting'] || !ObservableStoreBase.globalSettings)) {
-            ObservableStoreBase.globalSettings = settings;
+            ObservableStoreBase.globalSettings = {
+                ...ObservableStoreBase.defaultGlobalSettings,
+                ...settings
+            };
         }
         else if (!settings) {
             throw new Error('Please provide the global settings you would like to apply to Observable Store');
@@ -146,12 +149,13 @@ export class ObservableStore<T> {
 
     /**
      * Retrieve store's state. If using TypeScript (optional) then the state type defined when the store 
-     * was created will be returned rather than `any`. The deepCloneReturnedState boolean parameter (default is true) can be used
-     * to determine if the returned state will be deep cloned or not. If set to false, a reference to the store state will 
+     * was created will be returned rather than `any`. The deepCloneReturnedState boolean parameter
+     * (default is true and depends on globalSettings) can be used to determine if the returned state
+     * will be deep cloned or not. If set to false, a reference to the store state will
      * be returned and it's up to the user to ensure the state isn't change from outside the store. Setting it to false can be
      * useful in cases where read-only cached data is stored and must be retrieved as quickly as possible without any cloning.
      */
-    protected getState(deepCloneReturnedState: boolean = true) : T {
+    protected getState(deepCloneReturnedState: boolean = ObservableStoreBase.globalSettings.deepCloneReturnedState) : T {
         return this._getStateOrSlice(deepCloneReturnedState);
     }
 
@@ -161,7 +165,9 @@ export class ObservableStore<T> {
      * store value. If using TypeScript (optional) then the generic property type used with the 
      * function call will be the return type.
      */
-    protected getStateProperty<TProp>(propertyName: string, deepCloneReturnedState: boolean = true) : TProp {
+    protected getStateProperty<TProp>(
+        propertyName: string,
+        deepCloneReturnedState: boolean = ObservableStoreBase.globalSettings.deepCloneReturnedState) : TProp {
         return ObservableStoreBase.getStoreState(propertyName, deepCloneReturnedState);
     }
 
@@ -170,14 +176,14 @@ export class ObservableStore<T> {
      * The state value can be a function [(see example)](https://github.com/danwahlin/observable-store#store-api). 
      * The latest store state is returned.
      * The dispatchState parameter can be set to false if you do not want to send state change notifications to subscribers.
-     * The deepCloneReturnedState boolean parameter (default is true) can be used
+     * The deepCloneReturnedState boolean parameter (default is true and depends on globalSettings) can be used
      * to determine if the state will be deep cloned before it is added to the store. Setting it to false can be
      * useful in cases where read-only cached data is stored and must added to the store as quickly as possible without any cloning.
      */
     protected setState(state: Partial<T> | stateFunc<T>, 
         action?: string, 
         dispatchState: boolean = true,
-        deepCloneState: boolean = true) : T { 
+        deepCloneState: boolean = ObservableStoreBase.globalSettings.deepCloneReturnedState) : T {
 
         // Needed for tracking below (don't move or delete)
         const previousState = this.getState(deepCloneState);
