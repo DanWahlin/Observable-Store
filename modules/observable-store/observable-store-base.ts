@@ -2,27 +2,24 @@ import { BehaviorSubject } from 'rxjs';
 import { ClonerService } from './utilities/cloner.service';
 import { ObservableStoreSettings, ObservableStoreGlobalSettings, StateWithPropertyChanges, ObservableStoreExtension } from './interfaces';
 
-/**
- * Default settings & global settings
- */
-export const DEFAULT_SETTINGS: ObservableStoreGlobalSettings = {
-    deepCloneReturnedState: true,
-    trackStateHistory: false,
-    // deprecated
-    includeStateChangesOnSubscribe: false,
-    logStateChanges: false,
-    isProduction: false
-} as const;
-
 // Will be used to create a singleton
 class ObservableStoreBase {
     private _storeState: Readonly<any> = null;
     private _clonerService = new ClonerService();
     private _extensions = [];
 
-    readonly defaultGlobalSettings = DEFAULT_SETTINGS;
+    /**
+     * Default settings & global settings
+     */
+    readonly defaultGlobalSettings: ObservableStoreGlobalSettings = {
+        deepCloneReturnedState: true,
+        trackStateHistory: false,
+        // deprecated
+        includeStateChangesOnSubscribe: false,
+        logStateChanges: false,
+        isProduction: false
+    } as const;
 
-    readonly settingsDefaults = DEFAULT_SETTINGS;
     stateHistory: any[] = [];
     globalStateDispatcher = new BehaviorSubject<any>(null);
     globalStateWithChangesDispatcher = new BehaviorSubject<StateWithPropertyChanges<any>>(null);

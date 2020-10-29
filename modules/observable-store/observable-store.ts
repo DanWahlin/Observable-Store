@@ -57,7 +57,7 @@ export class ObservableStore<T> {
     }
 
     constructor(settings: ObservableStoreSettings) {
-        this._settings = { ...ObservableStoreBase.settingsDefaults, ...ObservableStoreBase.globalSettings, ...settings };
+        this._settings = { ...ObservableStoreBase.globalSettings, ...settings };
         this.stateChanged = this._stateDispatcher$.asObservable();
         this.globalStateChanged = ObservableStoreBase.globalStateDispatcher.asObservable();
 
