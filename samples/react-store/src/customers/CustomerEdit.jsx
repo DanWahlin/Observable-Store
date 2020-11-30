@@ -27,9 +27,9 @@ class CustomerEdit extends Component {
         // ## Customer Option 1: Subscribe to store changes
         // Useful when a component needs to be notified of changes but won't always
         // call store directly.
-        this.customersStoreSub = CustomersStore.stateChanged.subscribe(state => {
-            if (state && state.customer) {
-                this.setState({ customer: state.customer });
+        this.customersStoreSub = CustomersStore.stateChanged.subscribe(stateChange => {
+            if (stateChange && stateChange.state && stateChange.state.customer) {
+                this.setState({ customer: stateChange.state.customer });
             }
         });
 

@@ -48,9 +48,9 @@ export class UserSettingsService extends ObservableStore<StoreState> {
     return this.stateChanged
       .pipe(
         // stateSliceSelector could be added to UserSettingsService contructor to filter the store down to userSettings
-        map(state => {
-          if (state) {
-            return state.userSettings;
+        map(stateChange => {
+          if (stateChange && stateChange.state) {
+            return stateChange.state.userSettings;
           }
         }) 
       );

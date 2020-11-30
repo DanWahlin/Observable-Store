@@ -21,10 +21,10 @@ export class CustomersComponent implements OnInit, OnDestroy {
       // Option 1: Subscribe to store stateChanged
       // Useful when a component needs to be notified of changes but won't always
       // call store directly.
-      this.subsink.sink = this.customersService.stateChanged.subscribe(state => {
-        if (state) {
+      this.subsink.sink = this.customersService.stateChanged.subscribe(stateChange => {
+        if (stateChange && stateChange.state) {
             console.log(this.customersService.stateHistory);
-            this.customers = state.customers;
+            this.customers = stateChange.state.customers;
         }
       });
       this.subsink.sink = this.customersService.getCustomers().subscribe();

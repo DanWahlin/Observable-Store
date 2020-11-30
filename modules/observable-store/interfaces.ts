@@ -45,7 +45,8 @@ export interface StateHistory<T>{
 
 export interface StateWithPropertyChanges<T> {
     state: T,
-    stateChanges: Partial<T>
+    stateChanges: Partial<T>,
+    action: string
 }
 
 export interface ObservableStoreExtension {
@@ -53,4 +54,9 @@ export interface ObservableStoreExtension {
      * Function used to initialize the extension.
      */
     init(): void;
+}
+
+export interface StateChange<T> {
+    action: string;
+    state: Readonly<Partial<T>>;
 }

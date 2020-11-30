@@ -33,10 +33,8 @@ export class AppComponent implements OnInit {
 
     this.customersLength$ = this.customersService.stateChanged
         .pipe(
-          map(state => {
-            if (state && state.customers) {
-              return state.customers.length;
-            }
+          map(stateChange => {
+            return stateChange?.state?.customers?.length;
           })
         );
   }

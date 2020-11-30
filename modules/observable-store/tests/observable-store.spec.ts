@@ -107,8 +107,8 @@ describe('Observable Store', () => {
       ObservableStore.resetState({ prop1: 'state reset', prop2: null, user: null, users: null });
 
       expect(receivedUpdate).toBeTruthy();
-      expect(receivedState.prop1).toEqual('state reset');
-      expect(receivedState.prop2).toBe(null);
+      expect(receivedState.state.prop1).toEqual('state reset');
+      expect(receivedState.state.prop2).toBe(null);
       sub.unsubscribe();
     });
 
@@ -151,7 +151,7 @@ describe('Observable Store', () => {
 
       mockStore.updateProp1('test');
       expect(receivedData.length).toEqual(1);
-      expect(receivedData[0].prop1).toEqual('test');
+      expect(receivedData[0].state.prop1).toEqual('test');
       sub.unsubscribe();
     });
 

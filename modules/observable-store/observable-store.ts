@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ObservableStoreSettings, StateHistory, ObservableStoreGlobalSettings, StateWithPropertyChanges, ObservableStoreExtension } from './interfaces';
+import { ObservableStoreSettings, StateHistory, ObservableStoreGlobalSettings, StateWithPropertyChanges, ObservableStoreExtension, StateChange } from './interfaces';
 import ObservableStoreBase from './observable-store-base';
 
 /**
@@ -17,7 +17,7 @@ export class ObservableStore<T> {
     // some may use this as pure ES2015 I'm going with _ for the private fields.
     // private _stateDispatcher$ = new BehaviorSubject<T>(null);
     private _settings: ObservableStoreSettings;
-    private _stateDispatcher$ = new BehaviorSubject<T>(null);
+    private _stateDispatcher$ = new BehaviorSubject<StateChange<T>>(null);
     private _stateWithChangesDispatcher$ = new BehaviorSubject<StateWithPropertyChanges<T>>(null);
 
     /**
@@ -26,7 +26,7 @@ export class ObservableStore<T> {
      * of the other slices of state will not generate values in the `stateChanged` stream. 
      * Returns an RxJS Observable containing the current store state (or a specific slice of state if a `stateSliceSelector` has been specified).
      */
-    stateChanged: Observable<T>;
+    stateChanged: Observable<StateChange<T>>;
     /**
      * Subscribe to store changes in the particlar slice of state updated by a Service and also include the properties that changed as well. 
      * Upon subscribing to `stateWithPropertyChanges` you will get back an object containing state (which has the current slice of store state) 
@@ -38,7 +38,7 @@ export class ObservableStore<T> {
      * slices of state each managed by a particular service. This property notifies of a change in any of the 'n' slices of state. 
      * Returns an RxJS Observable containing the current store state.
      */
-    globalStateChanged: Observable<T>;
+    globalStateChanged: Observable<StateChange<T>>;
     /**
      * Subscribe to global store changes i.e. changes in any slice of state of the store and also include the properties that changed as well. 
      * The global store may consist of 'n' slices of state each managed by a particular service. 
@@ -203,7 +203,7 @@ export class ObservableStore<T> {
         }
         
         if (dispatchState) {
-            this.dispatchState(state as any);
+            this.dispatchState(action, state as any);
         }
 
         if (this._settings.logStateChanges) {
@@ -251,7 +251,7 @@ export class ObservableStore<T> {
      * Dispatch the store's state without modifying the store state. Service state can be dispatched as well as the global store state. 
      * If `dispatchGlobalState` is false then global state will not be dispatched to subscribers (defaults to `true`). 
      */
-    protected dispatchState(stateChanges: Partial<T>, dispatchGlobalState: boolean = true) {       
+    protected dispatchState(action: string, stateChanges: Partial<T>, dispatchGlobalState: boolean = true) {       
         // Get store state or slice of state
         const clonedStateOrSlice = this._getStateOrSlice(true);
 
@@ -262,16 +262,16 @@ export class ObservableStore<T> {
         if (this._settings.includeStateChangesOnSubscribe) {
             console.warn('includeStateChangesOnSubscribe is deprecated. ' +
                         'Subscribe to stateChangedWithChanges or globalStateChangedWithChanges instead.');
-            this._stateDispatcher$.next({ state: clonedStateOrSlice, stateChanges } as any);
-            ObservableStoreBase.globalStateDispatcher.next({ state: clonedGlobalState, stateChanges });
+            this._stateDispatcher$.next({ state: clonedStateOrSlice, stateChanges, action } as any);
+            ObservableStoreBase.globalStateDispatcher.next({ state: clonedGlobalState, stateChanges, action });
         }
         else {
-            this._stateDispatcher$.next(clonedStateOrSlice);
-            this._stateWithChangesDispatcher$.next({ state: clonedStateOrSlice, stateChanges });
+            this._stateDispatcher$.next({ action, state: clonedStateOrSlice });
+            this._stateWithChangesDispatcher$.next({ state: clonedStateOrSlice, stateChanges, action });
 
             if (dispatchGlobalState) {
-                ObservableStoreBase.globalStateDispatcher.next(clonedGlobalState);
-                ObservableStoreBase.globalStateWithChangesDispatcher.next({ state: clonedGlobalState, stateChanges })
+                ObservableStoreBase.globalStateDispatcher.next({ action, state: clonedGlobalState });
+                ObservableStoreBase.globalStateWithChangesDispatcher.next({ state: clonedGlobalState, stateChanges, action })
             };
         }
     }

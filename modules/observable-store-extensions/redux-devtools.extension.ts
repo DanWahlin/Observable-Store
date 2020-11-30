@@ -226,11 +226,17 @@ export class ReduxDevToolsExtension extends ObservableStore<any> implements Obse
     }
 
     private checkIsReact() {
-        const isReact = (this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__ &&
-            this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers &&
-            this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers.length) ||
-            this.window.__REACT_ERROR_OVERLAY_GLOBAL_HOOK__ || this.window.React ||
-            (this.window.require && (this.require('react') || this.require('React')));
+        let isReact = false;
+        // try/catch added in case this.require('react') throws an error
+        try {
+            isReact = (this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__ &&
+                this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers &&
+                this.window.__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers.length) ||
+                this.window.__REACT_ERROR_OVERLAY_GLOBAL_HOOK__ || this.window.React ||
+                (this.window.require && (this.window.require('react') || this.window.require('React')));
+        }
+        catch {}
+
         return isReact;
     }
 
