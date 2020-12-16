@@ -158,15 +158,13 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
         }
 
         get() {
-            const customers = this.getState().customers;
+            const { customers } = this.getState();
             if (customers) {
                 return of(customers);
             }
-            else {
-                // call server and get data
-                // assume async call here that returns observable
-                return asyncData;
-            }
+            // call server and get data
+            // assume async call here that returns observable
+            return asyncData;
         }
 
         add(customer: Customer) {
