@@ -9,7 +9,7 @@ The goal of observable store is to provide a small, simple, and consistent way t
 
 * <a href="https://blog.codewithdan.com/simplifying-front-end-state-management-with-observable-store" target="_blank">Blog Post about Observable Store</a>
 
-* <a href="https://videos.ng-conf.org/videos/stepping-up-observable-services-to-observable-store" target="_blank">ng-conf 2020 talk on Observable Store</a> (login is required but it's free to watch)
+* <a href="https://www.youtube.com/watch?v=jn4AH5pGWhA" target="_blank">Talk on Observable Store</a>
 
 ![Using Obervable Store](images/ObservableStore.png)
 
