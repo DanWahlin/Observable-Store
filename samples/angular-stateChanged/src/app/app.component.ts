@@ -9,8 +9,9 @@ import { StateWithPropertyChanges } from '@codewithdan/observable-store';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  storeState$: Observable<StoreState>;
-  storeStateWithPropertyChanges$: Observable<StateWithPropertyChanges<StoreState>>;
+  
+  storeState$: Observable<StoreState> = new Observable<StoreState>();
+  storeStateWithPropertyChanges$: Observable<StateWithPropertyChanges<StoreState>> = new Observable<StateWithPropertyChanges<StoreState>>();
 
   constructor(private customersService: CustomersService) {}
 

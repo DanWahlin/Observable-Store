@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { of, Observable } from 'rxjs';
+import { of, Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Customer } from '../../shared/interfaces';
 import { Injectable } from '@angular/core';
@@ -46,7 +46,7 @@ export class CustomersService extends ObservableStore<StoreState> {
             .pipe(
                 map(custs => {
                     let filteredCustomers = custs.filter(cust => cust.id === id);
-                    let customer = (filteredCustomers && filteredCustomers.length) ? filteredCustomers[0] : null;                
+                    let customer = ((filteredCustomers && filteredCustomers.length) ? filteredCustomers[0] : null) as Customer;                
                     this.setState({ customer }, CustomersStoreActions.GetCustomer);
                     return customer;
                 })
@@ -57,9 +57,9 @@ export class CustomersService extends ObservableStore<StoreState> {
         console.error('server error:', error);
         if (error.error instanceof Error) {
             const errMessage = error.error.message;
-            return Observable.throw(errMessage);
+            return throwError(errMessage);
         }
-        return Observable.throw(error || 'Server error');
+        return throwError(error || 'Server error');
       }
 }
 

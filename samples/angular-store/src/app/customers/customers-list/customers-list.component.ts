@@ -19,7 +19,7 @@ export class CustomersListComponent implements OnInit {
         }
     }
     filteredCustomers: Customer[] = [];
-    customersOrderTotal: number;
+    customersOrderTotal = 0;
     currencyCode = 'USD';
 
     constructor(private sorterService: SorterService) { }
@@ -31,16 +31,19 @@ export class CustomersListComponent implements OnInit {
     calculateOrders() {
         this.customersOrderTotal = 0;
         this.filteredCustomers.forEach((cust: Customer) => {
-            this.customersOrderTotal += cust.orderTotal;
+            if (cust && cust.orderTotal) {
+                this.customersOrderTotal += cust.orderTotal;
+            }
         });
     }
 
     filter(data: string) {
         if (data) {
             this.filteredCustomers = this.customers.filter((cust: Customer) => {
+                const orderTotal = cust.orderTotal || '';
                 return cust.name.toLowerCase().indexOf(data.toLowerCase()) > -1 ||
                        cust.city.toLowerCase().indexOf(data.toLowerCase()) > -1 ||
-                       cust.orderTotal.toString().indexOf(data) > -1;
+                       orderTotal.toString().indexOf(data) > -1;
             });
         } else {
             this.filteredCustomers = this.customers;

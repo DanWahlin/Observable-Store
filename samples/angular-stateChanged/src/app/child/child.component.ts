@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomersService } from '../core/customers.service';
+import { Observable } from 'rxjs';
+import { CustomersService, StoreState } from '../core/customers.service';
 
 @Component({
   selector: 'app-child',
@@ -7,7 +8,7 @@ import { CustomersService } from '../core/customers.service';
   styleUrls: ['./child.component.css']
 })
 export class ChildComponent implements OnInit {
-  storeState$: any;
+  storeState$: Observable<StoreState> = new Observable<StoreState>();
 
   constructor(private customersService: CustomersService) {}
 

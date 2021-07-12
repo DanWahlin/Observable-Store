@@ -13,15 +13,15 @@ import { Observable } from 'rxjs';
 })
 export class OrdersComponent implements OnInit, OnDestroy {
 
-  customer$: Observable<Customer>;
-  orders$: Observable<Order[]>;
+  customer$: Observable<Customer> = new Observable<Customer>();
+  orders$: Observable<Order[]> = new Observable<Order[]>();
 
   constructor(private customersService: CustomersService,
               private ordersService: OrdersService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
-    const id = +this.route.snapshot.paramMap.get('id');
+    const id = Number(this.route.snapshot.paramMap.get('id'));
 
     // Option 1: Access data directly from store
     this.customer$ = this.customersService.getCustomer(id);

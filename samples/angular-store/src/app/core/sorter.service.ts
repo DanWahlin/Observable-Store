@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class SorterService {
 
-    property: string = null;
+    property = null;
     direction = 1;
 
     sort(collection: any[], prop: any) {

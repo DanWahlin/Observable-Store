@@ -8,8 +8,8 @@ import { Customer } from './customer';
 import { SorterService } from '../utilities/sorter.service';
 
 export interface StoreState {
-  customers: Customer[];
-  customer: Customer;
+  customers: Customer[] | null;
+  customer: Customer | null;
 }
 
 @Injectable({
@@ -54,13 +54,13 @@ export class CustomersService extends ObservableStore<StoreState> {
     // insert via server API
     // if successful update store state
     let state = this.getState();
-    state.customers.push(customer);
+    state?.customers?.push(customer);
     this.setState({ customers: state.customers }, CustomersStoreActions.AddCustomer);
   }
 
   remove() {
     let state = this.getState();
-    state.customers.splice(state.customers.length - 1, 1);
+    state?.customers?.splice(state.customers.length - 1, 1);
     this.setState({ customers: state.customers }, CustomersStoreActions.RemoveCustomer);
   }
   
@@ -72,18 +72,13 @@ export class CustomersService extends ObservableStore<StoreState> {
     // Can also pass a function to setState to grab the previous state 
     // and then update the current state
     this.setState(prevState => { 
-      const customers = this.sorterService.sort(prevState.customers, property);
+      const customers = this.sorterService.sort(prevState.customers as any[], property);
       return { customers };
     }, CustomersStoreActions.SortCustomers);
 
     console.log('State History:', this.stateHistory);
   }
 
-}
-
-export interface StoreState {
-  customers: Customer[];
-  customer: Customer;
 }
 
 export enum CustomersStoreActions {

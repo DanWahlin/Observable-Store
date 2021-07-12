@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CustomersService } from './core/store/customers.service';
+import { CustomersService, StoreState } from './core/store/customers.service';
 import { Customer } from './core/store/customer';
 import { Observable, Subscription } from 'rxjs';
+import { StateHistory } from '@codewithdan/observable-store';
 
 @Component({
   selector: 'app-root',
@@ -9,8 +10,8 @@ import { Observable, Subscription } from 'rxjs';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  customers: Customer[] | Observable<Customer[]>;
-  stateHistory = null;
+  customers: Customer[] | null = [];
+  stateHistory: StateHistory<StoreState>[] = [];
   isHistoryVisible = false;
   subs = new Subscription();
 

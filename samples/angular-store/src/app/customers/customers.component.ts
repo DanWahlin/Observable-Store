@@ -9,8 +9,8 @@ import { CustomersService } from '../core/services/customers.service';
     templateUrl: './customers.component.html'
 })
 export class CustomersComponent implements OnInit, OnDestroy {
-    title: string;
-    customers: Customer[];
+    title = '';
+    customers: Customer[] = [];
     subsink = new SubSink();
 
     constructor(private customersService: CustomersService) { }
