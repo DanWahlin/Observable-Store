@@ -3,12 +3,5 @@
   "spec_files": ["**/*.spec.ts"],
   "stopSpecOnExpectationFailure": false,
   "random": false,
-  "reporters": [
-    {
-      "name": "jasmine-spec-reporter#SpecReporter",
-      "options": {
-        "displayStacktrace": "all"
-      }
-    }
-  ]
+  "helpers": ["spec/helpers/*.js"]
 }
