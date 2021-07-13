@@ -1,0 +1,19 @@
+{
+  "name": "react-store",
+  "version": "1.0.0",
+  "private": true,
+  "scripts":{
+    "webpack": "npx webpack --mode development",
+    "start": "http-server"
+  },
+  "dependencies": {
+    "@codewithdan/observable-store": "file:../../modules/observable-store/dist",
+    "@codewithdan/observable-store-extensions": "file:../../modules/observable-store/dist",
+    "rxjs": "7.2.0"
+  },
+  "devDependencies": {
+    "http-server": "^0.12.3",
+    "webpack": "^5.37.1",
+    "webpack-cli": "^4.7.0"
+  }
+}
