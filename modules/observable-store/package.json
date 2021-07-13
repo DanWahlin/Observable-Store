@@ -27,15 +27,15 @@
     "test:w": "nodemon --ext ts --exec 'jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json'"
   },
   "peerDependencies": {
-    "rxjs": "^6.4.0"
+    "rxjs": ">=6.4.0 <7.2.0"
   },
   "devDependencies": {
-    "@types/jasmine": "^3.5.10",
-    "jasmine": "^3.5.0",
-    "jasmine-spec-reporter": "^5.0.1",
-    "jasmine-ts": "^0.3.0",
-    "ts-node": ">=3.2.0 <8",
-    "typescript": "3.6.4",
-    "rxjs": "^6.4.0"
+    "@types/jasmine": "^3.8.1",
+    "jasmine": "^3.8.0",
+    "jasmine-spec-reporter": "^7.0.0",
+    "jasmine-ts": "^0.4.0",
+    "ts-node": "^10.1.0",
+    "typescript": "4.3.5",
+    "rxjs": "^7.2.0"
   }
 }

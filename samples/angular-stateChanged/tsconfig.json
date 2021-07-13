@@ -19,7 +19,21 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "rxjs": [
+        "node_modules/rxjs"
+      ],
+      "rxjs/*": [
+        "node_modules/rxjs/*"
+      ],
+      // "@codewithdan/observable-store": [
+      //   "../../modules/observable-store"
+      // ],
+      // "@codewithdan/observable-store-extensions": [
+      //   "../../modules/observable-store-extensions"
+      // ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
