@@ -14,8 +14,8 @@ import { map, tap } from 'rxjs/operators';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  customersLength$: Observable<number>;
-  userSettings$: Observable<UserSettings>;
+  customersLength$: Observable<number> = new Observable<number>();
+  userSettings$: Observable<UserSettings> = new Observable<UserSettings>();
 
   constructor(@Inject(DOCUMENT) private document: HTMLDocument, 
     private customersService: CustomersService,
@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
       this.userSettingsService.userSettingsChanged()  // Handle any changes
         .pipe(
           // tap(userSettings => console.log('userSettingsChanged: ', userSettings)),
-          map(userSettings => this.updateTheme(userSettings))
+          map(userSettings => this.updateTheme(userSettings as UserSettings))
         )
     );
 
@@ -37,6 +37,7 @@ export class AppComponent implements OnInit {
             if (state && state.customers) {
               return state.customers.length;
             }
+            return 0;
           })
         );
   }

@@ -20,9 +20,9 @@ export class UserSettingsService extends ObservableStore<StoreState> {
   }
 
   getUserSettings() : Observable<UserSettings> {
-    return this.http.get<UserSettings>(this.apiUrl)
+    return this.http.get<UserSettings[]>(this.apiUrl)
       .pipe(
-        map(userSettings => {
+        map((userSettings: UserSettings[]) => {
           let settings = userSettings[0]; // in-memory API returns an array but we only want one item
           this.setState({ userSettings: settings }, Actions.SetUserSettings, false); // false will stop stageChanged notifications from going out
           return settings;
@@ -44,7 +44,7 @@ export class UserSettingsService extends ObservableStore<StoreState> {
         );
   }
 
-  userSettingsChanged() : Observable<UserSettings> {
+  userSettingsChanged() : Observable<UserSettings | null> {
     return this.stateChanged
       .pipe(
         // stateSliceSelector could be added to UserSettingsService contructor to filter the store down to userSettings
@@ -52,6 +52,7 @@ export class UserSettingsService extends ObservableStore<StoreState> {
           if (state) {
             return state.userSettings;
           }
+          return null;
         }) 
       );
   }

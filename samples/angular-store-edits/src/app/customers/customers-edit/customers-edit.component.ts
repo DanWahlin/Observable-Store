@@ -19,7 +19,7 @@ export class CustomersEditComponent implements OnInit, OnDestroy {
     city: [ '', Validators.required ]
   });
 
-  customer: Customer;
+  customer: Customer | null = null;
   subsink = new SubSink();
 
   constructor(
@@ -29,7 +29,7 @@ export class CustomersEditComponent implements OnInit, OnDestroy {
       private route: ActivatedRoute) { }
 
   ngOnInit() {
-      const id = +this.route.snapshot.paramMap.get('id');
+      const id = Number(this.route.snapshot.paramMap.get('id'));
       this.subsink.sink = this.customersService.get(id).subscribe(customer => {
         if (customer) {
           this.customer = customer;
@@ -57,9 +57,11 @@ export class CustomersEditComponent implements OnInit, OnDestroy {
   }
 
   delete() {
-    this.subsink.sink = this.customersService.delete(this.customer.id).subscribe(() => {
-      this.navigateHome();
-    });
+    if (this.customer?.id) {
+      this.subsink.sink = this.customersService.delete(this.customer.id).subscribe(() => {
+        this.navigateHome();
+      });
+    }
   }
 
   update(customer: Customer) {

@@ -44,12 +44,12 @@ export class CustomersService extends ObservableStore<StoreState> {
         }
     }
 
-    get(id) {
+    get(id: number) {
         return this.getAll()
             .pipe(
                 map(custs => {
                     let filteredCusts = custs.filter(cust => cust.id === id);
-                    const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
+                    const customer = ((filteredCusts && filteredCusts.length) ? filteredCusts[0] : null) as Customer;                
                     this.setState({ customer }, CustomersStoreActions.GetCustomer);
                     return customer;
                 }),

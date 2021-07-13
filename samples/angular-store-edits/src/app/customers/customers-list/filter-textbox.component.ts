@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 @Component({
     selector: 'app-filter-textbox',
     template: `
-        Filter: <input type="text" (input)="filter=$event.target.value" [value]="filter" />
+        Filter: <input type="text" (input)="filter=getInputValue($event)" [value]="filter" />
     `
 })
 export class FilterTextboxComponent implements OnInit {
@@ -17,6 +17,10 @@ export class FilterTextboxComponent implements OnInit {
     set filter(val: string) {
         this._filter = val;
         this.changed.emit(this.filter); // Raise changed event
+    }
+
+    getInputValue(event: Event) {
+        return (event.target as HTMLInputElement).value;
     }
 
     @Output() changed: EventEmitter<string> = new EventEmitter<string>();

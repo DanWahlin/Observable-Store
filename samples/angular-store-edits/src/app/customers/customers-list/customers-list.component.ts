@@ -19,7 +19,7 @@ export class CustomersListComponent implements OnInit {
         }
     }
     filteredCustomers: Customer[] = [];
-    customersOrderTotal: number;
+    customersOrderTotal = 0;
     currencyCode = 'USD';
 
     constructor(private sorterService: SorterService) { }

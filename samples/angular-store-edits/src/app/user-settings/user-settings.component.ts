@@ -11,15 +11,14 @@ import { SubSink } from 'subsink';
 })
 export class UserSettingsComponent implements OnInit, OnDestroy {
 
-  themes: any[];
-  selectedTheme: Theme;
-  userSettings: UserSettings = { id: 1, preferredName: null, email: null, theme: null };
+  themes = [{label: 'Light', value: 0}, {label: 'Dark', value:  1}];
+  selectedTheme = Theme.Light;
+  userSettings: UserSettings = { id: 1, preferredName: '', email: '', theme: this.selectedTheme };
   subsink = new SubSink();
 
   constructor(private userSettingsService: UserSettingsService) { }
 
   ngOnInit() {
-    this.themes = [{label: 'Light', value: 0}, {label: 'Dark', value:  1}];
     this.subsink.sink = this.userSettingsService.getUserSettings().subscribe(settings => {
       this.userSettings = settings;
       if (settings) {
