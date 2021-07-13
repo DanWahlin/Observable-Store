@@ -1,6 +1,6 @@
 # JavaScript Demo
 
-This shows how to use Observable Stores with vanilla JavaScript (simple example).
+This shows how to use Observable Store with vanilla JavaScript (simple example).
 
 1. Run `npm install`
 
