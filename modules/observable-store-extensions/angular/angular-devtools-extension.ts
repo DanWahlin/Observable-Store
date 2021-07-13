@@ -8,7 +8,7 @@ export class AngularDevToolsExtension {
     constructor(private config?: ReduxDevtoolsExtensionConfig) {
         
         // Angular with NO Ivy
-        if (this.window.ng.probe && this.window.getAllAngularRootElements) {
+        if (this.window.ng && this.window.ng.probe && this.window.getAllAngularRootElements) {
             const rootElements = this.window.ng.probe(this.window.getAllAngularRootElements()[0]);
             const providers = rootElements.injector.view.root.ngModule._providers;        
             this.router = providers.find(p => p && p.constructor && p.constructor.name === 'Router');
@@ -22,7 +22,7 @@ export class AngularDevToolsExtension {
         }
 
         // Angular with Ivy
-        if (this.window.ng.getInjector && this.window.getAllAngularRootElements && 
+        if (this.window.ng && this.window.ng.getInjector && this.window.getAllAngularRootElements && 
             this.config && this.config.router && this.config.ngZone) {
             try {
                 const injector = this.window.ng.getInjector(this.window.getAllAngularRootElements()[0]);
