@@ -7,8 +7,8 @@
     "start": "http-server"
   },
   "dependencies": {
-    "@codewithdan/observable-store": "file:../../modules/observable-store/dist",
-    "@codewithdan/observable-store-extensions": "file:../../modules/observable-store/dist",
+    "@codewithdan/observable-store": "^2.2.12",
+    "@codewithdan/observable-store-extensions": "2.2.9",
     "rxjs": "7.2.0"
   },
   "devDependencies": {

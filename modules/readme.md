@@ -10,6 +10,8 @@
 
 1. Open a sample project in `samples` to test it out.
 
+1. Change versions in `package.json` files.
+
 1. Run `npm publish --access public` in the root of the `modules/observable-store` and `modules/observable-store-extensions` folders (enter the 2FA code for npm).
 
 

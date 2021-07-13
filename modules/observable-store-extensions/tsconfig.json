@@ -15,9 +15,9 @@
       "es2017"
     ],
     "paths": {
-      "@codewithdan/observable-store": [
-        "../observable-store"
-      ]
+      // "@codewithdan/observable-store": [
+      //   "../observable-store"
+      // ]
     }
   }
 }

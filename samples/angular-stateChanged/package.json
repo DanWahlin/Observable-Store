@@ -19,8 +19,8 @@
     "@angular/platform-browser": "~12.1.1",
     "@angular/platform-browser-dynamic": "~12.1.1",
     "@angular/router": "~12.1.1",
-    "@codewithdan/observable-store": "^2.2.11",
-    "@codewithdan/observable-store-extensions": "^2.2.8",
+    "@codewithdan/observable-store": "^2.2.12",
+    "@codewithdan/observable-store-extensions": "^2.2.9",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"
