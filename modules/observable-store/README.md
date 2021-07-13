@@ -7,7 +7,9 @@ Observable Store is a front-end state management library that provides a simple 
 
 The goal of observable store is to provide a small, simple, and consistent way to manage state in any front-end application (Angular, React, Vue.js or any other) while achieving many of the [key goals](#goals) offered by more complex state management solutions. While many front-end frameworks/libraries provide state management functionality, many can be overly complex and are only useable with the target framework/library. Observable Store is simple and can be used with any front-end JavaScript codebase.
 
-<a href="https://blog.codewithdan.com/simplifying-front-end-state-management-with-observable-store" target="_blank">View my blog post about Observable Store</a>
+* <a href="https://blog.codewithdan.com/simplifying-front-end-state-management-with-observable-store" target="_blank">Blog Post about Observable Store</a>
+
+* <a href="https://www.youtube.com/watch?v=jn4AH5pGWhA" target="_blank">Talk on Observable Store</a>
 
 ![Using Obervable Store](images/ObservableStore.png)
 
@@ -158,15 +160,13 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
         }
 
         get() {
-            const customers = this.getState().customers;
+            const { customers } = this.getState();
             if (customers) {
                 return of(customers);
             }
-            else {
-                // call server and get data
-                // assume async call here that returns observable
-                return asyncData;
-            }
+            // call server and get data
+            // assume async call here that returns observable
+            return asyncData;
         }
 
         add(customer: Customer) {
@@ -639,6 +639,7 @@ You can set the following Observable Store settings globally for the entire appl
 * `trackStateHistory`
 * `logStateChanges`
 * `includeStateChangesOnSubscribe` [DEPRECATED]
+* `isProduction` [RESERVED FOR FUTURE USE]
 
 Global store settings are defined ONCE when the application **first initializes** and BEFORE the store has been used:
 

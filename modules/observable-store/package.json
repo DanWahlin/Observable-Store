@@ -27,7 +27,7 @@
     "test:w": "nodemon --ext ts --exec 'jasmine-ts --project ./spec/tsconfig.json --config=./spec/jasmine.json'"
   },
   "peerDependencies": {
-    "rxjs": ">=6.4.0 <7.2.0"
+    "rxjs": ">=6.4.0 <8"
   },
   "devDependencies": {
     "@types/jasmine": "^3.8.1",
