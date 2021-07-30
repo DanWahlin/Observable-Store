@@ -279,7 +279,7 @@ export class ObservableStore<T> {
         // includeStateChangesOnSubscribe is deprecated
         if (this._settings.includeStateChangesOnSubscribe) {
             console.warn('includeStateChangesOnSubscribe is deprecated. ' +
-                'Subscribe to stateChangedWithChanges or globalStateChangedWithChanges instead.');
+                         'Subscribe to stateChangedWithChanges or globalStateChangedWithChanges instead.');
             this._stateDispatcher$.next({ state: clonedStateOrSlice, stateChanges } as any);
             ObservableStoreBase.globalStateDispatcher.next({ state: clonedGlobalState, stateChanges });
         }

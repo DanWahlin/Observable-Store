@@ -346,7 +346,7 @@ describe('Observable Store', () => {
       }
       catch (e) {
         expect(e.message).toEqual('The store state has already been initialized. initializeStoreState() can ' +
-          'only be called once BEFORE any store state has been set.');
+                                  'only be called once BEFORE any store state has been set.');
       }
 
     });
