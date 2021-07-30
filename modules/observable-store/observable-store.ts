@@ -171,8 +171,7 @@ export class ObservableStore<T> {
      * since only the defined property value will be returned (and cloned) rather than the entire 
      * store value. If using TypeScript (optional) then the generic property type used with the 
      * function call will be the return type.
-     * If a `stateSliceSelector` has been set, the specific slice will be searched first. Falling back
-     * to the top level state if property is not found.
+     * If a `stateSliceSelector` has been set, the specific slice will be searched first.
      */
     protected getStateSliceProperty<TProp>(propertyName: string, deepCloneReturnedState: boolean = true): TProp {
         if (this._settings.stateSliceSelector) {
@@ -181,7 +180,7 @@ export class ObservableStore<T> {
                 return state[propertyName];
             }
         }
-        return this.getStateProperty<TProp>(propertyName, deepCloneReturnedState);
+        return null;
     }
 
     /**
