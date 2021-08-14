@@ -3,22 +3,27 @@ import { ClonerService } from './utilities/cloner.service';
 import { ObservableStoreSettings, ObservableStoreGlobalSettings, StateWithPropertyChanges, ObservableStoreExtension } from './interfaces';
 
 // Will be used to create a singleton
-class ObservableStoreBase {  
+class ObservableStoreBase {
     private _storeState: Readonly<any> = null;
     private _clonerService = new ClonerService();
     private _extensions = [];
-    
-    settingsDefaults: ObservableStoreSettings = {
+
+    /**
+     * Default settings & global settings
+     */
+    readonly defaultGlobalSettings: ObservableStoreGlobalSettings = {
+        deepCloneReturnedState: true,
         trackStateHistory: false,
-        logStateChanges: false,
         // deprecated
         includeStateChangesOnSubscribe: false,
-        stateSliceSelector: null
-    };    
+        logStateChanges: false,
+        isProduction: false
+    } as const;
+
     stateHistory: any[] = [];
     globalStateDispatcher = new BehaviorSubject<any>(null);
     globalStateWithChangesDispatcher = new BehaviorSubject<StateWithPropertyChanges<any>>(null);
-    globalSettings: ObservableStoreGlobalSettings = null;
+    globalSettings: ObservableStoreGlobalSettings = { ...this.defaultGlobalSettings };
     services: any[] = []; // Track all services reading/writing to store. Useful for extensions like DevToolsExtension.
 
     initializeState(state: any) {

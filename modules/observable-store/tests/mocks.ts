@@ -57,22 +57,22 @@ export class UserStore extends ObservableStore<MockState> {
         this.resetStateHistory();
     }
 
-    updateUser(user: MockUser, deepCloneState: boolean = true) {
+    updateUser(user: MockUser, deepCloneState?: boolean) {
         this.setState({ user }, 'Update User', true, deepCloneState);
     }
 
-    updateMap(map: Map<any, any>, deepCloneState: boolean = true) {
+    updateMap(map: Map<any, any>, deepCloneState?: boolean) {
         this.setState({ map }, 'Update Map', true, deepCloneState);
     }
 
-    addToUsers(user: MockUser, deepCloneState: boolean = true) {
+    addToUsers(user: MockUser, deepCloneState?: boolean) {
         const state = this.getState(deepCloneState);
         let users = (state && state.users) ? state.users : [];
         users.push(user);
         this.setState({ users }, 'Update Users', true, deepCloneState);
     }
 
-    getCurrentState(deepCloneReturnedState: boolean = true) {
+    getCurrentState(deepCloneReturnedState?: boolean) {
         return this.getState(deepCloneReturnedState);
     }
 

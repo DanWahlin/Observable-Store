@@ -16,6 +16,11 @@ beforeEach(() => {
 
 describe('Observable Store', () => {
 
+  beforeEach(() => {
+    // reset globalSettings before each run to be sure it is clean
+    ObservableStore.globalSettings = {};
+  });
+
   describe('Changing state', () => {
 
     it('should change a single property', () => {
@@ -245,6 +250,13 @@ describe('Observable Store', () => {
       expect(userStore.currentState.user.address.city).toEqual('Las Vegas');
     });
 
+    it('should NOT deep clone by default when deepCloneReturnedState is false', () => {
+      ObservableStore.globalSettings = { deepCloneReturnedState: false };
+      userStore.updateUser(user); // don't set second parameter; it should be get from global settings
+      user.address.city = 'Las Vegas';
+      expect(userStore.currentState.user.address.city).toEqual('Las Vegas');
+    });
+
     it('should NOT deep clone when setState or getState called', () => {
       // Set state but don't clone
       userStore.updateUser(user, false);
@@ -297,11 +309,10 @@ describe('Observable Store', () => {
   });
 
   describe('globalSettings', () => {
-
-    it('should store global settings', () => {
+    it('should store and merge with default global settings', () => {
       ObservableStore.globalSettings = { trackStateHistory: true };
       const settingsKeys = Object.getOwnPropertyNames(ObservableStore.globalSettings);
-      expect(settingsKeys.length).toEqual(1);
+      expect(settingsKeys.length).toBeGreaterThan(1);
     });
 
     it('should error when no global settings passed', () => {
