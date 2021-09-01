@@ -58,8 +58,8 @@ describe('Observable Store', () => {
 
     it('should execute an anonymous function on a slice of data', () => {
       const updateUser: stateFunc<MockState> = (state: MockState) => {
-        if (!state) { 
-          state = { prop1: null, prop2: null, user: null, users: null } ;
+        if (!state) {
+          state = { prop1: null, prop2: null, user: null, users: null };
         }
         state.user = { name: 'fred' };
         return { user: state.user };
@@ -189,7 +189,25 @@ describe('Observable Store', () => {
       expect(state.name).toBeTruthy();
       expect(state.users).toBeUndefined();
     });
-    
+
+  });
+
+  describe('getStateSliceProperty', () => {
+
+    it('should retrieve single user property from slice when string property name passed', () => {
+      userStore = new UserStore({
+        stateSliceSelector: state => {
+          if (state) {
+            return { ...state.user };
+          }
+        }
+      });
+      userStore.setState({ user: getUser() });
+      expect(userStore.currentState).toBeTruthy();
+      let userName = userStore.getStateSliceProperty('name');
+      expect(userName).toBeTruthy();
+    });
+
   });
 
   describe('SliceSelector', () => {
@@ -222,7 +240,7 @@ describe('Observable Store', () => {
       user = getUser();
     });
 
-    it('should clone Map object added to store', ()=> {
+    it('should clone Map object added to store', () => {
       let map = new Map();
       map.set('key1', 22);
       map.set('key2', 32);
@@ -230,7 +248,7 @@ describe('Observable Store', () => {
       let state = userStore.getCurrentState();
       expect(map).toBe(map);
       expect(state.map).not.toBe(map);
-      expect (state.map.size).toEqual(map.size);
+      expect(state.map.size).toEqual(map.size);
     });
 
     it('should deep clone when setState called', () => {
