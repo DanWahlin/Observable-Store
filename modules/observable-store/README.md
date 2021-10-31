@@ -654,7 +654,7 @@ Observable Store now supports extensions. These can be added when the applicatio
 
 **Redux DevTools Extension**
 
-The first built-in extension adds [Redux DevTools](http://extension.remotedev.io/) integration into applications that use Observable Store. The extension can be found in the `@codewithdan/observable-store-extensions` package.
+The first built-in extension adds [Redux DevTools](https://github.com/reduxjs/redux-devtools) integration into applications that use Observable Store. The extension can be found in the `@codewithdan/observable-store-extensions` package.
 
 ![Integrating the Redux DevTools](images/reduxDevTools.png)
 
