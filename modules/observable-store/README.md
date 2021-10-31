@@ -917,6 +917,10 @@ External APIs supported turning off cloning but internal APIs still cloned which
 
 Adds a `getStateSliceProperty()` function. Thanks to <a href="https://github.com/ConnorSmith-pf" target="_blank">Connor Smith</a> for the contribution. Added `strict=true` support into Observable Store library tsconfig.json files.
 
+##### 2.2.14 - October 31, 2021
+
+Update readme link to Redux DevTools. Thanks to Ravi Mathpal for the information.
+
 Updates to documentation.
 
 ### Building the Project

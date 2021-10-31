@@ -919,6 +919,10 @@ Adds a `getStateSliceProperty()` function. Thanks to <a href="https://github.com
 
 Updates to documentation.
 
+##### 2.2.14 - October 31, 2021
+
+Update readme link to Redux DevTools. Thanks to Ravi Mathpal for the information.
+
 ### Building the Project
 
 See the `README.md` file in the `modules` folder.
