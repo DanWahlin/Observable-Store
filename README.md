@@ -564,7 +564,6 @@ Observable Store provides a simple API that can be used to get/set state, subscr
 | `static addExtension(extension: ObservableStoreExtension)`                              | Used to add an extension into ObservableStore. The extension must implement the `ObservableStoreExtension` interface. 
 | `static clearState(): void`| Clear/null the store state across all services that use it.
 | `static initializeState(state: any)`                              | Used to initialize the store's state. An error will be thrown if this is called and store state already exists so this should be set when the application first loads. No notifications are sent out to store subscribers when the store state is initialized.
-| `static isStoreInitialized()`                              | Used to determine if the the store's state is currently initialized. This is useful if there are multiple scenarios where the store might have already been initialized such as during unit testing etc or after the store has been cleared.
 | `static resetState(state, dispatchState: boolean = true)`                              | Used to reset the state of the store to a desired value for all services that derive from ObservableStore<T>. A state change notification and global state change notification is sent out to subscribers if the dispatchState parameter is true (the default value).
 <br>
 
@@ -577,6 +576,7 @@ Observable Store provides a simple API that can be used to get/set state, subscr
 | `stateHistory: StateHistory`                  | Retrieve state history. Assumes `trackStateHistory` setting was set on the store.
 | `static allStoreServices: any[]`| Provides access to all services that interact with ObservableStore. Useful for extensions that need to be able to access a specific service.
 | `static globalSettings: ObservableStoreGlobalSettings`| get/set global settings throughout the application for ObservableStore. See the [Observable Store Settings](#settings) below for additional information. Note that global settings can only be set once as the application first loads.
+| `static isStoreInitialized: boolean`                              | Used to determine if the the store's state is currently initialized. This is useful if there are multiple scenarios where the store might have already been initialized such as during unit testing etc or after the store has been cleared.
 <br>
 
 Note that TypeScript types are used to describe parameters and return types above. TypeScript is not required to use Observable Store though.

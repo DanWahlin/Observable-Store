@@ -21,8 +21,12 @@ class ObservableStoreBase {
     globalSettings: ObservableStoreGlobalSettings = null;
     services: any[] = []; // Track all services reading/writing to store. Useful for extensions like DevToolsExtension.
 
+    get isStoreInitialized(){
+        return this._storeState !== null;
+    }
+
     initializeState(state: any) {
-        if (this.isStoreInitialized()) {
+        if (this.isStoreInitialized) {
             throw Error('The store state has already been initialized. initializeStoreState() can ' +
                         'only be called once BEFORE any store state has been set.');
         }
@@ -31,7 +35,7 @@ class ObservableStoreBase {
 
     getStoreState(propertyName: string = null, deepCloneReturnedState: boolean = true) {
         let state = null;
-        if (this.isStoreInitialized()) {
+        if (this.isStoreInitialized) {
             // See if a specific property of the store should be returned via getStateProperty<T>()
             if (propertyName) {
                 if (this._storeState.hasOwnProperty(propertyName)) {
@@ -58,10 +62,6 @@ class ObservableStoreBase {
         else {
             this._storeState = { ...currentStoreState, ...state };
         }
-    }
-
-    isStoreInitialized(){
-        return this._storeState !== null;
     }
 
     clearStoreState() {

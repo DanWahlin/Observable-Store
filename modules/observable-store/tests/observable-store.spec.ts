@@ -405,7 +405,7 @@ describe('Observable Store', () => {
 
   describe('isInitialized', () => {
     it('should return false when ObservableStore state has not yet been initialized', () => {
-      expect(ObservableStore.isStoreInitialized()).toEqual(false);
+      expect(ObservableStore.isStoreInitialized).toEqual(false);
     });
 
     it('should return true when ObservableStore state has been initialized', () => {
@@ -413,9 +413,9 @@ describe('Observable Store', () => {
         number: 420,
         awesome: false,
       }
-      expect(ObservableStore.isStoreInitialized()).toEqual(false);
+      expect(ObservableStore.isStoreInitialized).toEqual(false);
       ObservableStore.initializeState(state);
-      expect(ObservableStore.isStoreInitialized()).toEqual(true);
+      expect(ObservableStore.isStoreInitialized).toEqual(true);
     });
 
     it('should return false after the ObservableStore state has been initialized and then reset', () => {
@@ -425,7 +425,7 @@ describe('Observable Store', () => {
       }
       ObservableStore.initializeState(state);
       ObservableStore.clearState();
-      expect(ObservableStore.isStoreInitialized()).toEqual(false);
+      expect(ObservableStore.isStoreInitialized).toEqual(false);
     });
   });
 
