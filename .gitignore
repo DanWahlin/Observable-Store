@@ -4,6 +4,7 @@
 modules/**/dist
 tmp
 out-tsc
+.angular
 
 samples/angular/src/app/**/*.js
 samples/angular/src/app/**/*.js.map

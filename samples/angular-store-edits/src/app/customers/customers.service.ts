@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { of, Observable } from 'rxjs';
+import { of, Observable, throwError } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
 import { ObservableStore } from '@codewithdan/observable-store';
 
@@ -113,11 +113,11 @@ export class CustomersService extends ObservableStore<StoreState> {
     private handleError(error: any) {
         console.error('server error:', error);
         if (error.error instanceof Error) {
-            const errMessage = error.error.message;
-            return Observable.throw(errMessage);
+          const errMessage = error.error.message;
+          return throwError(() => new Error(errMessage));
         }
-        return Observable.throw(error || 'Server error');
-      }
+        return throwError(() => error ? new Error(error) : new Error('Server error'));
+    }
 }
 
 export enum CustomersStoreActions {

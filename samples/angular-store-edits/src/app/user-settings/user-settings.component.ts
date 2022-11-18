@@ -29,7 +29,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
   updateUserSettings() {
     this.userSettingsService.updateUserSettings(this.userSettings)
-      .subscribe(userSettings => this.userSettings = userSettings);
+      .subscribe((userSettings: any) => this.userSettings = userSettings);
   }
 
   ngOnDestroy() {

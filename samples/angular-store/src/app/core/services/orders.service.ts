@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { of, Observable } from 'rxjs';
+import { of, Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Order } from '../../shared/interfaces';
 import { Injectable } from '@angular/core';
@@ -59,9 +59,9 @@ export class OrdersService extends ObservableStore<StoreState> {
         console.error('server error:', error);
         if (error.error instanceof Error) {
             const errMessage = error.error.message;
-            return Observable.throw(errMessage);
+            return throwError(() => new Error(errMessage));
         }
-        return Observable.throw(error || 'Server error');
+        return throwError(() => error ? new Error(error) : new Error('Server error'));
       }
 }
 

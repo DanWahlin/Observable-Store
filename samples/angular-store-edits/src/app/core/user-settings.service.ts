@@ -5,7 +5,7 @@ import { Theme, Actions } from '../shared/enums';
 import { ObservableStore } from '@codewithdan/observable-store';
 import { StoreState, UserSettings } from '../shared/interfaces';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +22,7 @@ export class UserSettingsService extends ObservableStore<StoreState> {
   getUserSettings() : Observable<UserSettings> {
     return this.http.get<UserSettings[]>(this.apiUrl)
       .pipe(
-        map((userSettings: UserSettings[]) => {
+        map(userSettings => {
           let settings = userSettings[0]; // in-memory API returns an array but we only want one item
           this.setState({ userSettings: settings }, Actions.SetUserSettings, false); // false will stop stageChanged notifications from going out
           return settings;
@@ -31,7 +31,7 @@ export class UserSettingsService extends ObservableStore<StoreState> {
       );
   }
 
-  updateUserSettings(userSettings: UserSettings) {
+  updateUserSettings(userSettings: UserSettings) : Observable<UserSettings> {
     return this.http.put(this.apiUrl + '/' + userSettings.id, userSettings)
         .pipe(
             switchMap(settings => {
@@ -61,8 +61,8 @@ export class UserSettingsService extends ObservableStore<StoreState> {
     console.error('server error:', error);
     if (error.error instanceof Error) {
       const errMessage = error.error.message;
-      return Observable.throw(errMessage);
+      return throwError(() => new Error(errMessage));
     }
-    return Observable.throw(error || 'Server error');
+    return throwError(() => error ? new Error(error) : new Error('Server error'));
   }
 }

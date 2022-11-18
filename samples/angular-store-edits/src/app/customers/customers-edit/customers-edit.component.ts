@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { SubSink } from 'subsink';
 
 import { Customer } from '../../core/model/customer';
@@ -13,7 +13,7 @@ import { CustomersService } from '../customers.service';
 })
 export class CustomersEditComponent implements OnInit, OnDestroy {
 
-  customerForm = this.formBuilder.group({
+  customerForm: UntypedFormGroup = this.formBuilder.group({
     id: [],
     name: [ '', Validators.required ],
     city: [ '', Validators.required ]

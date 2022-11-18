@@ -7,13 +7,13 @@
     "start": "http-server"
   },
   "dependencies": {
-    "@codewithdan/observable-store": "^2.2.13",
+    "@codewithdan/observable-store": "^2.2.14",
     "@codewithdan/observable-store-extensions": "2.2.9",
-    "rxjs": "7.2.0"
+    "rxjs": "7.5.7"
   },
   "devDependencies": {
-    "http-server": "^0.12.3",
-    "webpack": "^5.37.1",
-    "webpack-cli": "^4.7.0"
+    "http-server": "^14.1.1",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0"
   }
 }
