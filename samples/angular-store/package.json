@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve -o",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -18,7 +18,7 @@
     "@angular/platform-browser": "^15.0.0",
     "@angular/platform-browser-dynamic": "^15.0.0",
     "@angular/router": "^15.0.0",
-    "@codewithdan/observable-store": "^2.2.14",
+    "@codewithdan/observable-store": "^2.2.15",
     "@codewithdan/observable-store-extensions": "^2.2.9",
     "subsink": "^1.0.2",
     "rxjs": "~7.5.0",
