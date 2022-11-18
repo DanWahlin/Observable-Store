@@ -403,4 +403,30 @@ describe('Observable Store', () => {
     });
   });
 
+  describe('isInitialized', () => {
+    it('should return false when ObservableStore state has not yet been initialized', () => {
+      expect(ObservableStore.isStoreInitialized).toEqual(false);
+    });
+
+    it('should return true when ObservableStore state has been initialized', () => {
+      const state = {
+        number: 420,
+        awesome: false,
+      }
+      expect(ObservableStore.isStoreInitialized).toEqual(false);
+      ObservableStore.initializeState(state);
+      expect(ObservableStore.isStoreInitialized).toEqual(true);
+    });
+
+    it('should return false after the ObservableStore state has been initialized and then reset', () => {
+      const state = {
+        number: 69,
+        awesome: true,
+      }
+      ObservableStore.initializeState(state);
+      ObservableStore.clearState();
+      expect(ObservableStore.isStoreInitialized).toEqual(false);
+    });
+  });
+
 });
