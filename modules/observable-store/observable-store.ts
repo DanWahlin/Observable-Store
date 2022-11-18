@@ -138,7 +138,7 @@ export class ObservableStore<T> {
     /**
      * Determines if the ObservableStore has already been initialized through the use of ObservableStore.initializeState()
      */
-    static get isStoreInitialized(){
+    static get isStoreInitialized(): boolean {
         return ObservableStoreBase.isStoreInitialized;
     }
 

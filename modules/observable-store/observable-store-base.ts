@@ -21,7 +21,7 @@ class ObservableStoreBase {
     globalSettings: ObservableStoreGlobalSettings = null;
     services: any[] = []; // Track all services reading/writing to store. Useful for extensions like DevToolsExtension.
 
-    get isStoreInitialized(){
+    get isStoreInitialized(): boolean {
         return this._storeState !== null;
     }
 
