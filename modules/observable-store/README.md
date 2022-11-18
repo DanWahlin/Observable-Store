@@ -576,6 +576,7 @@ Observable Store provides a simple API that can be used to get/set state, subscr
 | `stateHistory: StateHistory`                  | Retrieve state history. Assumes `trackStateHistory` setting was set on the store.
 | `static allStoreServices: any[]`| Provides access to all services that interact with ObservableStore. Useful for extensions that need to be able to access a specific service.
 | `static globalSettings: ObservableStoreGlobalSettings`| get/set global settings throughout the application for ObservableStore. See the [Observable Store Settings](#settings) below for additional information. Note that global settings can only be set once as the application first loads.
+| `static isStoreInitialized: boolean`                              | Used to determine if the the store's state is currently initialized. This is useful if there are multiple scenarios where the store might have already been initialized such as during unit testing etc or after the store has been cleared.
 <br>
 
 Note that TypeScript types are used to describe parameters and return types above. TypeScript is not required to use Observable Store though.
@@ -922,6 +923,10 @@ Updates to documentation.
 ##### 2.2.14 - October 31, 2021
 
 Update readme link to Redux DevTools. Thanks to Ravi Mathpal for the information.
+
+##### 2.2.15 - November 18, 2022
+
+New `isStoreInitialized` property added. Thanks to <a href="https://github.com/JasonLandbridge" target="_blank">Jason Landbridge</a> for the PR!
 
 ### Building the Project
 

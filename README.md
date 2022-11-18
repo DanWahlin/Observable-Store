@@ -924,6 +924,10 @@ Updates to documentation.
 
 Update readme link to Redux DevTools. Thanks to Ravi Mathpal for the information.
 
+##### 2.2.15 - November 18, 2022
+
+New `isStoreInitialized` property added. Thanks to <a href="https://github.com/JasonLandbridge" target="_blank">Jason Landbridge</a> for the PR!
+
 ### Building the Project
 
 See the `README.md` file in the `modules` folder.
