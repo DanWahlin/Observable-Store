@@ -1,5 +1,5 @@
 [![Node.js CI](https://github.com/DanWahlin/Observable-Store/actions/workflows/nodejs-build-validation.yml/badge.svg)](https://github.com/DanWahlin/Observable-Store/actions/workflows/nodejs-build-validation.yml)
-[![npm version](https://img.shields.io/npm/v/@codewithdan/observable-store?color=%23330C252&label=npm%20version&style=plastic)](https://www.npmjs.com/package/@codewithdan/observable-store)
+[![npm version](https://img.shields.io/npm/v/@codewithdan/observable-store?color=%23330C252&label=npm%20version)](https://www.npmjs.com/package/@codewithdan/observable-store)
 
 ## Observable Store - State Management for Front-End Applications (Angular, React, Vue.js, or any other)
 
