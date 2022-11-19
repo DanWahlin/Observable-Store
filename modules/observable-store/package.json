@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@types/jasmine": "^3.8.2",
+    "@types/node": "^18.11.9",
     "jasmine": "^3.9.0",
     "jasmine-spec-reporter": "^7.0.0",
     "jasmine-ts": "^0.4.0",
