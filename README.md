@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/DanWahlin/Observable-Store.svg?branch=master)](https://travis-ci.org/DanWahlin/Observable-Store)
+[![Node.js CI](https://github.com/DanWahlin/Observable-Store/actions/workflows/nodejs-build-validation.yml/badge.svg)](https://github.com/DanWahlin/Observable-Store/actions/workflows/nodejs-build-validation.yml)
 [![npm version](https://badge.fury.io/js/%40codewithdan%2Fobservable-store.svg)](https://www.npmjs.com/package/@codewithdan/observable-store)
 
 ## Observable Store - State Management for Front-End Applications (Angular, React, Vue.js, or any other)
