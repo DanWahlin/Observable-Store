@@ -8,6 +8,10 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+    
+defaults:
+  run:
+    working-directory: ./modules/observable-store
 
 jobs:
   build:
@@ -26,9 +30,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: |
-          modules/observable-store/package-lock.json
-          modules/observable-store-extensions/package-lock.json
+        cache-dependency-path: ./modules/observable-store/package-lock.json
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
