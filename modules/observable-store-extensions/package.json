@@ -31,6 +31,7 @@
     "@codewithdan/observable-store": ">=2.2.12"
   },
   "devDependencies": {
+    "@codewithdan/observable-store": "latest",
     "@types/node": "^18.11.9",
     "typescript": "4.9.3",
     "rxjs": "^7.5.7"
