@@ -544,6 +544,124 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
     }
     ```
 
+## <a name="solid"></a>Using Observable Store with Solid.js
+
+1. Create a Solid.js App with Typescript using Vite
+
+```
+npm create vite@latest
+```
+
+2. Create a Customer Store
+
+``` typescript
+// stores/CustomersStore.ts
+import { ObservableStore } from '@codewithdan/observable-store';
+
+export class CustomersStore extends ObservableStore {
+  constructor() {
+    super({ trackStateHistory: true });
+  }
+
+  fetchCustomers() {
+     const customers = [
+    {
+      id: 1,
+      name: 'Jane Doe',
+      address: {
+        street: '123 Main St',
+        city: 'Phoenix',
+        state: 'AZ',
+        zip: '85258'
+      }
+    },
+    {
+      id: 2,
+      name: 'John Smith',
+      address: {
+        street: '456 Oak Ave',
+        city: 'Austin',
+        state: 'TX',
+        zip: '73301'
+      }
+    },
+      {
+      id: 3,
+      name: 'Pravin',
+      address: {
+        street: '456 Oak Ave',
+        city: 'Austin',
+        state: 'TX',
+        zip: '73301'
+      }
+    }
+  ];
+
+  this.setState({ customers }, 'GET_CUSTOMERS');
+  return Promise.resolve(customers);
+  }
+
+  getCustomers() {
+    const state = this.getState();
+    if (state?.customers) {
+      return Promise.resolve(state.customers);
+    }
+    return this.fetchCustomers();
+  }
+
+  getCustomer(id: number) {
+    return this.getCustomers().then(custs => {
+      const customer = custs.find(c => c.id === id) ?? null;
+      this.setState({ customer }, 'GET_CUSTOMER');
+      return customer;
+    });
+  }
+}
+
+export default new CustomersStore();
+```
+3. Access the store in Customers Component
+
+``` typescript
+// Customers.tsx
+import { createSignal, onMount, onCleanup } from 'solid-js';
+import CustomersStore from '../stores/CustomersStore';
+
+export default function Customers() {
+  const [customers, setCustomers] = createSignal([]);
+
+  let storeSub: any;
+
+  onMount(() => {
+    // Option 1: subscribe to store changes
+    storeSub = CustomersStore.stateChanged.subscribe(state => {
+      if (state?.customers) {
+        setCustomers(state.customers);
+      }
+    });
+
+    // Trigger data load
+    CustomersStore.getCustomers();
+  });
+
+  onCleanup(() => {
+    storeSub?.unsubscribe();
+  });
+
+  return (
+    <div>
+      <h2>Customers</h2>
+      <ul>
+        {customers().map(c => (
+          <li>{c.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+```
+
 ### <a name="vue"></a>Using Observable Store with Vue.js
 
 ....
