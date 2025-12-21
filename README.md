@@ -104,6 +104,7 @@ Open the `samples` folder available at the Github repo and follow the instructio
 
 * [Using Observable Store with Angular](#angular)
 * [Using Observable Store with React](#react)
+* [Using Observable Store with SolidJS](#solid)
 * [Using Observable Store with Vue.js](#vue)
 
 ## <a name="angular"></a>Using Observable Store with Angular
@@ -544,15 +545,22 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
     }
     ```
 
-## <a name="solid"></a>Using Observable Store with Solid.js
+## <a name="solid"></a>Using Observable Store with SolidJS
 
 1. Create a Solid.js App with Typescript using Vite
 
 ```
 npm create vite@latest
 ```
+2. Install `@codewithdan/observable-store`:
 
-2. Create a Customer Store
+    `npm install @codewithdan/observable-store`
+
+3. Install RxJS (a required peer dependency):
+
+    `npm install rxjs`
+
+4. Create a Customer Store
 
 ``` typescript
 // stores/CustomersStore.ts
@@ -620,7 +628,7 @@ export class CustomersStore extends ObservableStore {
 
 export default new CustomersStore();
 ```
-3. Access the store in Customers Component
+5. Access the store in Customers Component
 
 ``` typescript
 // Customers.tsx
