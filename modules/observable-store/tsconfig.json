@@ -14,5 +14,11 @@
         "es2015",
         "es2017"
       ]
-  }
+  },
+  "exclude": [
+    "**/*.spec.ts",
+    "spec",
+    "tests",
+    "node_modules"
+  ]
 }

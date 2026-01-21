@@ -31,6 +31,13 @@ export class ClonerService {
                     return result;
                 }
 
+                // Check if this is a plain object or array that can be safely JSON-cloned
+                // For complex objects with custom prototypes (like Dayjs, Moment, etc.),
+                // return the original reference to avoid cloning issues
+                if (!this.isCloneable(value)) {
+                    return value;
+                }
+
                 result = JSON.parse(JSON.stringify(value));
                 this.fixTypes(value, result);
                 return result;
@@ -63,7 +70,14 @@ export class ClonerService {
                 else if (originalValue == null) {
                     copy[key] = originalValue;
                 }
-                else {
+                else if (!this.isCloneable(originalValue)) {
+                    // For complex objects with custom prototypes (Dayjs, Moment, etc.),
+                    // use the original reference to avoid cloning issues
+                    copy[key] = originalValue;
+                }
+                else if (typeof copy[key] === 'object' && copy[key] !== null) {
+                    // Only call fixTypes if copy[key] is still an object
+                    // (not converted to a string/primitive by JSON.stringify)
                     this.fixTypes(originalValue, copy[key]);
                 }
                 break;
@@ -100,6 +114,49 @@ export class ClonerService {
         const regexpText = String(value);
         const slashIndex = regexpText.lastIndexOf('/');
         return new RegExp(regexpText.slice(1, slashIndex), regexpText.slice(slashIndex + 1));
+    }
+
+    private isCloneable(value): boolean {
+        // Arrays are always cloneable
+        if (value instanceof Array) {
+            return true;
+        }
+
+        // Check if it's a plain object (created by {} or new Object())
+        const proto = Object.getPrototypeOf(value);
+        if (proto === Object.prototype || proto === null) {
+            return true;
+        }
+
+        // If the object has a toJSON method, check if it would convert to a primitive
+        // This handles Dayjs, Moment, and other objects with custom JSON serialization
+        if (typeof value.toJSON === 'function') {
+            try {
+                const jsonResult = value.toJSON();
+                const jsonType = typeof jsonResult;
+                // If toJSON returns a primitive (string, number, etc.), it's not safely cloneable
+                if (jsonType !== 'object' || jsonResult === null) {
+                    return false;
+                }
+            } catch (e) {
+                // If toJSON throws, treat as not cloneable
+                return false;
+            }
+        }
+
+        // Check if the prototype has methods beyond constructor
+        // Objects with methods are complex and shouldn't be cloned via JSON
+        const protoProps = Object.getOwnPropertyNames(proto);
+        const hasMethods = protoProps.some(prop => {
+            return prop !== 'constructor' && typeof value[prop] === 'function';
+        });
+        
+        if (hasMethods) {
+            return false;
+        }
+
+        // Simple data classes (only properties, no methods) are cloneable
+        return true;
     }
 
 }
