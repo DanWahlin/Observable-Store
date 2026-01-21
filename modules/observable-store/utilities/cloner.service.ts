@@ -116,7 +116,7 @@ export class ClonerService {
         return new RegExp(regexpText.slice(1, slashIndex), regexpText.slice(slashIndex + 1));
     }
 
-    private isCloneable(value): boolean {
+    private isCloneable(value: any): boolean {
         // Arrays are always cloneable
         if (value instanceof Array) {
             return true;
@@ -147,11 +147,7 @@ export class ClonerService {
         // Check if the prototype has methods beyond constructor
         // Objects with methods are complex and shouldn't be cloned via JSON
         const protoProps = Object.getOwnPropertyNames(proto);
-        const hasMethods = protoProps.some(prop => {
-            return prop !== 'constructor' && typeof value[prop] === 'function';
-        });
-        
-        if (hasMethods) {
+        if (protoProps.some(prop => prop !== 'constructor' && typeof value[prop] === 'function')) {
             return false;
         }
 

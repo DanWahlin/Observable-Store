@@ -13,7 +13,7 @@ class ComplexDateClass {
     this.internalDate = new Date(dateStr);
   }
   
-  format(formatStr: string): string {
+  format(): string {
     return this.internalDate.toISOString();
   }
   
