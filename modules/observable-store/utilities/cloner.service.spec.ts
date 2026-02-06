@@ -528,5 +528,181 @@ describe('ClonerService', () => {
         testObject.level1.level2.level3.date
       );
     });
+
+    it('should clone primitive values as-is', () => {
+      const cloneService = new ClonerService();
+      expect(cloneService.deepClone(42)).toEqual(42);
+      expect(cloneService.deepClone('hello')).toEqual('hello');
+      expect(cloneService.deepClone(true)).toEqual(true);
+      expect(cloneService.deepClone(null)).toBeNull();
+      expect(cloneService.deepClone(undefined)).toBeUndefined();
+    });
+
+    it('should clone a Date object', () => {
+      const original = new Date('2020-06-15T12:00:00Z');
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(original);
+
+      expect(cloned).not.toBe(original);
+      expect(cloned instanceof Date).toBe(true);
+      expect(cloned.getTime()).toEqual(original.getTime());
+    });
+
+    it('should clone a RegExp object', () => {
+      const original = /test-pattern/gi;
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(original);
+
+      expect(cloned).not.toBe(original);
+      expect(cloned instanceof RegExp).toBe(true);
+      expect(cloned.source).toEqual('test-pattern');
+      expect(cloned.flags).toEqual('gi');
+    });
+
+    it('should handle objects with getter properties', () => {
+      const obj = {
+        _name: 'Dan',
+        get name() { return this._name.toUpperCase(); }
+      };
+
+      const cloneService = new ClonerService();
+      // JSON.parse/stringify will evaluate the getter and clone its value
+      const cloned = cloneService.deepClone(obj);
+      expect(cloned._name).toEqual('Dan');
+      expect(cloned.name).toEqual('DAN');
+    });
+
+    it('should handle Uint8Array by returning a clone', () => {
+      const arr = new Uint8Array([1, 2, 3, 4]);
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(arr);
+
+      // Typed arrays have custom prototypes, so cloner will use complex path
+      expect(cloned).not.toBe(arr);
+    });
+
+    it('should handle objects with NaN values inside arrays', () => {
+      const testObject = {
+        values: [1, NaN, 3, Infinity, null]
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      expect(cloned.values[0]).toEqual(1);
+      expect(isNaN(cloned.values[1])).toBe(true);
+      expect(cloned.values[2]).toEqual(3);
+      expect(cloned.values[3]).toEqual(Infinity);
+      expect(cloned.values[4]).toBeNull();
+    });
+
+    it('should handle nested Date objects inside arrays', () => {
+      const d1 = new Date('2020-01-01');
+      const d2 = new Date('2021-06-15');
+      const testObject = {
+        dates: [d1, d2]
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      expect(cloned.dates[0]).not.toBe(d1);
+      expect(cloned.dates[0].getTime()).toEqual(d1.getTime());
+      expect(cloned.dates[1]).not.toBe(d2);
+      expect(cloned.dates[1].getTime()).toEqual(d2.getTime());
+    });
+
+    it('should handle nested RegExp objects inside plain objects', () => {
+      const testObject = {
+        patterns: {
+          email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+          phone: /^\d{3}-\d{3}-\d{4}$/
+        }
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      expect(cloned.patterns.email).not.toBe(testObject.patterns.email);
+      expect(cloned.patterns.email.source).toEqual(testObject.patterns.email.source);
+      expect(cloned.patterns.phone.source).toEqual(testObject.patterns.phone.source);
+    });
+
+    it('should handle Map with complex object values', () => {
+      const map = new Map<string, any>();
+      map.set('created', new MockDateLib('2020-01-01'));
+      map.set('updated', new MockDateLib('2021-06-15'));
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(map);
+
+      expect(cloned).not.toBe(map);
+      expect(cloned.get('created')).not.toBe(map.get('created'));
+      expect(cloned.get('created').format()).toEqual('2020-01-01');
+      expect(cloned.get('updated').format()).toEqual('2021-06-15');
+    });
+
+    it('should handle Set with complex object values', () => {
+      const set = new Set<any>();
+      set.add(new MockDateLib('2020-01-01'));
+      set.add(new MockDateLib('2021-06-15'));
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(set);
+
+      expect(cloned).not.toBe(set);
+      expect(cloned.size).toEqual(2);
+      const clonedArr = [...cloned];
+      const origArr = [...set];
+      expect(clonedArr[0]).not.toBe(origArr[0]);
+      expect(clonedArr[0].format()).toEqual('2020-01-01');
+    });
+
+    it('should handle a complex object without clone() method', () => {
+      const config = new MutableConfig({ theme: 'dark' });
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(config);
+
+      expect(cloned).not.toBe(config);
+      expect(cloned.get('theme')).toEqual('dark');
+      // Verify it has prototype methods
+      expect(typeof cloned.set).toBe('function');
+      expect(typeof cloned.get).toBe('function');
+    });
+
+    it('should handle an empty Map', () => {
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(new Map());
+      expect(cloned instanceof Map).toBe(true);
+      expect(cloned.size).toEqual(0);
+    });
+
+    it('should handle an empty Set', () => {
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(new Set());
+      expect(cloned instanceof Set).toBe(true);
+      expect(cloned.size).toEqual(0);
+    });
+
+    it('should handle a plain array of primitives', () => {
+      const arr = [1, 'two', true, null];
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(arr);
+
+      expect(cloned).not.toBe(arr);
+      expect(cloned).toEqual([1, 'two', true, null]);
+    });
+
+    it('should handle a deeply nested plain object', () => {
+      const obj = { a: { b: { c: { d: { e: 'deep' } } } } };
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(obj);
+
+      expect(cloned).not.toBe(obj);
+      expect(cloned.a.b.c.d.e).toEqual('deep');
+      cloned.a.b.c.d.e = 'mutated';
+      expect(obj.a.b.c.d.e).toEqual('deep');
+    });
   });
 });
