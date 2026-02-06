@@ -6,7 +6,7 @@ export default defineConfig({
     keepNames: true,
   },
   build: {
-    target: 'es2015',
+    target: 'es2022',
     lib: {
       entry: 'index.ts',
       name: 'ObservableStore',

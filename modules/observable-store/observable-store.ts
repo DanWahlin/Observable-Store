@@ -283,22 +283,23 @@ export class ObservableStore<T> {
         //  Get full store state
         const clonedGlobalState = ObservableStoreBase.getStoreState();
 
-        // includeStateChangesOnSubscribe is deprecated
-        if (this._settings.includeStateChangesOnSubscribe) {
-            console.warn('includeStateChangesOnSubscribe is deprecated. ' +
-                         'Subscribe to stateChangedWithChanges or globalStateChangedWithChanges instead.');
-            this._stateDispatcher$.next({ state: clonedStateOrSlice, stateChanges } as any);
-            ObservableStoreBase.globalStateDispatcher.next({ state: clonedGlobalState, stateChanges });
-        }
-        else {
-            this._stateDispatcher$.next(clonedStateOrSlice);
-            this._stateWithChangesDispatcher$.next({ state: clonedStateOrSlice, stateChanges });
+        this._stateDispatcher$.next(clonedStateOrSlice);
+        this._stateWithChangesDispatcher$.next({ state: clonedStateOrSlice, stateChanges });
 
-            if (dispatchGlobalState) {
-                ObservableStoreBase.globalStateDispatcher.next(clonedGlobalState);
-                ObservableStoreBase.globalStateWithChangesDispatcher.next({ state: clonedGlobalState, stateChanges })
-            };
-        }
+        if (dispatchGlobalState) {
+            ObservableStoreBase.globalStateDispatcher.next(clonedGlobalState);
+            ObservableStoreBase.globalStateWithChangesDispatcher.next({ state: clonedGlobalState, stateChanges })
+        };
+    }
+
+    /**
+     * Unregister this service from the global store and complete its state dispatchers.
+     * Call this when a service is destroyed (e.g., in Angular's ngOnDestroy) to prevent memory leaks.
+     */
+    destroy() {
+        this._stateDispatcher$.complete();
+        this._stateWithChangesDispatcher$.complete();
+        ObservableStoreBase.removeService(this);
     }
 
 }

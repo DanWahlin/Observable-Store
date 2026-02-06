@@ -1,6 +1,6 @@
 {
   "name": "@codewithdan/observable-store",
-  "version": "2.2.15",
+  "version": "3.0.0",
   "type": "module",
   "author": "Dan Wahlin",
   "description": "Observable Store provides a simple way to store and retrieve state in Angular, React, Vue.js and other front-end applications.",

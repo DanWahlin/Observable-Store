@@ -11,8 +11,6 @@ class ObservableStoreBase {
     settingsDefaults: ObservableStoreSettings = {
         trackStateHistory: false,
         logStateChanges: false,
-        // deprecated
-        includeStateChangesOnSubscribe: false,
         stateSliceSelector: null
     };    
     stateHistory: any[] = [];
@@ -70,6 +68,13 @@ class ObservableStoreBase {
 
     deepClone(obj: any) {
         return this._clonerService.deepClone(obj);
+    }
+
+    removeService(service: any) {
+        const index = this.services.indexOf(service);
+        if (index > -1) {
+            this.services.splice(index, 1);
+        }
     }
 
     addExtension(extension: ObservableStoreExtension) {

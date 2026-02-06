@@ -1,6 +1,6 @@
 {
   "name": "@codewithdan/observable-store-extensions",
-  "version": "2.2.9",
+  "version": "3.0.0",
   "type": "module",
   "author": "Dan Wahlin",
   "description": "Observable Store redux devtools extension.",
@@ -43,7 +43,7 @@
   "dependencies": {},
   "peerDependencies": {
     "rxjs": ">=6.4.0 <8",
-    "@codewithdan/observable-store": ">=2.2.12"
+    "@codewithdan/observable-store": ">=3.0.0"
   },
   "devDependencies": {
     "@codewithdan/observable-store": "file:../observable-store",

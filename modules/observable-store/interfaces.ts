@@ -19,11 +19,6 @@ export interface BaseStoreSettings {
      * Log any store state changes to the browser console (defaults to `false`).
      */
     logStateChanges?: boolean;
-
-    /**
-     * DEPRECATED. Since this is deprecated, use `stateWithPropertyChanges` or `globalStateWithPropertyChanges` instead.
-     */
-    includeStateChangesOnSubscribe?: boolean;
 }
 
 export interface ObservableStoreSettings extends BaseStoreSettings, StateSliceSelector { }

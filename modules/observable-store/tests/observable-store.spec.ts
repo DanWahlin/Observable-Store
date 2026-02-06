@@ -113,20 +113,6 @@ describe('Observable Store', () => {
       sub.unsubscribe();
     });
 
-    // deprecated
-    // we will skip 1 to account for the initial BehaviorSubject<T> value
-    it('should receive state notification when includeStateChangesOnSubscribe set [deprecated]', () => {
-      let mockStore = new MockStore({ includeStateChangesOnSubscribe: true });
-      let receivedData;
-      const sub = mockStore.stateChanged.pipe(skip(1)).subscribe(stateWithChanges => receivedData = stateWithChanges);
-
-      mockStore.updateProp1('test');
-
-      expect(receivedData.state.prop1).toEqual('test');
-      expect(receivedData.stateChanges.prop1).toEqual('test');
-      sub.unsubscribe();
-    });
-
     // we will skip 1 to account for the initial BehaviorSubject<T> value
     it('should receive notification from stateChangedWithChanges', () => {
       let mockStore = new MockStore({});
@@ -402,6 +388,30 @@ describe('Observable Store', () => {
       userStore.updateUser(user);
       expect(userStore.stateHistory.length).toEqual(0);
     });
+  });
+
+  describe('destroy', () => {
+
+    it('should remove service from allStoreServices when destroyed', () => {
+      const servicesBefore = ObservableStore.allStoreServices.length;
+      const tempStore = new MockStore({});
+      expect(ObservableStore.allStoreServices.length).toEqual(servicesBefore + 1);
+
+      tempStore.destroy();
+      expect(ObservableStore.allStoreServices.length).toEqual(servicesBefore);
+    });
+
+    it('should complete state dispatchers on destroy', () => {
+      const tempStore = new MockStore({});
+      let completed = false;
+      tempStore.stateChanged.subscribe({
+        complete: () => { completed = true; }
+      });
+
+      tempStore.destroy();
+      expect(completed).toBe(true);
+    });
+
   });
 
   describe('isInitialized', () => {
