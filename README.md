@@ -11,7 +11,7 @@ The goal of observable store is to provide a small, simple, and consistent way t
 
 * <a href="https://www.youtube.com/watch?v=jn4AH5pGWhA" target="_blank">Talk on Observable Store</a>
 
-![Using Obervable Store](images/ObservableStore.png)
+![Using Observable Store](images/ObservableStore.png)
 
 ### <a name="goals"></a>Key Goals of Observable Store:
 1. Keep it simple!
@@ -139,7 +139,6 @@ Open the `samples` folder available at the Github repo and follow the instructio
 
 * [Using Observable Store with Angular](#angular)
 * [Using Observable Store with React](#react)
-* [Using Observable Store with Vue.js](#vue)
 
 ## <a name="angular"></a>Using Observable Store with Angular
 
@@ -160,10 +159,10 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
     }
     ```
 
-1. Add a service (you can optionally calll it a store if you'd like) that extends ObservableStore<T>. Pass the interface or model class that represents the shape of your store data in for T as shown next:
+1. Add a service (you can optionally call it a store if you'd like) that extends ObservableStore<T>. Pass the interface or model class that represents the shape of your store data in for T as shown next:
 
     ``` typescript
-    @Injectable()
+    @Injectable({ providedIn: 'root' })
     export class CustomersService extends ObservableStore<StoreState> {
 
     }
@@ -180,7 +179,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 1. Add functions into your service/store to retrieve, store, sort, filter, or perform any actions you'd like. To update the store call `setState()` and pass the action that is occuring as well as the store state. To get the state out of the store call `getState()`. Note that store data is immutable and `getState()` always returns a clone of the store data. Here's a simple example:
 
     ``` typescript
-    @Injectable()
+    @Injectable({ providedIn: 'root' })
     export class CustomersService extends ObservableStore<StoreState> {
         sorterService: SorterService;
 
@@ -344,7 +343,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
     }
     ```
 
-    You'll of course want to unsubscribe in `ngOnDestroy()` (check out SubSink on npm for a nice way to easily subscribe/unsubscribe):
+    Unsubscribe when the component is destroyed to avoid memory leaks:
 
     ``` typescript
     ngOnDestroy() {
@@ -356,49 +355,33 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 
 ## <a name="react"></a>Using Observable Store with React
 
-See the `samples` folder in the Github repo for examples of using Observable Store with React.
+See the `samples/react-store` folder in the Github repo for a complete example.
 
-1. Create a React application using the `create-react-app` or another option.
+1. Create a React application using [Vite](https://vitejs.dev/) or another tool:
 
-1. Install `@codewithdan/observable-store`:
-
-    `npm install @codewithdan/observable-store`
-
-1. Install RxJS (a required peer dependency):
-
-    `npm install rxjs`
-
-1. Add a store class (you can call it whatever you'd like) that extends ObservableStore<T>. 
-
-    ``` javascript
-    export class CustomersStore extends ObservableStore {
-
-    }
+    ```bash
+    npm create vite@latest my-app -- --template react
     ```
 
-1. In the constructor add a call to `super()`. The store allows you to turn tracking of store state changes on and off using the `trackStateHistory` property. See a list of [Observable Store Settings](#settings).
+1. Install `@codewithdan/observable-store` and RxJS:
 
-    ``` javascript
-    export class CustomersStore extends ObservableStore {
-        constructor() {
-            super({ trackStateHistory: true });
-        }
-    }
+    ```bash
+    npm install @codewithdan/observable-store rxjs
     ```
 
-1. Add functions into your service/store to retrieve, store, sort, filter, or perform any actions you'd like. To update the store call `setState()` and pass the action that is occuring as well as the store state. To get the state out of the store call `getState()`. Note that store data is immutable and `getState()` always returns a clone of the store data. Here's a simple example:
+1. Create a store class that extends `ObservableStore`:
 
     ``` javascript
-    export class CustomersStore extends ObservableStore {
+    import { ObservableStore } from '@codewithdan/observable-store';
+
+    class CustomersStore extends ObservableStore {
 
         constructor() {
             super({ trackStateHistory: true });
         }
 
         fetchCustomers() {
-            // using fetch api here to keep it simple, but any other
-            // 3rd party option will work (Axios, Ky, etc.)
-            return fetch('/customers')
+            return fetch('/customers.json')
                 .then(response => response.json())
                 .then(customers => {
                     this.setState({ customers }, 'GET_CUSTOMERS');
@@ -407,181 +390,52 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
         }
 
         getCustomers() {
-            let state = this.getState();
-            // pull from store cache
+            const state = this.getState();
             if (state && state.customers) {
-                return this.createPromise(null, state.customers);
+                return Promise.resolve(state.customers);
             }
-            // doesn't exist in store so fetch from server
-            else {
-                return this.fetchCustomers();
-            }
-        }
-
-        getCustomer(id) {
-            return this.getCustomers()
-                .then(custs => {
-                    let filteredCusts = custs.filter(cust => cust.id === id);
-                    const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
-                    this.setState({ customer }, 'GET_CUSTOMER');
-                    return customer;
-                });
-        }
-
-        createPromise(err, result) {
-            return new Promise((resolve, reject) => {
-                return err ? reject(err) : resolve(result);
-            });
+            return this.fetchCustomers();
         }
     }
-    ```
 
-    While strings are used for actions in the prior example, you can use an object as well if you want to have a set list of actions to choose from:
-
-    ``` javascript
-    const CustomersStoreActions = {
-        GetCustomers: 'GET_CUSTOMERS',
-        GetCustomer: 'GET_CUSTOMER'
-    };
-
-        // Example of using the enum in a store
-    getCustomer(id) {
-        return this.getCustomers()
-            .then(custs => {
-                let filteredCusts = custs.filter(cust => cust.id === id);
-                const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
-                this.setState({ customer }, CustomersStoreActions.GetCustomer);
-                return customer;
-            });
-    }
-    ```
-
-1. Export your store. A default export is used here:
-
-
-    ``` javascript
     export default new CustomersStore();
     ```
 
-1. If you want to view all of the changes to the store you can access the store's `stateHistory` property:
+1. Use the store in a component with hooks. Subscribe to `stateChanged` in a `useEffect` and clean up on unmount:
 
-    ``` javascript
-    console.log(this.stateHistory);
-
-    // example stateHistory output
-    [
-        {
-            "action": "INIT_STATE",
-            "beginState": null,
-            "endState": {
-                "customers": [
-                    {
-                        "id": 1545847909628,
-                        "name": "Jane Doe",
-                        "address": {
-                            "street": "1234 Main St.",
-                            "city": "Phoenix",
-                            "state": "AZ",
-                            "zip": "85258"
-                        }
-                    }
-                ],
-                "customer": null
-            }
-        },
-        {
-            "action": "ADD_CUSTOMER",
-            "beginState": {
-                "customers": [
-                    {
-                        "id": 1545847909628,
-                        "name": "Jane Doe",
-                        "address": {
-                            "street": "1234 Main St.",
-                            "city": "Phoenix",
-                            "state": "AZ",
-                            "zip": "85258"
-                        }
-                    }
-                ],
-                "customer": null
-            },
-            "endState": {
-                "customers": [
-                    {
-                        "id": 1545847909628,
-                        "name": "Jane Doe",
-                        "address": {
-                            "street": "1234 Main St.",
-                            "city": "Phoenix",
-                            "state": "AZ",
-                            "zip": "85258"
-                        }
-                    },
-                    {
-                        "id": 1545847921260,
-                        "name": "Fred",
-                        "address": {
-                            "street": "1545847921260 Main St.",
-                            "city": "Phoenix",
-                            "state": "AZ",
-                            "zip": "85258"
-                        }
-                    }
-                ],
-            "customer": null
-            }
-        }
-    ]
-    ```
-
-1. Import your store into a component:
-
-    ``` javascript
+    ``` jsx
+    import { useState, useEffect } from 'react';
     import CustomersStore from '../stores/CustomersStore';
-    ```
 
-1. Now use your store to access or update data. Any component can be notified of changes to the store state by subscribing to the `stateChanged` observable:
+    function CustomersList() {
+        const [customers, setCustomers] = useState([]);
 
-    ``` javascript
-    storeSub = null;
+        useEffect(() => {
+            // Subscribe to store state changes
+            const sub = CustomersStore.stateChanged.subscribe(state => {
+                if (state && state.customers) {
+                    setCustomers(state.customers);
+                }
+            });
 
-    componentDidMount() {
-        // ###### CustomersStore ########
-        // Option 1: Subscribe to store changes
-        // Useful when a component needs to be notified of changes but won't always
-        // call store directly.
-        this.storeSub = CustomersStore.stateChanged.subscribe(state => {
-          if (state) {
-            this.setState({ customers: state.customers });
-          }
-        });
+            // Trigger the initial data fetch
+            CustomersStore.getCustomers();
 
-        // In this example we trigger getting the customers (code above receives the customers)
-        CustomersStore.getCustomers();
+            // Cleanup subscription on unmount
+            return () => sub.unsubscribe();
+        }, []);
 
-        // Option 2: Get data directly from store
-        // If a component triggers getting the data it can retrieve it directly rather than subscribing
-        // CustomersStore.getCustomers()
-        //     .then(customers => {
-        //       ....
-        //     });
+        return (
+            <ul>
+                {customers.map(cust => (
+                    <li key={cust.id}>{cust.name}</li>
+                ))}
+            </ul>
+        );
     }
+
+    export default CustomersList;
     ```
-
-    You'll want to unsubscribe in `componentWillUnmount()`:
-
-    ``` javascript
-    componentWillUnmount() {
-        if (this.storeSub) {
-          this.storeSub.unsubscribe();
-        }
-    }
-    ```
-
-### <a name="vue"></a>Using Observable Store with Vue.js
-
-....
 
 ### <a name="api"></a>Store API
 
@@ -675,7 +529,6 @@ You can set the following Observable Store settings globally for the entire appl
 
 * `trackStateHistory`
 * `logStateChanges`
-* `isProduction` [RESERVED FOR FUTURE USE]
 
 Global store settings are defined ONCE when the application **first initializes** and BEFORE the store has been used:
 
@@ -700,7 +553,7 @@ When the Redux DevTools extension is enabled it will add routing information int
 
 **Integrating Angular with the Redux DevTools**
 
-See the example in the `samples/angular-store-edits` folder.
+See the example in the `samples/angular-store` folder.
 
 Install the extensions package:
 
@@ -720,7 +573,7 @@ ObservableStore.globalSettings = {
 ObservableStore.addExtension(new ReduxDevToolsExtension());
 ```
 
-Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your Angular application, and open the Redux DevTools extension.
+Install the [Redux DevTools Extension](https://chromewebstore.google.com/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your Angular application, and open the Redux DevTools extension.
 
 
 **Integrating React with the Redux DevTools**
@@ -743,7 +596,7 @@ ObservableStore.globalSettings = {
 ObservableStore.addExtension(new ReduxDevToolsExtension());
 ```
 
-Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your React application, and open the Redux DevTools extension.
+Install the [Redux DevTools Extension](https://chromewebstore.google.com/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your React application, and open the Redux DevTools extension.
 
 ### Redux DevTools and Production
 
@@ -752,9 +605,9 @@ While you can enable the Redux DevTools extension in production it's normally re
 **Angular Example**
 
 ```typescript
-import { environment } from './environments/environment';
+import { isDevMode } from '@angular/core';
 
-if (!environment.production) {
+if (isDevMode()) {
     ObservableStore.addExtension(new ReduxDevToolsExtension());
 }
 ```
@@ -763,10 +616,8 @@ if (!environment.production) {
 **React Example**
 
 ```typescript
-if (process.env.NODE_ENV !== 'production') {
-    ObservableStore.addExtension(new ReduxDevToolsExtension({ 
-        reactRouterHistory: history 
-    }));
+if (import.meta.env.DEV) {
+    ObservableStore.addExtension(new ReduxDevToolsExtension());
 }
 ```
 
@@ -776,6 +627,10 @@ See [CHANGELOG.md](CHANGELOG.md) for the full version history.
 
 ### Building the Project
 
-See the `README.md` file in the `modules` folder.
+```bash
+# Build both modules (observable-store + extensions)
+npm run build
 
-
+# Run tests
+npm test
+```
