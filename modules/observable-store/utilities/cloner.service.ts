@@ -23,11 +23,17 @@ export class ClonerService {
                     return result;
                 }
                 else if (value instanceof Map) {
-                    result = new Map(value);
+                    result = new Map();
+                    value.forEach((v, k) => {
+                        result.set(k, this.deepClone(v));
+                    });
                     return result;
                 }
                 else if (value instanceof Set) {
-                    result = new Set(value);
+                    result = new Set();
+                    value.forEach(v => {
+                        result.add(this.deepClone(v));
+                    });
                     return result;
                 }
 
@@ -226,7 +232,7 @@ export class ClonerService {
         switch (originalType) {
             case 'object':
                 if (originalValue instanceof Date) {
-                    var newValue = new Date();
+                    const newValue = new Date();
                     newValue.setTime(originalValue.getTime());
                     copy[key] = newValue;
                 }
@@ -234,10 +240,10 @@ export class ClonerService {
                     copy[key] = this.newRegExp(originalValue);
                 }
                 else if (originalValue instanceof Map) {
-                    copy[key] = new Map(originalValue);
+                    copy[key] = this.deepClone(originalValue);
                 }
                 else if (originalValue instanceof Set) {
-                    copy[key] = new Set(originalValue);
+                    copy[key] = this.deepClone(originalValue);
                 }
                 else if (originalValue == null) {
                     copy[key] = originalValue;
@@ -256,7 +262,7 @@ export class ClonerService {
                 if (isNaN(originalValue)) {
                     copy[key] = NaN;
                 }
-                else if (originalValue == Infinity) {
+                else if (originalValue === Infinity) {
                     copy[key] = Infinity;
                 }
                 break;

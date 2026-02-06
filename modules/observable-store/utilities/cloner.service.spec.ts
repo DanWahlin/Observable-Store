@@ -121,6 +121,22 @@ describe('ClonerService', () => {
     expect(clonedMap.size).toEqual(map.size);
   });
 
+  it('should deep clone Map values (not share references)', () => {
+    const user = { name: 'Dan', address: { city: 'Phoenix' } };
+    const map = new Map<string, any>();
+    map.set('user1', user);
+
+    const cloneService = new ClonerService();
+    const clonedMap = cloneService.deepClone(map);
+
+    // Mutate the cloned value
+    clonedMap.get('user1').address.city = 'Seattle';
+
+    // Original should NOT be affected
+    expect(user.address.city).toEqual('Phoenix');
+    expect(clonedMap.get('user1').address.city).toEqual('Seattle');
+  });
+
   it('should clone a Set', () => {
     let set = new Set();
     set.add('value1');
@@ -130,6 +146,23 @@ describe('ClonerService', () => {
     expect(set).toBe(set);
     expect(clonedSet).not.toBe(set);
     expect(clonedSet.size).toEqual(set.size);
+  });
+
+  it('should deep clone Set entries (not share references)', () => {
+    const obj1 = { name: 'first', nested: { value: 1 } };
+    const obj2 = { name: 'second', nested: { value: 2 } };
+    const set = new Set([obj1, obj2]);
+
+    const cloneService = new ClonerService();
+    const clonedSet = cloneService.deepClone(set);
+
+    // Get the first entry from the cloned set and mutate it
+    const clonedEntries = [...clonedSet];
+    clonedEntries[0].nested.value = 999;
+
+    // Original should NOT be affected
+    expect(obj1.nested.value).toEqual(1);
+    expect(clonedEntries[0].nested.value).toEqual(999);
   });
 
   it('should not be the original class that was cloned', () => {

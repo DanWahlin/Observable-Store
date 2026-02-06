@@ -38,7 +38,7 @@ class ObservableStoreBase {
         if (this.isStoreInitialized) {
             // See if a specific property of the store should be returned via getStateProperty<T>()
             if (propertyName) {
-                if (this._storeState.hasOwnProperty(propertyName)) {
+                if (Object.hasOwn(this._storeState, propertyName)) {
                     state = this._storeState[propertyName];  
                 }
             }

@@ -13,9 +13,6 @@ export type stateFunc<T> = (state: T) => Partial<T>;
  * providing getState(), setState() and additional functionality
  */
 export class ObservableStore<T> {
-    // Not a fan of using _ for private fields in TypeScript, but since 
-    // some may use this as pure ES2015 I'm going with _ for the private fields.
-    // private _stateDispatcher$ = new BehaviorSubject<T>(null);
     private _settings: ObservableStoreSettings;
     private _stateDispatcher$ = new BehaviorSubject<T>(null);
     private _stateWithChangesDispatcher$ = new BehaviorSubject<StateWithPropertyChanges<T>>(null);
@@ -183,7 +180,7 @@ export class ObservableStore<T> {
     protected getStateSliceProperty<TProp>(propertyName: string, deepCloneReturnedState: boolean = true): TProp {
         if (this._settings.stateSliceSelector) {
             const state = this._getStateOrSlice(deepCloneReturnedState);
-            if (state.hasOwnProperty(propertyName)) {
+            if (Object.hasOwn(state, propertyName)) {
                 return state[propertyName];
             }
         }
@@ -204,8 +201,8 @@ export class ObservableStore<T> {
         dispatchState: boolean = true,
         deepCloneState: boolean = true): T {
 
-        // Needed for tracking below (don't move or delete)
-        const previousState = this.getState(deepCloneState);
+        // Capture previous state for history tracking (before mutation)
+        const previousState = this._settings.trackStateHistory ? this.getState(deepCloneState) : null;
 
         switch (typeof state) {
             case 'function':
@@ -219,11 +216,14 @@ export class ObservableStore<T> {
                 throw Error('Pass an object or a function for the state parameter when calling setState().');
         }
 
+        // Get end state once — reused for history and return value
+        const endState = this.getState(deepCloneState);
+
         if (this._settings.trackStateHistory) {
             ObservableStoreBase.stateHistory.push({
                 action,
                 beginState: previousState,
-                endState: this.getState(deepCloneState)
+                endState
             });
         }
 
@@ -236,7 +236,7 @@ export class ObservableStore<T> {
             console.log('%cSTATE CHANGED', 'font-weight: bold', '\r\nAction: ', action, caller, '\r\nState: ', state);
         }
 
-        return this.getState(deepCloneState);
+        return endState;
     }
 
     /**
