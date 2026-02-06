@@ -40,15 +40,14 @@
   "scripts": {
     "build": "vite build"
   },
-  "dependencies": {},
   "peerDependencies": {
-    "rxjs": ">=6.4.0 <8",
-    "@codewithdan/observable-store": ">=3.0.0"
+    "@codewithdan/observable-store": ">=3.0.0",
+    "rxjs": ">=6.4.0 <8"
   },
   "devDependencies": {
     "@codewithdan/observable-store": "file:../observable-store",
     "rxjs": "^7.8.2",
-    "typescript": "^5.9.3",
+    "typescript": "~5.8.2",
     "vite": "^6.3.5",
     "vite-plugin-dts": "^4.5.4"
   }

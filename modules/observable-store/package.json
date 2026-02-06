@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "rxjs": "^7.8.2",
-    "typescript": "^5.9.3",
+    "typescript": "~5.8.2",
     "vite": "^6.3.5",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^3.2.1"
