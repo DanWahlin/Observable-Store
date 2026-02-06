@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { skip } from 'rxjs/operators';
 import { ObservableStore, stateFunc } from '../observable-store';
 import { StateWithPropertyChanges } from '../interfaces';
@@ -48,7 +49,7 @@ describe('Observable Store', () => {
         return state;
       };
 
-      const capitalizeSpy = jasmine.createSpy().and.callFake(capitalizeProp1);
+      const capitalizeSpy = vi.fn().mockImplementation(capitalizeProp1);
       mockStore.updateProp1('test');
       mockStore.updateUsingAFunction(capitalizeSpy);
 
@@ -65,7 +66,7 @@ describe('Observable Store', () => {
         return { user: state.user };
       };
 
-      const updateUserSpy = jasmine.createSpy().and.callFake(updateUser);
+      const updateUserSpy = vi.fn().mockImplementation(updateUser);
 
       mockStore.updateUsingAFunction(updateUserSpy);
 

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { ClonerService } from './cloner.service';
 
 class FakeClass {
@@ -117,7 +118,7 @@ describe('ClonerService', () => {
     const clonedMap = cloneService.deepClone(map);
     expect(map).toBe(map);
     expect(clonedMap).not.toBe(map);
-    expect (clonedMap.size).toEqual(map.size);
+    expect(clonedMap.size).toEqual(map.size);
   });
 
   it('should clone a Set', () => {
@@ -128,7 +129,7 @@ describe('ClonerService', () => {
     const clonedSet = cloneService.deepClone(set);
     expect(set).toBe(set);
     expect(clonedSet).not.toBe(set);
-    expect (clonedSet.size).toEqual(clonedSet.size);
+    expect(clonedSet.size).toEqual(set.size);
   });
 
   it('should not be the original class that was cloned', () => {
@@ -441,7 +442,7 @@ describe('ClonerService', () => {
       const cloneService = new ClonerService();
       const cloned = cloneService.deepClone(testObject);
 
-      expect(isNaN(cloned.nan)).toBeTrue();
+      expect(isNaN(cloned.nan)).toBe(true);
       expect(cloned.inf).toEqual(Infinity);
       expect(cloned.normal).toEqual(42);
     });

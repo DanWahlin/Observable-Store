@@ -1,11 +1,28 @@
 {
   "name": "@codewithdan/observable-store",
   "version": "2.2.15",
+  "type": "module",
   "author": "Dan Wahlin",
   "description": "Observable Store provides a simple way to store and retrieve state in Angular, React, Vue.js and other front-end applications.",
   "license": "MIT",
-  "main": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
+  "main": "./dist/observable-store.cjs",
+  "module": "./dist/observable-store.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/observable-store.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/observable-store.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "repository": {
     "url": "https://github.com/danwahlin/observable-store"
   },
@@ -20,22 +37,18 @@
     "Front-end store"
   ],
   "scripts": {
-    "tsc": "tsc",
-    "build": "cp ../../README.md ./ && rm -rf ./dist && tsc --build ./tsconfig.json",
-    "build:w": "tsc  --build ./tsconfig.json --watch",
-    "test": "jasmine --config=./spec/jasmine.json",
-    "test:w": "nodemon --ext ts --exec 'jasmine --config=./spec/jasmine.json'"
+    "build": "cp ../../README.md ./ && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "peerDependencies": {
     "rxjs": ">=6.4.0 <8"
   },
   "devDependencies": {
-    "@types/jasmine": "^6.0.0",
-    "@types/node": "^22.0.0",
-    "jasmine": "^6.0.0",
-    "jasmine-spec-reporter": "^7.0.0",
-    "ts-node": "^10.9.2",
+    "rxjs": "^7.8.2",
     "typescript": "^5.9.3",
-    "rxjs": "^7.8.2"
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.1"
   }
 }
