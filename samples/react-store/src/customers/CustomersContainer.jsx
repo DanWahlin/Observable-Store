@@ -1,53 +1,35 @@
-// React
-import React, { Component } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import CustomersStore from '../stores/CustomersStore.js';
+import CustomersList from './CustomersList.jsx';
 
-// Import store
-import CustomersStore from '../stores/CustomersStore';
+function CustomersContainer() {
+  const [customers, setCustomers] = useState([]);
+  const storeSubRef = useRef(null);
 
-// Components
-import CustomersList from './CustomersList';
-
-class CustomersContainer extends Component {
-  state = {
-    customers: []
-  };
-  storeSub = null;
-
-  componentDidMount() {
-    // ###### CustomersStore ########
-    // Option 1: Subscribe to store changes
-    // Useful when a component needs to be notified of changes but won't always
-    // call store directly.
-    this.storeSub = CustomersStore.stateChanged.subscribe(state => {
-      if (state) {
-        this.setState({customers: state.customers});
+  useEffect(() => {
+    // Subscribe to store changes
+    storeSubRef.current = CustomersStore.stateChanged.subscribe(state => {
+      if (state && state.customers) {
+        setCustomers(state.customers);
       }
     });
-    
+
     CustomersStore.getCustomers();
 
-    // Option 2: Get data directly from store
-    // CustomersStore.getCustomers()
-    //     .then(customers => {
-    //       this.setState({customers: customers});
-    //     });
-  }
+    return () => {
+      if (storeSubRef.current) {
+        storeSubRef.current.unsubscribe();
+      }
+    };
+  }, []);
 
-  componentWillUnmount() {
-    if (this.storeSub) {
-      this.storeSub.unsubscribe();
-    }
-  }
-
-  render() {
-    return (
-      <div>
-        <h1>Customers</h1>
-        <br />
-        <CustomersList customers={this.state.customers} />
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h1>Customers</h1>
+      <br />
+      <CustomersList customers={customers} />
+    </div>
+  );
 }
 
 export default CustomersContainer;

@@ -1,116 +1,81 @@
-// React
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import Currency from 'react-currency-formatter';
+import { useState, useEffect } from 'react';
+import CustomerRow from './CustomerRow.jsx';
+import { formatCurrency } from '../utils/index.js';
 
-// Utilities
-import _orderBy from 'lodash.orderby';
-import _isEqual from 'lodash.isequal';
+function CustomersList({ customers }) {
+  const [filter, setFilter] = useState('');
+  const [filteredCustomers, setFilteredCustomers] = useState([]);
+  const [customersOrderTotal, setCustomersOrderTotal] = useState(0);
+  const [sortOrder, setSortOrder] = useState('asc');
 
-// Components
-import CustomerRow from './CustomerRow';
-
-class CustomersList extends Component {
-  static propTypes = {
-    customers: PropTypes.array.isRequired
-  };
-
-  state = {
-    filter: '',
-    filteredCustomers: [],
-    prevFilteredCustomers: [],
-    customersOrderTotal: 0,
-    sortOrder: 'asc'
-  };
-
-  static getDerivedStateFromProps(props, state) {
-    if (!_isEqual(props.customers, state.prevFilteredCustomers)) {
-      return {
-        prevFilteredCustomers: props.customers,
-        filteredCustomers: props.customers,
-        customersOrderTotal: CustomersList.calculateOrders(props.customers)
-      };
-    }
-    return null;
-  }
-
-  sort(prop) {
-    const newSortOrder = this.state.sortOrder === 'asc' ? 'desc' : 'asc';
-
-    this.setState(state => ({
-      sortOrder: newSortOrder,
-      filteredCustomers: _orderBy(state.filteredCustomers, prop, newSortOrder)
-    }));
-  }
-
-  static calculateOrders = customers => {
-    let total = 0;
-    customers.forEach(cust => {
-      total += cust.orderTotal;
-    });
-    return total;
-  };
-
-  handleFilterChange = e => {
-    const filter = e.target.value;
-    let filteredCustomers = this.props.customers;
-
+  useEffect(() => {
+    let result = customers;
     if (filter) {
-      filteredCustomers = this.props.customers.filter(
-        cust => cust.name.toLowerCase().indexOf(filter.toLowerCase()) > -1 ||
-                cust.city.toLowerCase().indexOf(filter.toLowerCase()) > -1 ||
-                cust.orderTotal.toString().indexOf(filter.toLowerCase()) > -1
+      result = customers.filter(
+        cust =>
+          cust.name.toLowerCase().includes(filter.toLowerCase()) ||
+          cust.city.toLowerCase().includes(filter.toLowerCase()) ||
+          cust.orderTotal.toString().includes(filter.toLowerCase())
       );
     }
+    setFilteredCustomers(result);
+    setCustomersOrderTotal(calculateOrders(result));
+  }, [customers, filter]);
 
-    this.setState({
-      filter,
-      filteredCustomers,
-      customersOrderTotal: CustomersList.calculateOrders(filteredCustomers),
-    });
-  };
-
-  render() {
-    const { filteredCustomers, customersOrderTotal, filterValue } = this.state;
-
-    return (
-      <Fragment>
-        Filter: <input type="text" onInput={this.handleFilterChange} value={filterValue} />
-        <br />
-        <br />
-        <table className="table table-hover">
-          <thead>
-            <tr>
-              <th onClick={() => this.sort('name')}>Name</th>
-              <th onClick={() => this.sort('city')}>City</th>
-              <th onClick={() => this.sort('orderTotal')}>Order Total</th>
-              <th>&nbsp;</th>
-              <th>&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCustomers.map(cust => (
-              <CustomerRow key={cust.id} customer={cust} />
-            ))}
-            {filteredCustomers.length ? (
-              <tr>
-                <td colSpan="2" />
-                <td>
-                  <Currency quantity={customersOrderTotal} />
-                </td>
-                <td colSpan="2" />
-              </tr>
-            ) : (
-              <tr>
-                <td colSpan="6">No customers found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-        Number of Customers: {filteredCustomers.length}
-      </Fragment>
-    );
+  function calculateOrders(custs) {
+    return custs.reduce((total, cust) => total + cust.orderTotal, 0);
   }
+
+  function sort(prop) {
+    const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newOrder);
+    const sorted = [...filteredCustomers].sort((a, b) => {
+      if (a[prop] < b[prop]) return newOrder === 'asc' ? -1 : 1;
+      if (a[prop] > b[prop]) return newOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+    setFilteredCustomers(sorted);
+  }
+
+  function handleFilterChange(e) {
+    setFilter(e.target.value);
+  }
+
+  return (
+    <>
+      Filter: <input type="text" onInput={handleFilterChange} value={filter} />
+      <br />
+      <br />
+      <table className="table table-hover">
+        <thead>
+          <tr>
+            <th onClick={() => sort('name')}>Name</th>
+            <th onClick={() => sort('city')}>City</th>
+            <th onClick={() => sort('orderTotal')}>Order Total</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredCustomers.map(cust => (
+            <CustomerRow key={cust.id} customer={cust} />
+          ))}
+          {filteredCustomers.length ? (
+            <tr>
+              <td colSpan="2" />
+              <td>{formatCurrency(customersOrderTotal)}</td>
+              <td colSpan="2" />
+            </tr>
+          ) : (
+            <tr>
+              <td colSpan="6">No customers found</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+      Number of Customers: {filteredCustomers.length}
+    </>
+  );
 }
 
 export default CustomersList;

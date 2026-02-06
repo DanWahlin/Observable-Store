@@ -15,10 +15,6 @@ class CustomersStore extends ObservableStore {
             });
     }
 
-    // Set state in the store by calling setState(stateObject, action). 
-    // If you want to access the previous state you can also call 
-    // setState((prevState) => stateObject, action) rather than calling getState()
-    // first before calling setState().
     getCustomers() {
         let state = this.getState();
         // pull from store cache

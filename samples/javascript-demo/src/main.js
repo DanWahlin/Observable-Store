@@ -1,11 +1,13 @@
-import CustomersStore from './customers-store';
+import CustomersStore from './customers-store.js';
 
-let customersStore = new CustomersStore();
+const customersStore = new CustomersStore();
 customersStore.getCustomers().then((customers) => {
     // Get customers via fetch
-    alert('Fetch returned ' + customers.length + ' customers');
+    console.log('Fetch returned ' + customers.length + ' customers');
+    document.body.innerHTML += '<p>Fetch returned ' + customers.length + ' customers</p>';
     // Get customers from store
     customersStore.getCustomers().then((customers) => {
-        alert('Store returned ' + customers.length + ' customers');
+        console.log('Store returned ' + customers.length + ' customers');
+        document.body.innerHTML += '<p>Store returned ' + customers.length + ' customers</p>';
     });
 });
