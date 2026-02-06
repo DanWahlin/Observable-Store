@@ -26,7 +26,7 @@ The goal of observable store is to provide a small, simple, and consistent way t
 ### Compatibility
 
 - **Angular 17+** — use Observable Store **v3** (`npm install @codewithdan/observable-store`)
-- **Angular 14–16** — use Observable Store **v2.x** (`npm install @codewithdan/observable-store@2`)
+- **Angular 14–16** — use Observable Store **v2.2.15** (`npm install @codewithdan/observable-store@2.2.15`)
 - **React, Vue, and vanilla JS** — v3 works with any modern setup
 
 ### Development Setup
