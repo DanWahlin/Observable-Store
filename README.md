@@ -23,6 +23,23 @@ The goal of observable store is to provide a small, simple, and consistent way t
 1. Works with any front-end project built with JavaScript or TypeScript (Angular, React, Vue, or anything else)
 1. Integrate with the Redux DevTools (Angular and React currently supported)
 
+### Compatibility
+
+Observable Store v3 targets **ES2022** and ships native JavaScript classes. This requires a modern bundler that supports ES2022 class syntax.
+
+| Framework | Minimum Version | Notes |
+|-----------|----------------|-------|
+| **Angular** | **17+** | Angular 17 switched to esbuild/Vite by default, which handles ES2022 classes. |
+| **React** | **16+** | Works with Vite, esbuild, or any modern bundler. |
+| **Vue** | **3+** | Works with Vite (the default Vue 3 toolchain). |
+| **Vanilla JS** | Any | Works with Vite, Rollup, esbuild, or modern webpack 5+. |
+
+> **Using Angular 14–16 or an older bundler?** Use [Observable Store v2.x](https://www.npmjs.com/package/@codewithdan/observable-store/v/2.2.15) instead:
+> ```
+> npm install @codewithdan/observable-store@2
+> ```
+> v2.x targets ES2015 and is compatible with older webpack-based Angular builds.
+
 ### Development Setup
 
 To run samples locally from this repo:
