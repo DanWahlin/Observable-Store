@@ -1,15 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable} from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 import { Customer, CustomersService, StoreState } from './core/customers.service';
 import { StateWithPropertyChanges } from '@codewithdan/observable-store';
+import { ChildComponent } from './child/child.component';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule, ChildComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  
+
   storeState$: Observable<StoreState> = new Observable<StoreState>();
   storeStateWithPropertyChanges$: Observable<StateWithPropertyChanges<StoreState>> = new Observable<StateWithPropertyChanges<StoreState>>();
 

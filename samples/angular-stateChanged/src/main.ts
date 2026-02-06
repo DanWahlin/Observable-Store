@@ -1,19 +1,11 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app/app.component';
+import { appConfig } from './app/app.config';
 import { ObservableStore } from '@codewithdan/observable-store';
-import { ReduxDevToolsExtension } from '@codewithdan/observable-store-extensions';
 
-if (environment.production) {
-  enableProdMode();
-}
-
-// Set ObservableStore globalSettings here since 
+// Set ObservableStore globalSettings here since
 // it'll be called before the rest of the app loads
-ObservableStore.globalSettings = { isProduction: environment.production };
-ObservableStore.addExtension(new ReduxDevToolsExtension());
+ObservableStore.globalSettings = { isProduction: false };
 
-platformBrowserDynamic().bootstrapModule(AppModule)
+bootstrapApplication(AppComponent, appConfig)
   .catch(err => console.error(err));

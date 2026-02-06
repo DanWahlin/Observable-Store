@@ -1,26 +1,11 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowser } from '@angular/platform-browser';
-import { NgZone } from '@angular/core';
-import { Router } from '@angular/router';
-
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app/app.component';
+import { appConfig } from './app/app.config';
 import { ObservableStore } from '@codewithdan/observable-store';
-import { ReduxDevToolsExtension } from '@codewithdan/observable-store-extensions';
 
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
-
-if (environment.production) {
-  enableProdMode();
-}
-
-// Set Observable Store globalSettings here since 
+// Set Observable Store globalSettings here since
 // it'll be called before the rest of the app loads
-ObservableStore.globalSettings = { isProduction: environment.production };
+ObservableStore.globalSettings = { isProduction: false };
 
-// Enable Redux DevTools support. Ensure that RouterModule.forRoot() is called in app.module.
-if (!environment.production) {
-  ObservableStore.addExtension(new ReduxDevToolsExtension({ router: Router, ngZone: NgZone }));
-}
-
-platformBrowser().bootstrapModule(AppModule)
-  .catch(err => console.log(err));
+bootstrapApplication(AppComponent, appConfig)
+  .catch(err => console.error(err));

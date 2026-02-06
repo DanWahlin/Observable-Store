@@ -1,7 +1,10 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-filter-textbox',
+    standalone: true,
+    imports: [FormsModule],
     template: `
         Filter: <input type="text" [(ngModel)]="filter" />
     `
@@ -15,15 +18,12 @@ export class FilterTextboxComponent implements OnInit {
 
     set filter(val: string) {
         this._filter = val;
-        this.changed.emit(this.filter); // Raise changed event
+        this.changed.emit(this.filter);
     }
 
     @Output() changed: EventEmitter<string> = new EventEmitter<string>();
 
     constructor() { }
 
-    ngOnInit() {
-
-    }
-
+    ngOnInit() { }
 }

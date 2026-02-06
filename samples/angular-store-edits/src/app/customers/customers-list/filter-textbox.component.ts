@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 
 @Component({
     selector: 'app-filter-textbox',
+    standalone: true,
     template: `
         Filter: <input type="text" (input)="filter=getInputValue($event)" [value]="filter" />
     `
@@ -16,7 +17,7 @@ export class FilterTextboxComponent implements OnInit {
 
     set filter(val: string) {
         this._filter = val;
-        this.changed.emit(this.filter); // Raise changed event
+        this.changed.emit(this.filter);
     }
 
     getInputValue(event: Event) {
@@ -27,8 +28,5 @@ export class FilterTextboxComponent implements OnInit {
 
     constructor() { }
 
-    ngOnInit() {
-
-    }
-
+    ngOnInit() { }
 }

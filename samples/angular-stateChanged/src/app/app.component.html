@@ -1,10 +1,14 @@
 <h1>Customers</h1>
 <button (click)="addCustomer()">Add Customer</button>
+@if (storeState$ | async; as state) {
 <ul>
-  <li *ngFor="let customer of (storeState$ | async)?.customers">
-    {{ customer.firstName }} {{ customer.lastName }} <button (click)="updateCustomer(customer)">Update</button>
-  </li>
+  @for (customer of state.customers; track customer.id) {
+    <li>
+      {{ customer.firstName }} {{ customer.lastName }} <button (click)="updateCustomer(customer)">Update</button>
+    </li>
+  }
 </ul>
+}
 
 <br><br>
 
