@@ -128,6 +128,8 @@ Open the `samples` folder available at the Github repo and follow the instructio
 
 * [Using Observable Store with Angular](#angular)
 * [Using Observable Store with React](#react)
+* [Using Observable Store with Vue.js](#vue)
+* [Using Observable Store with JavaScript](#javascript)
 
 ## <a name="angular"></a>Using Observable Store with Angular
 
@@ -424,6 +426,125 @@ See the `samples/react-store` folder in the Github repo for a complete example.
     }
 
     export default CustomersList;
+    ```
+
+## <a name="vue"></a>Using Observable Store with Vue.js
+
+See the `samples/vue-store` folder in the Github repo for a complete example.
+
+1. Create a Vue application using [Vite](https://vitejs.dev/) or another tool:
+
+    ```bash
+    npm create vite@latest my-app -- --template vue
+    ```
+
+1. Install `@codewithdan/observable-store` and RxJS:
+
+    ```bash
+    npm install @codewithdan/observable-store rxjs
+    ```
+
+1. Create a store class that extends `ObservableStore` (same pattern as React — the store is framework-agnostic):
+
+    ``` javascript
+    import { ObservableStore } from '@codewithdan/observable-store';
+
+    class CustomersStore extends ObservableStore {
+
+        constructor() {
+            super({ trackStateHistory: true });
+        }
+
+        fetchCustomers() {
+            return fetch('/customers.json')
+                .then(response => response.json())
+                .then(customers => {
+                    this.setState({ customers }, 'GET_CUSTOMERS');
+                    return customers;
+                });
+        }
+
+        getCustomers() {
+            const state = this.getState();
+            if (state && state.customers) {
+                return Promise.resolve(state.customers);
+            }
+            return this.fetchCustomers();
+        }
+    }
+
+    export default new CustomersStore();
+    ```
+
+1. Use the store in a component with Vue's Composition API. Subscribe to `stateChanged` in `onMounted` and clean up in `onUnmounted`:
+
+    ``` vue
+    <script setup>
+    import { ref, onMounted, onUnmounted } from 'vue';
+    import CustomersStore from '../stores/CustomersStore';
+
+    const customers = ref([]);
+    let sub;
+
+    onMounted(() => {
+        sub = CustomersStore.stateChanged.subscribe(state => {
+            if (state && state.customers) {
+                customers.value = state.customers;
+            }
+        });
+        CustomersStore.getCustomers();
+    });
+
+    onUnmounted(() => {
+        if (sub) sub.unsubscribe();
+    });
+    </script>
+
+    <template>
+        <ul>
+            <li v-for="cust in customers" :key="cust.id">{{ cust.name }}</li>
+        </ul>
+    </template>
+    ```
+
+## <a name="javascript"></a>Using Observable Store with JavaScript
+
+See the `samples/javascript-demo` folder in the Github repo for a complete example. Observable Store works with plain JavaScript — no framework required.
+
+1. Create a project with [Vite](https://vitejs.dev/) or any bundler, then install Observable Store:
+
+    ```bash
+    npm install @codewithdan/observable-store rxjs
+    ```
+
+1. Create a store class and use it directly:
+
+    ``` javascript
+    import { ObservableStore } from '@codewithdan/observable-store';
+
+    class CustomersStore extends ObservableStore {
+        constructor() {
+            super({ trackStateHistory: true, logStateChanges: true });
+        }
+
+        addCustomer(customer) {
+            const state = this.getState();
+            const customers = state?.customers ? [...state.customers, customer] : [customer];
+            this.setState({ customers }, 'ADD_CUSTOMER');
+        }
+    }
+
+    const store = new CustomersStore();
+
+    // Subscribe to state changes
+    store.stateChanged.subscribe(state => {
+        if (state) {
+            console.log('Customers:', state.customers);
+        }
+    });
+
+    // Update state
+    store.addCustomer({ id: 1, name: 'Jane Doe' });
     ```
 
 ### <a name="api"></a>Store API
