@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-filter-textbox',
-    standalone: true,
     imports: [FormsModule],
     template: `
         Filter: <input type="text" [(ngModel)]="filter" />

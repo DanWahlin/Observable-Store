@@ -11,10 +11,9 @@ import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   customersLength$: Observable<number> = new Observable<number>();

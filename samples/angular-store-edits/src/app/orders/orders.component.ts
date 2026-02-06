@@ -7,10 +7,9 @@ import { OrdersService } from './orders.service';
 
 @Component({
   selector: 'app-orders',
-  standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './orders.component.html',
-  styleUrls: ['./orders.component.scss']
+  styleUrl: './orders.component.scss'
 })
 export class OrdersComponent implements OnInit {
 

@@ -9,10 +9,9 @@ import { SubSink } from 'subsink';
 
 @Component({
   selector: 'app-user-settings',
-  standalone: true,
   imports: [CommonModule, FormsModule, SelectButton],
   templateUrl: './user-settings.component.html',
-  styleUrls: ['./user-settings.component.scss']
+  styleUrl: './user-settings.component.scss'
 })
 export class UserSettingsComponent implements OnInit, OnDestroy {
 

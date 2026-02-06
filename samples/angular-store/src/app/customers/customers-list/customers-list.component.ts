@@ -9,7 +9,6 @@ import { FilterTextboxComponent } from './filter-textbox.component';
 
 @Component({
     selector: 'app-customers-list',
-    standalone: true,
     imports: [CommonModule, RouterLink, CapitalizePipe, FilterTextboxComponent],
     templateUrl: './customers-list.component.html'
 })

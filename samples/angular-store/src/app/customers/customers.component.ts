@@ -7,7 +7,6 @@ import { CustomersListComponent } from './customers-list/customers-list.componen
 
 @Component({
     selector: 'app-customers',
-    standalone: true,
     imports: [CustomersListComponent],
     templateUrl: './customers.component.html'
 })

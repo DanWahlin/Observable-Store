@@ -2,7 +2,6 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 
 @Component({
     selector: 'app-filter-textbox',
-    standalone: true,
     template: `
         Filter: <input type="text" (input)="filter=getInputValue($event)" [value]="filter" />
     `

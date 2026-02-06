@@ -10,10 +10,9 @@ import { CapitalizePipe } from '../shared/capitalize.pipe';
 
 @Component({
   selector: 'app-orders',
-  standalone: true,
   imports: [CommonModule, RouterLink, CapitalizePipe],
   templateUrl: './orders.component.html',
-  styleUrls: ['./orders.component.css']
+  styleUrl: './orders.component.css'
 })
 export class OrdersComponent implements OnInit {
 

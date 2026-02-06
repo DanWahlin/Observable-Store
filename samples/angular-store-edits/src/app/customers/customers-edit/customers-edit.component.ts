@@ -9,10 +9,9 @@ import { CustomersService } from '../customers.service';
 
 @Component({
   selector: 'app-customers-edit',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './customers-edit.component.html',
-  styleUrls: ['./customers-edit.component.scss']
+  styleUrl: './customers-edit.component.scss'
 })
 export class CustomersEditComponent implements OnInit, OnDestroy {
 

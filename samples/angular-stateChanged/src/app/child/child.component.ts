@@ -5,10 +5,9 @@ import { CustomersService, StoreState } from '../core/customers.service';
 
 @Component({
   selector: 'app-child',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './child.component.html',
-  styleUrls: ['./child.component.css']
+  styleUrl: './child.component.css'
 })
 export class ChildComponent implements OnInit {
   storeState$: Observable<StoreState> = new Observable<StoreState>();
