@@ -1,4 +1,4 @@
-import { ReduxDevtoolsExtensionConfig } from "interfaces";
+import { ReduxDevtoolsExtensionConfig } from "../interfaces";
 
 export class AngularDevToolsExtension {
     private window = (window as any);
