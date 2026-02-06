@@ -2,7 +2,11 @@ import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
 export default defineConfig({
+  esbuild: {
+    keepNames: true,
+  },
   build: {
+    target: 'es2015',
     lib: {
       entry: 'index.ts',
       name: 'ObservableStore',
