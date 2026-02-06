@@ -18,7 +18,7 @@
     "@angular/router": "^21.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "@codewithdan/observable-store": "^3.0.0"
+    "@codewithdan/observable-store": "file:../../modules/observable-store"
   },
   "devDependencies": {
     "@angular/build": "^21.1.3",

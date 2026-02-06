@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@codewithdan/observable-store": "^3.0.0",
+    "@codewithdan/observable-store": "file:../../modules/observable-store",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.2",

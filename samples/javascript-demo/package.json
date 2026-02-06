@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@codewithdan/observable-store": "^3.0.0",
+    "@codewithdan/observable-store": "file:../../modules/observable-store",
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
