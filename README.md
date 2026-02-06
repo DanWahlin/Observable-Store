@@ -23,6 +23,24 @@ The goal of observable store is to provide a small, simple, and consistent way t
 1. Works with any front-end project built with JavaScript or TypeScript (Angular, React, Vue, or anything else)
 1. Integrate with the Redux DevTools (Angular and React currently supported)
 
+### Development Setup
+
+To run samples locally from this repo:
+
+1. Build the core modules first:
+
+    ```bash
+    npm run build
+    ```
+
+2. Then go into any sample and install + start:
+
+    ```bash
+    cd samples/angular-store
+    npm install
+    npm start
+    ```
+
 ### Steps to use Observable Store
 
 Here's a simple example of getting started using Observable Store. Note that if you're using TypeScript you can provide additional details about the store state by using an interface or class (additional examples of that can be found below).
