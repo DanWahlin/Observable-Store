@@ -3,5 +3,6 @@
   "spec_files": ["**/*.spec.ts"],
   "stopSpecOnExpectationFailure": false,
   "random": false,
-  "helpers": ["spec/helpers/*.js"]
+  "helpers": ["spec/helpers/*.{js,ts}"],
+  "jsLoader": "require"
 }

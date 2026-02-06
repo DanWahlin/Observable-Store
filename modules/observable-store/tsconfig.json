@@ -1,18 +1,18 @@
 {
   "compilerOptions": {
-      "target": "es5",
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "baseUrl": "./",
-      "outDir": "./dist",
-      "declaration": true,
-      "sourceMap": true,
-      "noImplicitUseStrict": true,
-      "experimentalDecorators": true,
-      "lib": [
-        "dom",
-        "es2015",
-        "es2017"
-      ]
+    "target": "es2018",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "declaration": true,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "dom",
+      "es2015",
+      "es2017",
+      "es2018"
+    ]
   }
 }
