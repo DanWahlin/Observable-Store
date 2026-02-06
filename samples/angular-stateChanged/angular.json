@@ -26,6 +26,9 @@
             ],
             "styles": [
               "src/styles.css"
+            ],
+            "polyfills": [
+              "zone.js"
             ]
           },
           "configurations": {

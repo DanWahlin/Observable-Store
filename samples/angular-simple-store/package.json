@@ -16,9 +16,10 @@
     "@angular/forms": "^21.1.0",
     "@angular/platform-browser": "^21.1.0",
     "@angular/router": "^21.1.0",
+    "@codewithdan/observable-store": "file:../../modules/observable-store",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "@codewithdan/observable-store": "file:../../modules/observable-store"
+    "zone.js": "^0.16.0"
   },
   "devDependencies": {
     "@angular/build": "^21.1.3",
