@@ -579,6 +579,7 @@ Observable Store provides a simple API that can be used to get/set state, subscr
 | `logStateAction(state: any, action: string): void` | Add a custom state value and action into the state history. Assumes `trackStateHistory` setting was set on store or using the global settings.
 | `resetStateHistory(): void`                   | Reset the store's state history to an empty array.
 | `setState(state: T, action: string, dispatchState: boolean = true, deepCloneState: boolean = true) : T`      | Set the store state. Pass the state to be updated as well as the action that is occuring. The state value can be a function (see example below). The latest store state is returned and any store subscribers are notified of the state change. The dispatchState parameter can be set to `false` if you do not want to send state change notifications to subscribers. The deepCloneReturnedState boolean parameter (default is true) can be used to determine if the state will be deep cloned before it is added to the store. Setting it to false can be useful in cases where read-only cached data is stored and must added to the store as quickly as possible without any cloning.
+| `destroy(): void`                              | Unregister this service from the global store and complete its state dispatchers. Call this when a service is destroyed (e.g., in Angular's `ngOnDestroy`) to prevent memory leaks.
 | `static addExtension(extension: ObservableStoreExtension)`                              | Used to add an extension into ObservableStore. The extension must implement the `ObservableStoreExtension` interface. 
 | `static clearState(): void`| Clear/null the store state across all services that use it.
 | `static initializeState(state: any)`                              | Used to initialize the store's state. An error will be thrown if this is called and store state already exists so this should be set when the application first loads. No notifications are sent out to store subscribers when the store state is initialized.
@@ -617,7 +618,6 @@ Observable Store settings can be passed when the store is initialized (when supe
 | -------------------------------|------------------------------------------------------------------------------------------------------------------- 
 | `trackStateHistory: boolean`   | Determines if the store's state will be tracked or not (defaults to false). Pass it when initializing the Observable Store (see examples above). When `true`, you can access the store's state history by calling the `stateHistory` property.
 | `logStateChanges: boolean`     | Log any store state changes to the browser console (defaults to false). 
-| `includeStateChangesOnSubscribe: boolean`   | **DEPRECATED**. Returns the store state by default when false (default). Set to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store). **Since this is deprecated, use `stateWithPropertyChanges` or `globalStateWithPropertyChanges` instead.**
 | `stateSliceSelector: function`     | Function to select the slice of the store being managed by this particular service. If specified then the specific state slice is returned. If not specified then the total state is returned (defaults to null).
 
 Example of passing settings to the store:
@@ -658,7 +658,6 @@ You can set the following Observable Store settings globally for the entire appl
 
 * `trackStateHistory`
 * `logStateChanges`
-* `includeStateChangesOnSubscribe` [DEPRECATED]
 * `isProduction` [RESERVED FOR FUTURE USE]
 
 Global store settings are defined ONCE when the application **first initializes** and BEFORE the store has been used:
@@ -676,10 +675,6 @@ Observable Store now supports extensions. These can be added when the applicatio
 The first built-in extension adds [Redux DevTools](https://github.com/reduxjs/redux-devtools) integration into applications that use Observable Store. The extension can be found in the `@codewithdan/observable-store-extensions` package.
 
 ![Integrating the Redux DevTools](images/reduxDevTools.png)
-
-**Note about Angular 9/Ivy and the Redux DevTools Support**
-
-While the [code is in place](https://github.com/DanWahlin/Observable-Store/blob/master/modules/observable-store-extensions/angular/angular-devtools-extension.ts) to support it, The Observable Store Redux DevTools currently do not work with Angular 9 and Ivy. Once the [`findProviders()` API](https://github.com/angular/angular/blob/cd9ae66b357bd4b5f97aa60cea38e48acb015325/packages/core/src/testability/testability.ts#L221) is fully implemented and released by Angular then support will be finalized for the Redux DevTools.
 
 **Note about the `__devTools` Store Property:** 
 
@@ -719,46 +714,16 @@ Install the extensions package:
 
 `npm install @codewithdan/observable-store-extensions`
 
-Add the `history` prop to your router:
-
-```jsx
-import React from 'react';
-import { Router, Route, Redirect } from 'react-router-dom';
-import { createBrowserHistory } from 'history';|
-
-export const history = createBrowserHistory();
-
-...
-
-const Routes = () => (
-  <Router history={history}>
-    <div>
-       <!-- Routes go here -->
-    </div>
-  </Router>
-);
-
-export default Routes;
-
-```
-
-Add the following into `index.js` and ensure that you set `trackStateHistory` to `true` and pass the `history` object into the `ReduxDevToolsExtension` constructor as shown:
+Add the following into your app's entry point (e.g., `main.jsx`) and ensure that you set `trackStateHistory` to `true`:
 
 ``` javascript
-import Routes, { history } from './Routes';
 import { ObservableStore } from '@codewithdan/observable-store';
 import { ReduxDevToolsExtension } from '@codewithdan/observable-store-extensions';
-
-...
 
 ObservableStore.globalSettings = {  
     trackStateHistory: true
 };
-ObservableStore.addExtension(new ReduxDevToolsExtension({ 
-    reactRouterHistory: history 
-}));
-
-ReactDOM.render(<Routes />, document.getElementById('root'));
+ObservableStore.addExtension(new ReduxDevToolsExtension());
 ```
 
 Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your React application, and open the Redux DevTools extension.
@@ -790,161 +755,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 ### Changes
 
-#### 1.0.11 
-
-Added `includeStateChangesOnSubscribe` setting (NOW DEPRECATED in 2+) for cases where a subscriber to `stateChanged` wants to get the current state as well as the specific properties/data that were changes in the store. Defaults to `false` so prior versions will only receive the current state by default which keeps patched versions compatible in the 1.0.x range.
-
-Set the property to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
-
-#### 1.0.12
-
-Changed `updateState()` to `_updateState()` since it's a private function. Remove `tsconfig.json` from package.
-
-#### 1.0.13
-
-Moved `BehaviorSubject` into `ObservableService` class so that if multiple instances of a wrapper around the store are created, subscribers can subscribe to the individual instances.
-
-#### 1.0.14
-
-Added `logStateChanges` setting to write out all state changes to the browser console when true. Defaults to false.
-
-#### 1.0.15
-
-Added action to log output when `logStateChanges` is true.
-
-#### 1.0.16
-
-Thanks to a great contribution by Mickey Puri you can now globally subscribe to store changes (`globalStateChanged` event) and even define state slices (`stateSliceSelector` setting).
-
-#### 1.0.17
-
-Merged in another contribution by Mickey Puri to ensure the settings defaults are always applied regardless of how many properties the user passes. Renamed
-a settings default property (`state_slice_selector` => `stateSliceSelector`). Added editable store example (update/delete functionality) for Angular in the `samples` folder.
-
-#### 1.0.18 
-
-Minor updates to the readme.
-
-#### 1.0.19
-
-Updated Angular example and added `stateSliceSelector()` information in readme
-
-#### 1.0.20
-
-Updated readme
-
-#### 1.0.21
-
-Updated to latest version of RxJS. Removed subsink from the Angular Simple Store demo to just use a normal Subscription for unsubscribing (just to keep it more "native" and require less dependencies).
-
-#### 1.0.22
-
-Internal type additions and tests contributed by @elAndyG (https://github.com/elAndyG). 
-
-#### 2.0.0 - October 13, 2019
-
-1. Added more strongly-typed information for `stateChanged` and the overall API to provide better code help while using Observable Store.
-1. RxJS is now a peer dependency (RxJS 6.4.0 or higher is required). This avoids reported versioning issues that have come up when a project already has RxJS in it. The 1.x version of Observable Store added RxJS as a dependency. Starting with 2.0.0 this is no longer the case.
-1. Added an `ObservableStore.globalSettings` property to allow store settings to be defined once if desired for an entire application rather than per service that uses the store. 
-1. `getState()` and `setState()` now clone when the global settings `isProduction` property is false (`ObservableStore.globalSettings = { isProduction: false }`). When running in production mode no cloning is used in order to enhance performance since mutability issues would've been detected at development time. This technique is used with other store solutions as well. NOTE: isProduction is no longer used. See 2.0.1 below.
-1. Changed TypeScript module compilation to CommonJS instead of ES2015 to aid with testing scenarios (such as Jest) where the project doesn't automatically handle ES2015 module conventions without extra configuration.
-
-#### 2.0.1 - October 14, 2019
-
-Due to edge cases cloning is used in development and production. The `isProduction` property is left in so builds are not broken, but currently isn't used.
-
-#### 2.1.0 - October 24, 2019
-
-In order to allow `stateChanged` to be strongly-typed and also allow state changes with property changes to return a strongly-typed object as well, there are now 4 observable options to choose from when you want to know about changes to the store:
-
-```typescript
-// access state changes made by a service interacting with the store
-// allows access to slice of store state that service interacts with
-stateChanged: Observable<T>   
-
-// access all state changes in the store regardless of where they're
-// made in the app
-globalStateChanged: Observable<any>  
-
-// access state changes made by a service interacting with the 
-// store and include the properties that were changed
-stateWithPropertyChanges: Observable<StateWithPropertyChanges<T>> 
-
-// access all state changes in the store and include the 
-// properties that were changed
-globalStateWithPropertyChanges: Observable<StateWithPropertyChanges<any>>
-````
-
-The `includeStateChangesOnSubscribe` property is now deprecated since `stateWithPropertyChanges` or `globalStateWithPropertyChanges` can be used directly.
-
-Thanks to <a href="https://github.com/MichaelTurbe" target="_blank">Michael Turbe</a> for the feedback and discussion on these changes.
-
-#### 2.2.3 - December 10, 2019
-
-This version adds a [Redux DevTools Extension](#extensions). A BIG thank you to @brandonroberts (https://github.com/brandonroberts) of [NgRx](https://github.com/ngrx) fame for helping get me started integrating with the Redux DevTools.
-
-New APIs:
-
-* A static `allStoreServices` property is now available to access all services that extend ObservableStore and interact with the store. Used by the Redux DevTools extension and can be useful for future extensions.
-* Added static `addExtension()` function. Used to add the [Redux DevTools Extension](#extensions) and any future extensions.
-* Added new `@codewithdan/observable-store-extensions` package for the redux devtools support.
-
-#### 2.2.4 - January 23, 2019
-
-Minor updates to the Observable Store docs. Fixed a bug in the Redux DevTools extension that would throw an error when the extension wasn't installed or available. Updated readme to discuss how to disable extensions for production scenarios.
-
-Thanks to <a href="https://github.com/riscie" target="_blank">Matthias Langhard</a> for the feedback and discussion on these changes.
-
-#### 2.2.5 - February 26, 2020
-
-- Added `ObservableStore.initializeState()` API. 
-- Refactored unit tests.
-
-#### 2.2.6 - February 29, 2020
-
-- Added `ObservableStore.resetState()` API.
-- Added unit tests for `resetState()`.
-
-Feedback from <a href="https://github.com/svehera" target="_blank">Severgyn</a> and <a href="https://github.com/LuizFilipeMedeira" target="_blank">Luiz Filipe</a> influenced this feature. Thanks folks!
-
-#### 2.2.7 - March 6, 2020
-
-- Fixed bug where Redux DevTools code for Angular v8 or lower was also calling code intended for Angular v9 (which is still a work in progress as noted in the Redux DevTools section above).
-
-Thanks to <a href="https://github.com/trentsteel84" target="_blank">trentsteel84</a> for reporting the issue.
-
-##### 2.2.8 - April 2, 2020
-
-- All calls to getState() and setState() clone data now due to edge issues that can arise otherwise with external references. Previously, it would
-selectively clone based on dev or prod. All functions that get/set state now provide an optional `deepClone` type of boolean property that can be used in cases where
-it's not desirable to clone state (large amount of data being added to the store for caching for example).
-
-- Added `ObservableStore.clearState()` API to null the store across all services that use it.
-- Added `getStateProperty<T>(propName: string)` to retrieve a specific property from the store versus retrieving the entire store
-as `getState()` does.
-
-##### 2.2.9 - May 5, 2020
-
-Added support for cloning Map and Set objects in the interal cloner service used by Observable Store. Thanks to <a href="https://github.com/chrisjandrade" target="_blank">Chris Andrade</a> for the initial contribution. 
-
-##### 2.2.10 - May 20, 2020
-
-External APIs supported turning off cloning but internal APIs still cloned which isn't optimal for people storing a lot of data in the store. Thanks to 
- <a href="https://github.com/Steve-RW" target="_blank">Steve-RW</a> for asking about it and for the PR that fixed it.
-
-##### 2.2.13 - August 31, 2021
-
-Adds a `getStateSliceProperty()` function. Thanks to <a href="https://github.com/ConnorSmith-pf" target="_blank">Connor Smith</a> for the contribution. Added `strict=true` support into Observable Store library tsconfig.json files.
-
-Updates to documentation.
-
-##### 2.2.14 - October 31, 2021
-
-Update readme link to Redux DevTools. Thanks to Ravi Mathpal for the information.
-
-##### 2.2.15 - November 18, 2022
-
-New `isStoreInitialized` property added. Thanks to <a href="https://github.com/JasonLandbridge" target="_blank">Jason Landbridge</a> for the PR!
+See [CHANGELOG.md](CHANGELOG.md) for the full version history.
 
 ### Building the Project
 
