@@ -5,6 +5,16 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Run publish step (dry-run by default)'
+        type: boolean
+        default: true
+      dry_run:
+        description: 'Dry run (no actual publish)'
+        type: boolean
+        default: true
 
 jobs:
   build-and-test:
@@ -64,7 +74,9 @@ jobs:
         run: npm install && npm run build
 
   publish:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'release:')
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'release:')) ||
+      (github.event_name == 'workflow_dispatch' && inputs.publish)
     needs: [build-and-test, build-samples]
     runs-on: ubuntu-latest
     permissions:
@@ -85,12 +97,12 @@ jobs:
 
       - name: Publish observable-store
         working-directory: modules/observable-store
-        run: npm publish --provenance --access public
+        run: npm publish --provenance --access public ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish observable-store-extensions
         working-directory: modules/observable-store-extensions
-        run: npm publish --provenance --access public
+        run: npm publish --provenance --access public ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
