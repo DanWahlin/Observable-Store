@@ -4,7 +4,102 @@ class FakeClass {
   constructor(public prop1: string, public prop2: string) {}
 }
 
+// Simulates Dayjs/Moment: has toJSON(), clone(), and prototype methods
+class MockDateLib {
+  private _date: Date;
+
+  constructor(dateStr: string | MockDateLib) {
+    if (dateStr instanceof MockDateLib) {
+      this._date = new Date(dateStr._date.getTime());
+    } else {
+      this._date = new Date(dateStr);
+    }
+  }
+
+  format(fmt?: string): string {
+    return this._date.toISOString().split('T')[0];
+  }
+
+  toJSON(): string {
+    return this._date.toISOString();
+  }
+
+  clone(): MockDateLib {
+    return new MockDateLib(this);
+  }
+
+  getTime(): number {
+    return this._date.getTime();
+  }
+
+  add(days: number): MockDateLib {
+    const d = new Date(this._date.getTime());
+    d.setDate(d.getDate() + days);
+    return new MockDateLib(d.toISOString());
+  }
+}
+
+// Simulates a mutable complex class WITHOUT clone()
+class MutableConfig {
+  public settings: Record<string, any> = {};
+
+  constructor(init?: Record<string, any> | MutableConfig) {
+    if (init instanceof MutableConfig) {
+      this.settings = JSON.parse(JSON.stringify(init.settings));
+    } else if (init) {
+      this.settings = { ...init };
+    }
+  }
+
+  get(key: string): any {
+    return this.settings[key];
+  }
+
+  set(key: string, value: any): void {
+    this.settings[key] = value;
+  }
+
+  toJSON(): object {
+    return { settings: this.settings };
+  }
+}
+
+// Class with toJSON returning a primitive (the actual Dayjs crash scenario)
+class PrimitiveJsonClass {
+  private value: number;
+
+  constructor(val: number | PrimitiveJsonClass) {
+    if (val instanceof PrimitiveJsonClass) {
+      this.value = val.value;
+    } else {
+      this.value = val;
+    }
+  }
+
+  toJSON(): number {
+    return this.value;
+  }
+
+  getValue(): number {
+    return this.value;
+  }
+
+  clone(): PrimitiveJsonClass {
+    return new PrimitiveJsonClass(this.value);
+  }
+}
+
+// Simple data class with no methods (should still be JSON-cloneable)
+class SimpleData {
+  constructor(public name: string, public age: number) {}
+}
+
 describe('ClonerService', () => {
+
+  // =========================================================================
+  // EXISTING TESTS (preserved)
+  // =========================================================================
+
   it('should clone a class', () => {
     const fake = new FakeClass('foo', 'bar');
 
@@ -59,5 +154,345 @@ describe('ClonerService', () => {
     expect(clonedObject.prop1).toEqual('test');
     expect(clonedObject.fake.prop1).toEqual('foo');
     expect(clonedObject.fake.prop2).toEqual('bar');
+  });
+
+  // =========================================================================
+  // COMPLEX OBJECT TESTS (Issue #314)
+  // =========================================================================
+
+  describe('Complex objects (Dayjs/Moment-like)', () => {
+
+    it('should clone objects containing date-lib instances without crashing', () => {
+      const testObject = {
+        name: 'Test',
+        createdAt: new MockDateLib('2019-12-31'),
+        nested: {
+          updatedAt: new MockDateLib('2020-06-15')
+        }
+      };
+
+      const cloneService = new ClonerService();
+      // This was the crash: TypeError: Cannot create property '$d' on string
+      expect(() => cloneService.deepClone(testObject)).not.toThrow();
+    });
+
+    it('should produce a separate clone (not the same reference) for the top-level object', () => {
+      const testObject = {
+        name: 'Test',
+        createdAt: new MockDateLib('2019-12-31')
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      expect(cloned).not.toBe(testObject);
+      expect(cloned.name).toEqual('Test');
+    });
+
+    it('should clone date-lib instances as separate objects (not shared references)', () => {
+      const original = new MockDateLib('2020-01-01');
+      const testObject = { date: original };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      // The cloned date should NOT be the same reference (avoids mutation footgun)
+      expect(cloned.date).not.toBe(original);
+      // But should have the same value
+      expect(cloned.date.format()).toEqual('2020-01-01');
+      expect(cloned.date.getTime()).toEqual(original.getTime());
+    });
+
+    it('should preserve prototype methods on cloned complex objects', () => {
+      const testObject = {
+        date: new MockDateLib('2020-01-01')
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      // Methods should still work
+      expect(typeof cloned.date.format).toBe('function');
+      expect(typeof cloned.date.add).toBe('function');
+      expect(typeof cloned.date.clone).toBe('function');
+      expect(cloned.date.format()).toEqual('2020-01-01');
+    });
+
+    it('should handle nested complex objects', () => {
+      const testObject = {
+        user: 'John',
+        metadata: {
+          createdAt: new MockDateLib('2020-01-01'),
+          config: {
+            updatedAt: new MockDateLib('2021-06-15')
+          }
+        }
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      expect(cloned).not.toBe(testObject);
+      expect(cloned.metadata).not.toBe(testObject.metadata);
+      expect(cloned.metadata.config).not.toBe(testObject.metadata.config);
+      expect(cloned.user).toEqual('John');
+      expect(cloned.metadata.createdAt.format()).toEqual('2020-01-01');
+      expect(cloned.metadata.config.updatedAt.format()).toEqual('2021-06-15');
+    });
+
+    it('should handle objects with toJSON returning primitives (the actual crash case)', () => {
+      const testObject = {
+        name: 'Test',
+        value: new PrimitiveJsonClass(42)
+      };
+
+      const cloneService = new ClonerService();
+      // This was crashing: JSON.stringify converts to 42, then fixTypes tries
+      // to set properties on a number
+      expect(() => cloneService.deepClone(testObject)).not.toThrow();
+
+      const cloned = cloneService.deepClone(testObject);
+      expect(cloned.name).toEqual('Test');
+      expect(cloned.value.getValue()).toEqual(42);
+    });
+  });
+
+  // =========================================================================
+  // ARRAYS WITH COMPLEX OBJECTS
+  // =========================================================================
+
+  describe('Arrays containing complex objects', () => {
+
+    it('should handle arrays of date-lib instances', () => {
+      const dates = [
+        new MockDateLib('2020-01-01'),
+        new MockDateLib('2020-06-15'),
+        new MockDateLib('2020-12-31')
+      ];
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(dates);
+
+      expect(cloned).not.toBe(dates);
+      expect(cloned.length).toEqual(3);
+      expect(cloned[0]).not.toBe(dates[0]);
+      expect(cloned[0].format()).toEqual('2020-01-01');
+      expect(cloned[1].format()).toEqual('2020-06-15');
+      expect(cloned[2].format()).toEqual('2020-12-31');
+    });
+
+    it('should handle state objects with array of complex objects', () => {
+      const testObject = {
+        name: 'Timeline',
+        events: [
+          { label: 'Start', date: new MockDateLib('2020-01-01') },
+          { label: 'End', date: new MockDateLib('2020-12-31') }
+        ]
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      expect(cloned).not.toBe(testObject);
+      expect(cloned.events).not.toBe(testObject.events);
+      expect(cloned.events.length).toEqual(2);
+      expect(cloned.events[0].label).toEqual('Start');
+      expect(cloned.events[0].date.format()).toEqual('2020-01-01');
+      expect(cloned.events[1].date.format()).toEqual('2020-12-31');
+      // Not shared references
+      expect(cloned.events[0].date).not.toBe(testObject.events[0].date);
+    });
+
+    it('should handle mixed arrays with primitives and complex objects', () => {
+      const testObject = {
+        items: [1, 'hello', new MockDateLib('2020-01-01'), null, { nested: true }]
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      expect(cloned.items[0]).toEqual(1);
+      expect(cloned.items[1]).toEqual('hello');
+      expect(cloned.items[2].format()).toEqual('2020-01-01');
+      expect(cloned.items[3]).toBeNull();
+      expect(cloned.items[4].nested).toEqual(true);
+    });
+  });
+
+  // =========================================================================
+  // MUTATION ISOLATION (the "footgun" test)
+  // =========================================================================
+
+  describe('Mutation isolation', () => {
+
+    it('should not affect original when cloned complex object is mutated', () => {
+      const config = new MutableConfig({ theme: 'dark', lang: 'en' });
+      const testObject = { config: config };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      // Mutate the clone
+      cloned.config.set('theme', 'light');
+
+      // Original should not be affected
+      expect(testObject.config.get('theme')).toEqual('dark');
+      expect(cloned.config.get('theme')).toEqual('light');
+    });
+
+    it('should not affect original plain objects when clone is mutated', () => {
+      const testObject = {
+        user: { name: 'Dan', age: 30 },
+        settings: { theme: 'dark' }
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      cloned.user.name = 'Changed';
+      cloned.settings.theme = 'light';
+
+      expect(testObject.user.name).toEqual('Dan');
+      expect(testObject.settings.theme).toEqual('dark');
+    });
+  });
+
+  // =========================================================================
+  // MIXED SCENARIOS
+  // =========================================================================
+
+  describe('Mixed object types', () => {
+
+    it('should handle objects with Date, complex, Map, Set, and plain values', () => {
+      const testObject = {
+        name: 'Complex State',
+        regularDate: new Date('2020-01-01'),
+        libDate: new MockDateLib('2020-06-15'),
+        tags: new Set(['a', 'b']),
+        metadata: new Map([['key', 'value']]),
+        settings: { theme: 'dark', count: 42 },
+        items: [1, 2, 3]
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      expect(cloned).not.toBe(testObject);
+      expect(cloned.name).toEqual('Complex State');
+
+      // Date: properly cloned
+      expect(cloned.regularDate).not.toBe(testObject.regularDate);
+      expect(cloned.regularDate.getTime()).toEqual(testObject.regularDate.getTime());
+
+      // Complex object: cloned with methods intact
+      expect(cloned.libDate).not.toBe(testObject.libDate);
+      expect(cloned.libDate.format()).toEqual('2020-06-15');
+
+      // Set: cloned
+      expect(cloned.tags).not.toBe(testObject.tags);
+      expect(cloned.tags.size).toEqual(2);
+
+      // Map: cloned
+      expect(cloned.metadata).not.toBe(testObject.metadata);
+      expect(cloned.metadata.get('key')).toEqual('value');
+
+      // Plain object: deep cloned
+      expect(cloned.settings).not.toBe(testObject.settings);
+      expect(cloned.settings.theme).toEqual('dark');
+
+      // Array: deep cloned
+      expect(cloned.items).not.toBe(testObject.items);
+      expect(cloned.items).toEqual([1, 2, 3]);
+    });
+
+    it('should handle null and undefined values alongside complex objects', () => {
+      const testObject = {
+        date: new MockDateLib('2020-01-01'),
+        nullVal: null,
+        undefinedVal: undefined,
+        emptyStr: '',
+        zero: 0
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      expect(cloned.date.format()).toEqual('2020-01-01');
+      expect(cloned.nullVal).toBeNull();
+      expect(cloned.undefinedVal).toBeUndefined();
+      expect(cloned.emptyStr).toEqual('');
+      expect(cloned.zero).toEqual(0);
+    });
+  });
+
+  // =========================================================================
+  // EDGE CASES
+  // =========================================================================
+
+  describe('Edge cases', () => {
+
+    it('should still handle NaN and Infinity in plain objects', () => {
+      const testObject = {
+        nan: NaN,
+        inf: Infinity,
+        normal: 42
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      expect(isNaN(cloned.nan)).toBeTrue();
+      expect(cloned.inf).toEqual(Infinity);
+      expect(cloned.normal).toEqual(42);
+    });
+
+    it('should handle empty objects and arrays', () => {
+      const testObject = {
+        empty: {},
+        emptyArr: [],
+        emptyNested: { inner: {} }
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      expect(cloned).not.toBe(testObject);
+      expect(cloned.empty).not.toBe(testObject.empty);
+      expect(cloned.emptyArr).not.toBe(testObject.emptyArr);
+      expect(cloned.emptyArr.length).toEqual(0);
+    });
+
+    it('should handle a top-level complex object (not wrapped in plain object)', () => {
+      const date = new MockDateLib('2020-01-01');
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(date);
+
+      expect(cloned).not.toBe(date);
+      expect(cloned.format()).toEqual('2020-01-01');
+      expect(cloned.getTime()).toEqual(date.getTime());
+    });
+
+    it('should handle deeply nested complex objects (3+ levels)', () => {
+      const testObject = {
+        level1: {
+          level2: {
+            level3: {
+              date: new MockDateLib('2020-01-01'),
+              value: 'deep'
+            }
+          }
+        }
+      };
+
+      const cloneService = new ClonerService();
+      const cloned = cloneService.deepClone(testObject);
+
+      expect(cloned.level1.level2.level3.value).toEqual('deep');
+      expect(cloned.level1.level2.level3.date.format()).toEqual('2020-01-01');
+      expect(cloned.level1.level2.level3.date).not.toBe(
+        testObject.level1.level2.level3.date
+      );
+    });
   });
 });
