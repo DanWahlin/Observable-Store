@@ -11,7 +11,7 @@ The goal of observable store is to provide a small, simple, and consistent way t
 
 * <a href="https://www.youtube.com/watch?v=jn4AH5pGWhA" target="_blank">Talk on Observable Store</a>
 
-![Using Obervable Store](images/ObservableStore.png)
+![Using Observable Store](images/ObservableStore.png)
 
 ### <a name="goals"></a>Key Goals of Observable Store:
 1. Keep it simple!
@@ -22,6 +22,30 @@ The goal of observable store is to provide a small, simple, and consistent way t
 1. Easy to understand with a minimal amount of code required to get started
 1. Works with any front-end project built with JavaScript or TypeScript (Angular, React, Vue, or anything else)
 1. Integrate with the Redux DevTools (Angular and React currently supported)
+
+### Compatibility
+
+- **Angular 17+** — use Observable Store **v3** (`npm install @codewithdan/observable-store`)
+- **Angular 14–16** — use Observable Store **v2.2.15** (`npm install @codewithdan/observable-store@2.2.15`)
+- **React, Vue, and vanilla JS** — v3 works with any modern setup
+
+### Development Setup
+
+To run samples locally from this repo:
+
+1. Build the core modules first:
+
+    ```bash
+    npm run build
+    ```
+
+2. Then go into any sample and install + start:
+
+    ```bash
+    cd samples/angular-store
+    npm install
+    npm start
+    ```
 
 ### Steps to use Observable Store
 
@@ -104,8 +128,8 @@ Open the `samples` folder available at the Github repo and follow the instructio
 
 * [Using Observable Store with Angular](#angular)
 * [Using Observable Store with React](#react)
-* [Using Observable Store with SolidJS](#solid)
-* [Using Observable Store with Vue.js](#vue)
+* [Using Observable Store with JavaScript](#javascript)
+
 
 ## <a name="angular"></a>Using Observable Store with Angular
 
@@ -126,10 +150,10 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
     }
     ```
 
-1. Add a service (you can optionally calll it a store if you'd like) that extends ObservableStore<T>. Pass the interface or model class that represents the shape of your store data in for T as shown next:
+1. Add a service (you can optionally call it a store if you'd like) that extends ObservableStore<T>. Pass the interface or model class that represents the shape of your store data in for T as shown next:
 
     ``` typescript
-    @Injectable()
+    @Injectable({ providedIn: 'root' })
     export class CustomersService extends ObservableStore<StoreState> {
 
     }
@@ -143,10 +167,10 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
     }
     ```
 
-1. Add functions into your service/store to retrieve, store, sort, filter, or perform any actions you'd like. To update the store call `setState()` and pass the action that is occuring as well as the store state. To get the state out of the store call `getState()`. Note that store data is immutable and `getState()` always returns a clone of the store data. Here's a simple example:
+1. Add functions into your service/store to retrieve, store, sort, filter, or perform any actions you'd like. To update the store call `setState()` and pass the action that is occurring as well as the store state. To get the state out of the store call `getState()`. Note that store data is immutable and `getState()` always returns a clone of the store data. Here's a simple example:
 
     ``` typescript
-    @Injectable()
+    @Injectable({ providedIn: 'root' })
     export class CustomersService extends ObservableStore<StoreState> {
         sorterService: SorterService;
 
@@ -310,7 +334,7 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
     }
     ```
 
-    You'll of course want to unsubscribe in `ngOnDestroy()` (check out SubSink on npm for a nice way to easily subscribe/unsubscribe):
+    Unsubscribe when the component is destroyed to avoid memory leaks:
 
     ``` typescript
     ngOnDestroy() {
@@ -322,49 +346,33 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
 
 ## <a name="react"></a>Using Observable Store with React
 
-See the `samples` folder in the Github repo for examples of using Observable Store with React.
+See the `samples/react-store` folder in the Github repo for a complete example.
 
-1. Create a React application using the `create-react-app` or another option.
+1. Create a React application using [Vite](https://vitejs.dev/) or another tool:
 
-1. Install `@codewithdan/observable-store`:
-
-    `npm install @codewithdan/observable-store`
-
-1. Install RxJS (a required peer dependency):
-
-    `npm install rxjs`
-
-1. Add a store class (you can call it whatever you'd like) that extends ObservableStore<T>. 
-
-    ``` javascript
-    export class CustomersStore extends ObservableStore {
-
-    }
+    ```bash
+    npm create vite@latest my-app -- --template react
     ```
 
-1. In the constructor add a call to `super()`. The store allows you to turn tracking of store state changes on and off using the `trackStateHistory` property. See a list of [Observable Store Settings](#settings).
+1. Install `@codewithdan/observable-store` and RxJS:
 
-    ``` javascript
-    export class CustomersStore extends ObservableStore {
-        constructor() {
-            super({ trackStateHistory: true });
-        }
-    }
+    ```bash
+    npm install @codewithdan/observable-store rxjs
     ```
 
-1. Add functions into your service/store to retrieve, store, sort, filter, or perform any actions you'd like. To update the store call `setState()` and pass the action that is occuring as well as the store state. To get the state out of the store call `getState()`. Note that store data is immutable and `getState()` always returns a clone of the store data. Here's a simple example:
+1. Create a store class that extends `ObservableStore`:
 
     ``` javascript
-    export class CustomersStore extends ObservableStore {
+    import { ObservableStore } from '@codewithdan/observable-store';
+
+    class CustomersStore extends ObservableStore {
 
         constructor() {
             super({ trackStateHistory: true });
         }
 
         fetchCustomers() {
-            // using fetch api here to keep it simple, but any other
-            // 3rd party option will work (Axios, Ky, etc.)
-            return fetch('/customers')
+            return fetch('/customers.json')
                 .then(response => response.json())
                 .then(customers => {
                     this.setState({ customers }, 'GET_CUSTOMERS');
@@ -373,306 +381,92 @@ See the `samples` folder in the Github repo for examples of using Observable Sto
         }
 
         getCustomers() {
-            let state = this.getState();
-            // pull from store cache
+            const state = this.getState();
             if (state && state.customers) {
-                return this.createPromise(null, state.customers);
+                return Promise.resolve(state.customers);
             }
-            // doesn't exist in store so fetch from server
-            else {
-                return this.fetchCustomers();
-            }
-        }
-
-        getCustomer(id) {
-            return this.getCustomers()
-                .then(custs => {
-                    let filteredCusts = custs.filter(cust => cust.id === id);
-                    const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
-                    this.setState({ customer }, 'GET_CUSTOMER');
-                    return customer;
-                });
-        }
-
-        createPromise(err, result) {
-            return new Promise((resolve, reject) => {
-                return err ? reject(err) : resolve(result);
-            });
+            return this.fetchCustomers();
         }
     }
-    ```
 
-    While strings are used for actions in the prior example, you can use an object as well if you want to have a set list of actions to choose from:
-
-    ``` javascript
-    const CustomersStoreActions = {
-        GetCustomers: 'GET_CUSTOMERS',
-        GetCustomer: 'GET_CUSTOMER'
-    };
-
-        // Example of using the enum in a store
-    getCustomer(id) {
-        return this.getCustomers()
-            .then(custs => {
-                let filteredCusts = custs.filter(cust => cust.id === id);
-                const customer = (filteredCusts && filteredCusts.length) ? filteredCusts[0] : null;                
-                this.setState({ customer }, CustomersStoreActions.GetCustomer);
-                return customer;
-            });
-    }
-    ```
-
-1. Export your store. A default export is used here:
-
-
-    ``` javascript
     export default new CustomersStore();
     ```
 
-1. If you want to view all of the changes to the store you can access the store's `stateHistory` property:
+1. Use the store in a component with hooks. Subscribe to `stateChanged` in a `useEffect` and clean up on unmount:
 
-    ``` javascript
-    console.log(this.stateHistory);
-
-    // example stateHistory output
-    [
-        {
-            "action": "INIT_STATE",
-            "beginState": null,
-            "endState": {
-                "customers": [
-                    {
-                        "id": 1545847909628,
-                        "name": "Jane Doe",
-                        "address": {
-                            "street": "1234 Main St.",
-                            "city": "Phoenix",
-                            "state": "AZ",
-                            "zip": "85258"
-                        }
-                    }
-                ],
-                "customer": null
-            }
-        },
-        {
-            "action": "ADD_CUSTOMER",
-            "beginState": {
-                "customers": [
-                    {
-                        "id": 1545847909628,
-                        "name": "Jane Doe",
-                        "address": {
-                            "street": "1234 Main St.",
-                            "city": "Phoenix",
-                            "state": "AZ",
-                            "zip": "85258"
-                        }
-                    }
-                ],
-                "customer": null
-            },
-            "endState": {
-                "customers": [
-                    {
-                        "id": 1545847909628,
-                        "name": "Jane Doe",
-                        "address": {
-                            "street": "1234 Main St.",
-                            "city": "Phoenix",
-                            "state": "AZ",
-                            "zip": "85258"
-                        }
-                    },
-                    {
-                        "id": 1545847921260,
-                        "name": "Fred",
-                        "address": {
-                            "street": "1545847921260 Main St.",
-                            "city": "Phoenix",
-                            "state": "AZ",
-                            "zip": "85258"
-                        }
-                    }
-                ],
-            "customer": null
-            }
-        }
-    ]
-    ```
-
-1. Import your store into a component:
-
-    ``` javascript
+    ``` jsx
+    import { useState, useEffect } from 'react';
     import CustomersStore from '../stores/CustomersStore';
-    ```
 
-1. Now use your store to access or update data. Any component can be notified of changes to the store state by subscribing to the `stateChanged` observable:
+    function CustomersList() {
+        const [customers, setCustomers] = useState([]);
 
-    ``` javascript
-    storeSub = null;
+        useEffect(() => {
+            // Subscribe to store state changes
+            const sub = CustomersStore.stateChanged.subscribe(state => {
+                if (state && state.customers) {
+                    setCustomers(state.customers);
+                }
+            });
 
-    componentDidMount() {
-        // ###### CustomersStore ########
-        // Option 1: Subscribe to store changes
-        // Useful when a component needs to be notified of changes but won't always
-        // call store directly.
-        this.storeSub = CustomersStore.stateChanged.subscribe(state => {
-          if (state) {
-            this.setState({ customers: state.customers });
-          }
-        });
+            // Trigger the initial data fetch
+            CustomersStore.getCustomers();
 
-        // In this example we trigger getting the customers (code above receives the customers)
-        CustomersStore.getCustomers();
+            // Cleanup subscription on unmount
+            return () => sub.unsubscribe();
+        }, []);
 
-        // Option 2: Get data directly from store
-        // If a component triggers getting the data it can retrieve it directly rather than subscribing
-        // CustomersStore.getCustomers()
-        //     .then(customers => {
-        //       ....
-        //     });
+        return (
+            <ul>
+                {customers.map(cust => (
+                    <li key={cust.id}>{cust.name}</li>
+                ))}
+            </ul>
+        );
     }
+
+    export default CustomersList;
     ```
 
-    You'll want to unsubscribe in `componentWillUnmount()`:
+## <a name="javascript"></a>Using Observable Store with JavaScript
+
+See the `samples/javascript-demo` folder in the Github repo for a complete example. Observable Store works with plain JavaScript — no framework required.
+
+1. Create a project with [Vite](https://vitejs.dev/) or any bundler, then install Observable Store:
+
+    ```bash
+    npm install @codewithdan/observable-store rxjs
+    ```
+
+1. Create a store class and use it directly:
 
     ``` javascript
-    componentWillUnmount() {
-        if (this.storeSub) {
-          this.storeSub.unsubscribe();
+    import { ObservableStore } from '@codewithdan/observable-store';
+
+    class CustomersStore extends ObservableStore {
+        constructor() {
+            super({ trackStateHistory: true, logStateChanges: true });
+        }
+
+        addCustomer(customer) {
+            const state = this.getState();
+            const customers = state?.customers ? [...state.customers, customer] : [customer];
+            this.setState({ customers }, 'ADD_CUSTOMER');
         }
     }
+
+    const store = new CustomersStore();
+
+    // Subscribe to state changes
+    store.stateChanged.subscribe(state => {
+        if (state) {
+            console.log('Customers:', state.customers);
+        }
+    });
+
+    // Update state
+    store.addCustomer({ id: 1, name: 'Jane Doe' });
     ```
-
-## <a name="solid"></a>Using Observable Store with SolidJS
-
-1. Create a Solid.js App with Typescript using Vite
-
-```
-npm create vite@latest
-```
-2. Install `@codewithdan/observable-store`:
-
-    `npm install @codewithdan/observable-store`
-
-3. Install RxJS (a required peer dependency):
-
-    `npm install rxjs`
-
-4. Create a Customer Store
-
-``` typescript
-// stores/CustomersStore.ts
-import { ObservableStore } from '@codewithdan/observable-store';
-
-export class CustomersStore extends ObservableStore {
-  constructor() {
-    super({ trackStateHistory: true });
-  }
-
-  fetchCustomers() {
-     const customers = [
-    {
-      id: 1,
-      name: 'Jane Doe',
-      address: {
-        street: '123 Main St',
-        city: 'Phoenix',
-        state: 'AZ',
-        zip: '85258'
-      }
-    },
-    {
-      id: 2,
-      name: 'John Smith',
-      address: {
-        street: '456 Oak Ave',
-        city: 'Austin',
-        state: 'TX',
-        zip: '73301'
-      }
-    },
-      {
-      id: 3,
-      name: 'Pravin',
-      address: {
-        street: '456 Oak Ave',
-        city: 'Austin',
-        state: 'TX',
-        zip: '73301'
-      }
-    }
-  ];
-
-  this.setState({ customers }, 'GET_CUSTOMERS');
-  return Promise.resolve(customers);
-  }
-
-  getCustomers() {
-    const state = this.getState();
-    if (state?.customers) {
-      return Promise.resolve(state.customers);
-    }
-    return this.fetchCustomers();
-  }
-
-  getCustomer(id: number) {
-    return this.getCustomers().then(custs => {
-      const customer = custs.find(c => c.id === id) ?? null;
-      this.setState({ customer }, 'GET_CUSTOMER');
-      return customer;
-    });
-  }
-}
-
-export default new CustomersStore();
-```
-5. Access the store in Customers Component
-
-``` typescript
-// Customers.tsx
-import { createSignal, onMount, onCleanup } from 'solid-js';
-import CustomersStore from '../stores/CustomersStore';
-
-export default function Customers() {
-  const [customers, setCustomers] = createSignal([]);
-
-  let storeSub: any;
-
-  onMount(() => {
-    // Option 1: subscribe to store changes
-    storeSub = CustomersStore.stateChanged.subscribe(state => {
-      if (state?.customers) {
-        setCustomers(state.customers);
-      }
-    });
-
-    // Trigger data load
-    CustomersStore.getCustomers();
-  });
-
-  onCleanup(() => {
-    storeSub?.unsubscribe();
-  });
-
-  return (
-    <div>
-      <h2>Customers</h2>
-      <ul>
-        {customers().map(c => (
-          <li>{c.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-```
-
-### <a name="vue"></a>Using Observable Store with Vue.js
-
-....
 
 ### <a name="api"></a>Store API
 
@@ -680,15 +474,16 @@ Observable Store provides a simple API that can be used to get/set state, subscr
 
  Functions                                      | Description
 | ----------------------------------------------| -----------------------------------------------------
-| `dispatchState(stateChanges: Partial<T>, dispatchGlobalState: boolean = true) : T`                              | Dispatch the store's state without modifying the  state. Service state can be dispatched as well as the global store state. If `dispatchGlobalState` is false then global state will not be dispatched to subscribers (defaults to `true`). 
-| `getState(deepCloneReturnedState: boolean = true) : T`                              | Retrieve store's state. If using TypeScript (optional) then the state type defined when the store was created will be returned rather than `any`. The deepCloneReturnedState boolean parameter (default is true) can be used to determine if the returned state will be deep cloned or not. If set to false, a reference to the store state will be returned and it's up to the user to ensure the state isn't change from outside the store. Setting it to false can be useful in cases where read-only cached data is stored and must be retrieved as quickly as possible without any cloning.
+| `dispatchState(stateChanges: Partial<T>, dispatchGlobalState: boolean = true) : void`                              | Dispatch the store's state without modifying the store state. Service state can be dispatched as well as the global store state. If `dispatchGlobalState` is false then global state will not be dispatched to subscribers (defaults to `true`). 
+| `getState(deepCloneReturnedState: boolean = true) : T`                              | Retrieve store's state. If using TypeScript (optional) then the state type defined when the store was created will be returned rather than `any`. The deepCloneReturnedState boolean parameter (default is true) can be used to determine if the returned state will be deep cloned or not. If set to false, a reference to the store state will be returned and it's up to the user to ensure the state isn't changed from outside the store. Setting it to false can be useful in cases where read-only cached data is stored and must be retrieved as quickly as possible without any cloning.
 | `getStateProperty<TProp>(propertyName: string, deepCloneReturnedState: boolean = true) : TProp`| Retrieve a specific property from the store's state which can be more efficient than getState() since only the defined property value will be returned (and cloned) rather than the entire store value. If using TypeScript (optional) then the generic property type used with the function call will be the return type.      
 | `getStateSliceProperty<TProp>(propertyName: string, deepCloneReturnedState: boolean = true): TProp`| If a `stateSliceSelector` has been set, the specific slice will be searched first. Retrieve a specific property from the store's state which can be more efficient than getState() since only the defined property value will be returned (and cloned) rather than the entire store value. If using TypeScript (optional) then the generic property type used with the function call will be the return type.
 | `logStateAction(state: any, action: string): void` | Add a custom state value and action into the state history. Assumes `trackStateHistory` setting was set on store or using the global settings.
 | `resetStateHistory(): void`                   | Reset the store's state history to an empty array.
-| `setState(state: T, action: string, dispatchState: boolean = true, deepCloneState: boolean = true) : T`      | Set the store state. Pass the state to be updated as well as the action that is occuring. The state value can be a function (see example below). The latest store state is returned and any store subscribers are notified of the state change. The dispatchState parameter can be set to `false` if you do not want to send state change notifications to subscribers. The deepCloneReturnedState boolean parameter (default is true) can be used to determine if the state will be deep cloned before it is added to the store. Setting it to false can be useful in cases where read-only cached data is stored and must added to the store as quickly as possible without any cloning.
+| `setState(state: Partial<T> \| stateFunc<T>, action?: string, dispatchState: boolean = true, deepCloneState: boolean = true) : T`      | Set the store state. Pass the state to be updated as well as the action that is occurring. The state value can be an object or a function (see example below). The latest store state is returned and any store subscribers are notified of the state change. The `dispatchState` parameter can be set to `false` if you do not want to send state change notifications to subscribers. The `deepCloneState` parameter (default is true) can be used to determine if the state will be deep cloned before it is added to the store. Setting it to false can be useful in cases where read-only cached data is stored and must be added to the store as quickly as possible without any cloning.
+| `destroy(): void`                              | Unregister this service from the global store and complete its state dispatchers. Call this when a service is destroyed (e.g., in Angular's `ngOnDestroy`) to prevent memory leaks.
 | `static addExtension(extension: ObservableStoreExtension)`                              | Used to add an extension into ObservableStore. The extension must implement the `ObservableStoreExtension` interface. 
-| `static clearState(): void`| Clear/null the store state across all services that use it.
+| `static clearState(dispatchState: boolean = true): void`| Clear/null the store state across all services that use it. A state change notification is sent to subscribers if `dispatchState` is true (the default).
 | `static initializeState(state: any)`                              | Used to initialize the store's state. An error will be thrown if this is called and store state already exists so this should be set when the application first loads. No notifications are sent out to store subscribers when the store state is initialized.
 | `static resetState(state, dispatchState: boolean = true)`                              | Used to reset the state of the store to a desired value for all services that derive from ObservableStore<T>. A state change notification and global state change notification is sent out to subscribers if the dispatchState parameter is true (the default value).
 <br>
@@ -697,12 +492,12 @@ Observable Store provides a simple API that can be used to get/set state, subscr
 | ----------------------------------------------| -----------------------------------------------------
 | `globalStateChanged: Observable<any>`         | Subscribe to global store changes i.e. changes in any slice of state of the store. The global store may consist of 'n' slices of state each managed by a particular service. This property notifies of a change in any of the 'n' slices of state. Returns an RxJS Observable containing the current store state. 
 | `globalStateWithPropertyChanges: Observable<StateWithPropertyChanges<any>>`         | Subscribe to global store changes i.e. changes in any slice of state of the store and also include the properties that changed as well. The global store may consist of 'n' slices of state each managed by a particular service. This property notifies of a change in any of the 'n' slices of state. Upon subscribing to `globalStateWithPropertyChanges` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
-| `stateChanged: Observable<T>`                 | Subscribe to store changes in the particlar slice of state updated by a Service. If the store contains 'n' slices of state each being managed by one of 'n' services, then changes in any of the other slices of state will not generate values in the stateChanged stream. Returns an RxJS Observable containing the current store state (or a specific slice of state if a stateSliceSelector has been specified). 
-| `stateWithPropertyChanges: Observable<StateWithPropertyChanges<T>>`     | Subscribe to store changes in the particlar slice of state updated by a Service and also include the properties that changed as well. Upon subscribing to `stateWithPropertyChanges` you will get back an object containing `state` (which has the current slice of store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
-| `stateHistory: StateHistory`                  | Retrieve state history. Assumes `trackStateHistory` setting was set on the store.
+| `stateChanged: Observable<T>`                 | Subscribe to store changes in the particular slice of state updated by a Service. If the store contains 'n' slices of state each being managed by one of 'n' services, then changes in any of the other slices of state will not generate values in the stateChanged stream. Returns an RxJS Observable containing the current store state (or a specific slice of state if a stateSliceSelector has been specified). 
+| `stateWithPropertyChanges: Observable<StateWithPropertyChanges<T>>`     | Subscribe to store changes in the particular slice of state updated by a Service and also include the properties that changed as well. Upon subscribing to `stateWithPropertyChanges` you will get back an object containing `state` (which has the current slice of store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
+| `stateHistory: StateHistory<T>[]`             | Retrieve state history. Assumes `trackStateHistory` setting was set on the store.
 | `static allStoreServices: any[]`| Provides access to all services that interact with ObservableStore. Useful for extensions that need to be able to access a specific service.
 | `static globalSettings: ObservableStoreGlobalSettings`| get/set global settings throughout the application for ObservableStore. See the [Observable Store Settings](#settings) below for additional information. Note that global settings can only be set once as the application first loads.
-| `static isStoreInitialized: boolean`                              | Used to determine if the the store's state is currently initialized. This is useful if there are multiple scenarios where the store might have already been initialized such as during unit testing etc or after the store has been cleared.
+| `static isStoreInitialized: boolean`                              | Used to determine if the store's state is currently initialized. This is useful if there are multiple scenarios where the store might have already been initialized such as during unit testing etc or after the store has been cleared.
 <br>
 
 Note that TypeScript types are used to describe parameters and return types above. TypeScript is not required to use Observable Store though.
@@ -725,7 +520,6 @@ Observable Store settings can be passed when the store is initialized (when supe
 | -------------------------------|------------------------------------------------------------------------------------------------------------------- 
 | `trackStateHistory: boolean`   | Determines if the store's state will be tracked or not (defaults to false). Pass it when initializing the Observable Store (see examples above). When `true`, you can access the store's state history by calling the `stateHistory` property.
 | `logStateChanges: boolean`     | Log any store state changes to the browser console (defaults to false). 
-| `includeStateChangesOnSubscribe: boolean`   | **DEPRECATED**. Returns the store state by default when false (default). Set to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store). **Since this is deprecated, use `stateWithPropertyChanges` or `globalStateWithPropertyChanges` instead.**
 | `stateSliceSelector: function`     | Function to select the slice of the store being managed by this particular service. If specified then the specific state slice is returned. If not specified then the total state is returned (defaults to null).
 
 Example of passing settings to the store:
@@ -766,8 +560,6 @@ You can set the following Observable Store settings globally for the entire appl
 
 * `trackStateHistory`
 * `logStateChanges`
-* `includeStateChangesOnSubscribe` [DEPRECATED]
-* `isProduction` [RESERVED FOR FUTURE USE]
 
 Global store settings are defined ONCE when the application **first initializes** and BEFORE the store has been used:
 
@@ -785,10 +577,6 @@ The first built-in extension adds [Redux DevTools](https://github.com/reduxjs/re
 
 ![Integrating the Redux DevTools](images/reduxDevTools.png)
 
-**Note about Angular 9/Ivy and the Redux DevTools Support**
-
-While the [code is in place](https://github.com/DanWahlin/Observable-Store/blob/master/modules/observable-store-extensions/angular/angular-devtools-extension.ts) to support it, The Observable Store Redux DevTools currently do not work with Angular 9 and Ivy. Once the [`findProviders()` API](https://github.com/angular/angular/blob/cd9ae66b357bd4b5f97aa60cea38e48acb015325/packages/core/src/testability/testability.ts#L221) is fully implemented and released by Angular then support will be finalized for the Redux DevTools.
-
 **Note about the `__devTools` Store Property:** 
 
 When the Redux DevTools extension is enabled it will add routing information into your store using a property called `__devTools`. This property is used to enable the Redux DevTools time travel feature and can be useful for associating different action states with a given route when manually looking at store data using the DevTools. If the Redux DevTools extension is not enabled (such as in production scenarios) then the `__devTools` property will not be added into your store.
@@ -796,7 +584,7 @@ When the Redux DevTools extension is enabled it will add routing information int
 
 **Integrating Angular with the Redux DevTools**
 
-See the example in the `samples/angular-store-edits` folder.
+See the example in the `samples/angular-store` folder.
 
 Install the extensions package:
 
@@ -816,7 +604,7 @@ ObservableStore.globalSettings = {
 ObservableStore.addExtension(new ReduxDevToolsExtension());
 ```
 
-Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your Angular application, and open the Redux DevTools extension.
+Install the [Redux DevTools Extension](https://chromewebstore.google.com/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your Angular application, and open the Redux DevTools extension.
 
 
 **Integrating React with the Redux DevTools**
@@ -827,49 +615,19 @@ Install the extensions package:
 
 `npm install @codewithdan/observable-store-extensions`
 
-Add the `history` prop to your router:
-
-```jsx
-import React from 'react';
-import { Router, Route, Redirect } from 'react-router-dom';
-import { createBrowserHistory } from 'history';|
-
-export const history = createBrowserHistory();
-
-...
-
-const Routes = () => (
-  <Router history={history}>
-    <div>
-       <!-- Routes go here -->
-    </div>
-  </Router>
-);
-
-export default Routes;
-
-```
-
-Add the following into `index.js` and ensure that you set `trackStateHistory` to `true` and pass the `history` object into the `ReduxDevToolsExtension` constructor as shown:
+Add the following into your app's entry point (e.g., `main.jsx`) and ensure that you set `trackStateHistory` to `true`:
 
 ``` javascript
-import Routes, { history } from './Routes';
 import { ObservableStore } from '@codewithdan/observable-store';
 import { ReduxDevToolsExtension } from '@codewithdan/observable-store-extensions';
-
-...
 
 ObservableStore.globalSettings = {  
     trackStateHistory: true
 };
-ObservableStore.addExtension(new ReduxDevToolsExtension({ 
-    reactRouterHistory: history 
-}));
-
-ReactDOM.render(<Routes />, document.getElementById('root'));
+ObservableStore.addExtension(new ReduxDevToolsExtension());
 ```
 
-Install the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your React application, and open the Redux DevTools extension.
+Install the [Redux DevTools Extension](https://chromewebstore.google.com/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) in your browser, run your React application, and open the Redux DevTools extension.
 
 ### Redux DevTools and Production
 
@@ -878,9 +636,9 @@ While you can enable the Redux DevTools extension in production it's normally re
 **Angular Example**
 
 ```typescript
-import { environment } from './environments/environment';
+import { isDevMode } from '@angular/core';
 
-if (!environment.production) {
+if (isDevMode()) {
     ObservableStore.addExtension(new ReduxDevToolsExtension());
 }
 ```
@@ -889,173 +647,21 @@ if (!environment.production) {
 **React Example**
 
 ```typescript
-if (process.env.NODE_ENV !== 'production') {
-    ObservableStore.addExtension(new ReduxDevToolsExtension({ 
-        reactRouterHistory: history 
-    }));
+if (import.meta.env.DEV) {
+    ObservableStore.addExtension(new ReduxDevToolsExtension());
 }
 ```
 
 ### Changes
 
-#### 1.0.11 
-
-Added `includeStateChangesOnSubscribe` setting (NOW DEPRECATED in 2+) for cases where a subscriber to `stateChanged` wants to get the current state as well as the specific properties/data that were changes in the store. Defaults to `false` so prior versions will only receive the current state by default which keeps patched versions compatible in the 1.0.x range.
-
-Set the property to `true` if you want to receive the store state as well as the specific properties/data that were changed when the `stateChanged` subject emits. Upon subscribing to `stateChanged` you will get back an object containing `state` (which has the current store state) and `stateChanges` (which has the individual properties/data that were changed in the store).
-
-#### 1.0.12
-
-Changed `updateState()` to `_updateState()` since it's a private function. Remove `tsconfig.json` from package.
-
-#### 1.0.13
-
-Moved `BehaviorSubject` into `ObservableService` class so that if multiple instances of a wrapper around the store are created, subscribers can subscribe to the individual instances.
-
-#### 1.0.14
-
-Added `logStateChanges` setting to write out all state changes to the browser console when true. Defaults to false.
-
-#### 1.0.15
-
-Added action to log output when `logStateChanges` is true.
-
-#### 1.0.16
-
-Thanks to a great contribution by Mickey Puri you can now globally subscribe to store changes (`globalStateChanged` event) and even define state slices (`stateSliceSelector` setting).
-
-#### 1.0.17
-
-Merged in another contribution by Mickey Puri to ensure the settings defaults are always applied regardless of how many properties the user passes. Renamed
-a settings default property (`state_slice_selector` => `stateSliceSelector`). Added editable store example (update/delete functionality) for Angular in the `samples` folder.
-
-#### 1.0.18 
-
-Minor updates to the readme.
-
-#### 1.0.19
-
-Updated Angular example and added `stateSliceSelector()` information in readme
-
-#### 1.0.20
-
-Updated readme
-
-#### 1.0.21
-
-Updated to latest version of RxJS. Removed subsink from the Angular Simple Store demo to just use a normal Subscription for unsubscribing (just to keep it more "native" and require less dependencies).
-
-#### 1.0.22
-
-Internal type additions and tests contributed by @elAndyG (https://github.com/elAndyG). 
-
-#### 2.0.0 - October 13, 2019
-
-1. Added more strongly-typed information for `stateChanged` and the overall API to provide better code help while using Observable Store.
-1. RxJS is now a peer dependency (RxJS 6.4.0 or higher is required). This avoids reported versioning issues that have come up when a project already has RxJS in it. The 1.x version of Observable Store added RxJS as a dependency. Starting with 2.0.0 this is no longer the case.
-1. Added an `ObservableStore.globalSettings` property to allow store settings to be defined once if desired for an entire application rather than per service that uses the store. 
-1. `getState()` and `setState()` now clone when the global settings `isProduction` property is false (`ObservableStore.globalSettings = { isProduction: false }`). When running in production mode no cloning is used in order to enhance performance since mutability issues would've been detected at development time. This technique is used with other store solutions as well. NOTE: isProduction is no longer used. See 2.0.1 below.
-1. Changed TypeScript module compilation to CommonJS instead of ES2015 to aid with testing scenarios (such as Jest) where the project doesn't automatically handle ES2015 module conventions without extra configuration.
-
-#### 2.0.1 - October 14, 2019
-
-Due to edge cases cloning is used in development and production. The `isProduction` property is left in so builds are not broken, but currently isn't used.
-
-#### 2.1.0 - October 24, 2019
-
-In order to allow `stateChanged` to be strongly-typed and also allow state changes with property changes to return a strongly-typed object as well, there are now 4 observable options to choose from when you want to know about changes to the store:
-
-```typescript
-// access state changes made by a service interacting with the store
-// allows access to slice of store state that service interacts with
-stateChanged: Observable<T>   
-
-// access all state changes in the store regardless of where they're
-// made in the app
-globalStateChanged: Observable<any>  
-
-// access state changes made by a service interacting with the 
-// store and include the properties that were changed
-stateWithPropertyChanges: Observable<StateWithPropertyChanges<T>> 
-
-// access all state changes in the store and include the 
-// properties that were changed
-globalStateWithPropertyChanges: Observable<StateWithPropertyChanges<any>>
-````
-
-The `includeStateChangesOnSubscribe` property is now deprecated since `stateWithPropertyChanges` or `globalStateWithPropertyChanges` can be used directly.
-
-Thanks to <a href="https://github.com/MichaelTurbe" target="_blank">Michael Turbe</a> for the feedback and discussion on these changes.
-
-#### 2.2.3 - December 10, 2019
-
-This version adds a [Redux DevTools Extension](#extensions). A BIG thank you to @brandonroberts (https://github.com/brandonroberts) of [NgRx](https://github.com/ngrx) fame for helping get me started integrating with the Redux DevTools.
-
-New APIs:
-
-* A static `allStoreServices` property is now available to access all services that extend ObservableStore and interact with the store. Used by the Redux DevTools extension and can be useful for future extensions.
-* Added static `addExtension()` function. Used to add the [Redux DevTools Extension](#extensions) and any future extensions.
-* Added new `@codewithdan/observable-store-extensions` package for the redux devtools support.
-
-#### 2.2.4 - January 23, 2019
-
-Minor updates to the Observable Store docs. Fixed a bug in the Redux DevTools extension that would throw an error when the extension wasn't installed or available. Updated readme to discuss how to disable extensions for production scenarios.
-
-Thanks to <a href="https://github.com/riscie" target="_blank">Matthias Langhard</a> for the feedback and discussion on these changes.
-
-#### 2.2.5 - February 26, 2020
-
-- Added `ObservableStore.initializeState()` API. 
-- Refactored unit tests.
-
-#### 2.2.6 - February 29, 2020
-
-- Added `ObservableStore.resetState()` API.
-- Added unit tests for `resetState()`.
-
-Feedback from <a href="https://github.com/svehera" target="_blank">Severgyn</a> and <a href="https://github.com/LuizFilipeMedeira" target="_blank">Luiz Filipe</a> influenced this feature. Thanks folks!
-
-#### 2.2.7 - March 6, 2020
-
-- Fixed bug where Redux DevTools code for Angular v8 or lower was also calling code intended for Angular v9 (which is still a work in progress as noted in the Redux DevTools section above).
-
-Thanks to <a href="https://github.com/trentsteel84" target="_blank">trentsteel84</a> for reporting the issue.
-
-##### 2.2.8 - April 2, 2020
-
-- All calls to getState() and setState() clone data now due to edge issues that can arise otherwise with external references. Previously, it would
-selectively clone based on dev or prod. All functions that get/set state now provide an optional `deepClone` type of boolean property that can be used in cases where
-it's not desirable to clone state (large amount of data being added to the store for caching for example).
-
-- Added `ObservableStore.clearState()` API to null the store across all services that use it.
-- Added `getStateProperty<T>(propName: string)` to retrieve a specific property from the store versus retrieving the entire store
-as `getState()` does.
-
-##### 2.2.9 - May 5, 2020
-
-Added support for cloning Map and Set objects in the interal cloner service used by Observable Store. Thanks to <a href="https://github.com/chrisjandrade" target="_blank">Chris Andrade</a> for the initial contribution. 
-
-##### 2.2.10 - May 20, 2020
-
-External APIs supported turning off cloning but internal APIs still cloned which isn't optimal for people storing a lot of data in the store. Thanks to 
- <a href="https://github.com/Steve-RW" target="_blank">Steve-RW</a> for asking about it and for the PR that fixed it.
-
-##### 2.2.13 - August 31, 2021
-
-Adds a `getStateSliceProperty()` function. Thanks to <a href="https://github.com/ConnorSmith-pf" target="_blank">Connor Smith</a> for the contribution. Added `strict=true` support into Observable Store library tsconfig.json files.
-
-Updates to documentation.
-
-##### 2.2.14 - October 31, 2021
-
-Update readme link to Redux DevTools. Thanks to Ravi Mathpal for the information.
-
-##### 2.2.15 - November 18, 2022
-
-New `isStoreInitialized` property added. Thanks to <a href="https://github.com/JasonLandbridge" target="_blank">Jason Landbridge</a> for the PR!
+See [CHANGELOG.md](CHANGELOG.md) for the full version history.
 
 ### Building the Project
 
-See the `README.md` file in the `modules` folder.
+```bash
+# Build both modules (observable-store + extensions)
+npm run build
 
-
+# Run tests
+npm test
+```

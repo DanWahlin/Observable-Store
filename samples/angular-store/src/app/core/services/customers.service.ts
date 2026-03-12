@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { of, Observable, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Customer } from '../../shared/interfaces';
 import { Injectable } from '@angular/core';
@@ -11,9 +11,9 @@ import { ObservableStore } from '@codewithdan/observable-store';
 })
 export class CustomersService extends ObservableStore<StoreState> {
 
-    customersUrl = 'assets/customers.json';
+    customersUrl = 'customers.json';
 
-    constructor(private http: HttpClient) {  
+    constructor(private http: HttpClient) {
         super({ trackStateHistory: true, logStateChanges: true });
     }
 
@@ -46,7 +46,7 @@ export class CustomersService extends ObservableStore<StoreState> {
             .pipe(
                 map(custs => {
                     let filteredCustomers = custs.filter(cust => cust.id === id);
-                    let customer = ((filteredCustomers && filteredCustomers.length) ? filteredCustomers[0] : null) as Customer;                
+                    let customer = ((filteredCustomers && filteredCustomers.length) ? filteredCustomers[0] : null) as Customer;
                     this.setState({ customer }, CustomersStoreActions.GetCustomer);
                     return customer;
                 })
@@ -57,10 +57,10 @@ export class CustomersService extends ObservableStore<StoreState> {
         console.error('server error:', error);
         if (error.error instanceof Error) {
             const errMessage = error.error.message;
-            return throwError(errMessage);
+            return throwError(() => new Error(errMessage));
         }
-        return throwError(error || 'Server error');
-      }
+        return throwError(() => error ? new Error(error) : new Error('Server error'));
+    }
 }
 
 export enum CustomersStoreActions {

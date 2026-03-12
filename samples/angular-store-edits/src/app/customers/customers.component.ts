@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import { Customer } from '../core/model/customer';
-import { Observable, of, merge } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { CustomersService } from './customers.service';
+import { CustomersListComponent } from './customers-list/customers-list.component';
 
 @Component({
     selector: 'app-customers',
+    imports: [CommonModule, CustomersListComponent],
     templateUrl: './customers.component.html'
 })
 export class CustomersComponent implements OnInit {
@@ -17,20 +19,5 @@ export class CustomersComponent implements OnInit {
 
     ngOnInit() {
         this.customers$ = this.customersService.getAll();
-
-        // Could do this to get initial customers plus 
-        // listen for any changes
-        // this.customers$ = merge(
-        //     // Get initial
-        //     this.customersService.getAll(),
-        //     // Capture any changes to the store
-        //     this.customersService.stateChanged.pipe(
-        //         map(state => {
-        //             if (state) {
-        //                 return state.customers;
-        //             }
-        //         })
-        //     ));
     }
-
 }

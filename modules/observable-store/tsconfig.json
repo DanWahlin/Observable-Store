@@ -1,18 +1,25 @@
 {
   "compilerOptions": {
-      "target": "es5",
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "baseUrl": "./",
-      "outDir": "./dist",
-      "declaration": true,
-      "sourceMap": true,
-      "noImplicitUseStrict": true,
-      "experimentalDecorators": true,
-      "lib": [
-        "dom",
-        "es2015",
-        "es2017"
-      ]
-  }
+    "target": "es2022",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "declaration": true,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "lib": [
+      "dom",
+      "es2022"
+    ]
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts"
+  ]
 }

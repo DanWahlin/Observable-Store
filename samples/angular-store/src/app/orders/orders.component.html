@@ -1,20 +1,24 @@
-<div *ngIf="customer$ | async as customer;else elseBlock">
+@if (customer$ | async; as customer) {
+<div>
     <h1>Orders for {{ customer.name | capitalize }}</h1>
 
-    <div *ngFor="let order of orders$ | async">
+    @for (order of orders$ | async; track order) {
+    <div>
         <table class="table table-hover orders-table">
-            <tr *ngFor="let orderItem of order.orderItems">
+            @for (orderItem of order.orderItems; track orderItem.id) {
+            <tr>
                 <td>{{ orderItem.productName }}</td>
-                <td>{{ orderItem.itemCost | currency:'USD':'symbol' }}</td>    
+                <td>{{ orderItem.itemCost | currency:'USD':'symbol' }}</td>
             </tr>
+            }
         </table>
         <br />
     </div>
+    }
 </div>
-<ng-template #elseBlock>
+} @else {
    No customer found
-</ng-template>  
+}
 <br />
 <br />
 <a routerLink="/customers">View All Customers</a>
-

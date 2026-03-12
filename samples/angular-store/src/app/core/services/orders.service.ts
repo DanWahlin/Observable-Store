@@ -1,22 +1,20 @@
 import { HttpClient } from '@angular/common/http';
-import { of, Observable, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Order } from '../../shared/interfaces';
 import { Injectable } from '@angular/core';
 import { StoreState } from '../store/store-state';
-// The following is for testing only
-// import { ObservableStore } from '../../../../../../src/observable-store';
 import { ObservableStore } from '@codewithdan/observable-store';
 
 @Injectable({
     providedIn: 'root'
 })
 export class OrdersService extends ObservableStore<StoreState> {
-    ordersUrl = 'assets/orders.json';
+    ordersUrl = 'orders.json';
 
     constructor(private http: HttpClient) {
         super({ trackStateHistory: true });
-     }
+    }
 
     private fetchOrders() {
         return this.http.get<Order[]>(this.ordersUrl)
@@ -41,8 +39,6 @@ export class OrdersService extends ObservableStore<StoreState> {
                 .pipe(
                     map(orders => {
                         let filteredOrders = this.filterOrders(id, orders);
-                        // The following can be used in cases where the store data won't change, but 
-                        // you'd like to add to the state history for debugging/tracing purposes.
                         this.logStateAction(filteredOrders, OrdersStoreActions.FilterOrders);
                         return filteredOrders;
                     })
@@ -50,10 +46,9 @@ export class OrdersService extends ObservableStore<StoreState> {
         }
     }
 
-    filterOrders(id: number, orders : Order[]) {
+    filterOrders(id: number, orders: Order[]) {
        return orders.filter(order => +order.customerId === id);
     }
-    
 
     private handleError(error: any) {
         console.error('server error:', error);
@@ -62,7 +57,7 @@ export class OrdersService extends ObservableStore<StoreState> {
             return throwError(() => new Error(errMessage));
         }
         return throwError(() => error ? new Error(error) : new Error('Server error'));
-      }
+    }
 }
 
 export enum OrdersStoreActions {

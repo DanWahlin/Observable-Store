@@ -16,7 +16,7 @@ export class FilterTextboxComponent implements OnInit {
 
     set filter(val: string) {
         this._filter = val;
-        this.changed.emit(this.filter); // Raise changed event
+        this.changed.emit(this.filter);
     }
 
     getInputValue(event: Event) {
@@ -27,8 +27,5 @@ export class FilterTextboxComponent implements OnInit {
 
     constructor() { }
 
-    ngOnInit() {
-
-    }
-
+    ngOnInit() { }
 }

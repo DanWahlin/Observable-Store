@@ -1,11 +1,9 @@
-import { Observable, Subscription } from 'rxjs';
-
 export interface ReduxDevtoolsExtensionConnection {
-  subscribe(listener: (change: any) => void): void;
+  subscribe(listener: (change: unknown) => void): void;
   unsubscribe(): void;
-  send(action: any, state: any): void;
-  init(state?: any): void;
-  error(anyErr: any): void;
+  send(action: unknown, state: unknown): void;
+  init(state?: unknown): void;
+  error(anyErr: unknown): void;
 }
 
 export interface ReduxDevtoolsExtensionConfig {
@@ -16,19 +14,17 @@ export interface ReduxDevtoolsExtensionConfig {
   trace?: boolean;
   traceLimit?: number;
   serialize?: boolean | object;
-  actionSanitizer?: any;
-  stateSanitizer?: any;
+  actionSanitizer?: (action: unknown) => unknown;
+  stateSanitizer?: (state: unknown) => unknown;
   routerPropertyName?: string;
-  reactRouterHistory?: any;
+  reactRouterHistory?: { push(path: string): void };
   customRouteNavigator?: CustomReduxDevtoolsRouteNavigator;
-  router?: any;
-  ngZone?: any;
+  router?: unknown;
+  ngZone?: unknown;
 }
 
 export interface ObservableStoreExtension {
-  /**
-   * Function used to initialize the extension.
-   */
+  /** Function used to initialize the extension. */
   init(): void;
 }
 

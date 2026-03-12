@@ -1,88 +1,53 @@
-// React
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { capitalize } from '../utils/index.js';
+import OrdersList from './OrdersList.jsx';
+import CustomersStore from '../stores/CustomersStore.js';
+import OrdersStore from '../stores/OrdersStore.js';
 
-// Utilities
-import { capitalize } from '../utils';
+function OrdersContainer() {
+  const { id } = useParams();
+  const [customer, setCustomer] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const storeSubRef = useRef(null);
 
-// Components
-import OrdersList from './OrdersList';
+  useEffect(() => {
+    const customerId = +id;
 
-// Stores
-import CustomersStore from '../stores/CustomersStore';
-import OrdersStore from '../stores/OrdersStore';
-
-
-class OrdersContainer extends Component {
-  static propTypes = {
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        id: PropTypes.string.isRequired
-      }).isRequired
-    }).isRequired
-  };
-  customersStoreSub = null;
-  ordersStoreSub = null;
-
-  state = {
-    customer: null,
-    orders: []
-  };
-
-  componentDidMount() {
-    const customerId = +this.props.match.params.id;
-
-    // ###### CustomersStore ########
-    // ## Customer Option 1: Subscribe to store changes
-    // Useful when a component needs to be notified of changes but won't always
-    // call store directly.
-    this.customersStoreSub = CustomersStore.stateChanged.subscribe(state => {
+    storeSubRef.current = CustomersStore.stateChanged.subscribe(state => {
       if (state && state.customer) {
-        this.setState( {customer: state.customer} );
+        setCustomer(state.customer);
       }
     });
+
     CustomersStore.getCustomer(customerId);
 
-    // ## Customer Option 2: Get data directly from store
-    // customersStore.getCustomer(customerId)
-    //     .then(customer => {
-    //       this.setState({ customer: customer });
-    //     });
+    OrdersStore.getOrders(customerId).then(ords => {
+      setOrders(ords);
+    });
 
-    OrdersStore.getOrders(customerId)
-        .then(orders => {
-          this.setState( {orders} );
-        });
-  }
+    return () => {
+      if (storeSubRef.current) {
+        storeSubRef.current.unsubscribe();
+      }
+    };
+  }, [id]);
 
-  componentWillUnmount() {
-    if (this.customersStoreSub) {
-      this.customersStoreSub.unsubscribe();
-    }
-
-    if (this.ordersStoreSub) {
-      this.ordersStoreSub.unsubscribe();
-    }
-  }
-
-  render() {
-    return (
-      <div>
-        {this.state.customer ? (
-          <div>
-            <h1>Orders for {capitalize(this.state.customer.name)}</h1>
-            <br />
-            <OrdersList orders={this.state.orders} />
-          </div>
-        ) : (
-          <div className="row">No customer found</div>
-        )}
-        <br />
-        <Link to="/customers">View All Customers</Link>
-      </div>
-    );
-  }
+  return (
+    <div>
+      {customer ? (
+        <div>
+          <h1>Orders for {capitalize(customer.name)}</h1>
+          <br />
+          <OrdersList orders={orders} />
+        </div>
+      ) : (
+        <div className="row">No customer found</div>
+      )}
+      <br />
+      <Link to="/customers">View All Customers</Link>
+    </div>
+  );
 }
 
 export default OrdersContainer;

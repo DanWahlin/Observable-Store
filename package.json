@@ -1,0 +1,11 @@
+{
+  "name": "observable-store-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "npm run build:store && npm run build:extensions",
+    "build:store": "cd modules/observable-store && npm install && npm run build",
+    "build:extensions": "cd modules/observable-store-extensions && npm install && npm run build",
+    "test": "cd modules/observable-store && npx vitest run",
+    "setup": "npm run build && echo 'Modules built. Now cd into any sample, run npm install && npm start.'"
+  }
+}

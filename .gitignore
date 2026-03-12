@@ -2,6 +2,7 @@
 
 # compiled output
 modules/**/dist
+samples/**/dist
 tmp
 out-tsc
 .angular

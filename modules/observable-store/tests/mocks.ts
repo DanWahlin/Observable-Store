@@ -38,6 +38,31 @@ export class MockStore extends ObservableStore<MockState> {
         }, 'Update Using a Function', true, cloneState);
     }
 
+    // setState with explicit dispatchState control (3rd param)
+    updateProp1WithDispatch(value: string, dispatchState: boolean) {
+        this.setState({ prop1: value }, Update_Prop1, dispatchState);
+    }
+
+    // setState with non-object to test error handling
+    setStateRaw(state: any, action?: string) {
+        this.setState(state, action);
+    }
+
+    // Expose logStateAction for testing
+    logAction(state: any, action: string) {
+        this.logStateAction(state, action);
+    }
+
+    // Expose resetStateHistory for testing
+    clearHistory() {
+        this.resetStateHistory();
+    }
+
+    // Expose dispatchState for testing
+    dispatch(stateChanges: any, dispatchGlobalState: boolean = true) {
+        this.dispatchState(stateChanges, dispatchGlobalState);
+    }
+
     get currentState() {
         return this.getState();
     }
@@ -74,6 +99,14 @@ export class UserStore extends ObservableStore<MockState> {
 
     getCurrentState(deepCloneReturnedState: boolean = true) {
         return this.getState(deepCloneReturnedState);
+    }
+
+    getProperty<T>(propName: string, deepClone: boolean = true): T {
+        return this.getStateProperty<T>(propName, deepClone);
+    }
+
+    getSliceProperty<T>(propName: string, deepClone: boolean = true): T {
+        return this.getStateSliceProperty<T>(propName, deepClone);
     }
 
     get currentState() {

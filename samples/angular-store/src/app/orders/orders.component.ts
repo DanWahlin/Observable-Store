@@ -1,17 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Customer, Order } from '../shared/interfaces';
 import { CustomersService } from '../core/services/customers.service';
 import { OrdersService } from '../core/services/orders.service';
 import { Observable } from 'rxjs';
+import { CapitalizePipe } from '../shared/capitalize.pipe';
 
 @Component({
   selector: 'app-orders',
+  imports: [CommonModule, RouterLink, CapitalizePipe],
   templateUrl: './orders.component.html',
-  styleUrls: [ './orders.component.css' ]
+  styleUrl: './orders.component.css'
 })
-export class OrdersComponent implements OnInit, OnDestroy {
+export class OrdersComponent implements OnInit {
 
   customer$: Observable<Customer> = new Observable<Customer>();
   orders$: Observable<Order[]> = new Observable<Order[]>();
@@ -22,16 +25,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-
-    // Option 1: Access data directly from store
     this.customer$ = this.customersService.getCustomer(id);
     this.orders$ = this.ordersService.getOrders(id);
-
-    // Option 2: Could subscribe to store stateChanged (see customers/customers.component.ts for an example)
   }
-
-  ngOnDestroy() {
-
-  }
-
 }

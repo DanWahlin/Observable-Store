@@ -1,17 +1,21 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { SubSink } from 'subsink';
 
 import { Customer } from '../../core/model/customer';
-import { ActivatedRoute, Router } from '@angular/router';
 import { CustomersService } from '../customers.service';
 
 @Component({
   selector: 'app-customers-edit',
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './customers-edit.component.html',
-  styleUrls: ['./customers-edit.component.scss']
+  styleUrl: './customers-edit.component.scss'
 })
 export class CustomersEditComponent implements OnInit, OnDestroy {
+
+  private formBuilder = inject(FormBuilder);
 
   customerForm: UntypedFormGroup = this.formBuilder.group({
     id: [],
@@ -25,7 +29,6 @@ export class CustomersEditComponent implements OnInit, OnDestroy {
   constructor(
       private customersService: CustomersService,
       private router: Router,
-      private formBuilder: FormBuilder,
       private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -68,7 +71,6 @@ export class CustomersEditComponent implements OnInit, OnDestroy {
     this.subsink.sink = this.customersService.update(customer).subscribe(() => {
       this.navigateHome();
     });
-
   }
 
   navigateHome() {
@@ -78,5 +80,4 @@ export class CustomersEditComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subsink.unsubscribe();
   }
-
 }

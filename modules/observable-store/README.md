@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/DanWahlin/Observable-Store.svg?branch=master)](https://travis-ci.org/DanWahlin/Observable-Store)
-[![npm version](https://badge.fury.io/js/%40codewithdan%2Fobservable-store.svg)](https://www.npmjs.com/package/@codewithdan/observable-store)
+[![Node.js CI](https://github.com/DanWahlin/Observable-Store/actions/workflows/nodejs-build-validation.yml/badge.svg)](https://github.com/DanWahlin/Observable-Store/actions/workflows/nodejs-build-validation.yml)
+[![npm version](https://img.shields.io/npm/v/@codewithdan/observable-store?color=%23330C252&label=npm%20version)](https://www.npmjs.com/package/@codewithdan/observable-store)
 
 ## Observable Store - State Management for Front-End Applications (Angular, React, Vue.js, or any other)
 
@@ -22,6 +22,24 @@ The goal of observable store is to provide a small, simple, and consistent way t
 1. Easy to understand with a minimal amount of code required to get started
 1. Works with any front-end project built with JavaScript or TypeScript (Angular, React, Vue, or anything else)
 1. Integrate with the Redux DevTools (Angular and React currently supported)
+
+### Development Setup
+
+To run samples locally from this repo:
+
+1. Build the core modules first:
+
+    ```bash
+    npm run build
+    ```
+
+2. Then go into any sample and install + start:
+
+    ```bash
+    cd samples/angular-store
+    npm install
+    npm start
+    ```
 
 ### Steps to use Observable Store
 

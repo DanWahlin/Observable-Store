@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { skip } from 'rxjs/operators';
 import { ObservableStore, stateFunc } from '../observable-store';
 import { StateWithPropertyChanges } from '../interfaces';
@@ -48,7 +49,7 @@ describe('Observable Store', () => {
         return state;
       };
 
-      const capitalizeSpy = jasmine.createSpy().and.callFake(capitalizeProp1);
+      const capitalizeSpy = vi.fn().mockImplementation(capitalizeProp1);
       mockStore.updateProp1('test');
       mockStore.updateUsingAFunction(capitalizeSpy);
 
@@ -65,7 +66,7 @@ describe('Observable Store', () => {
         return { user: state.user };
       };
 
-      const updateUserSpy = jasmine.createSpy().and.callFake(updateUser);
+      const updateUserSpy = vi.fn().mockImplementation(updateUser);
 
       mockStore.updateUsingAFunction(updateUserSpy);
 
@@ -109,20 +110,6 @@ describe('Observable Store', () => {
       expect(receivedUpdate).toBeTruthy();
       expect(receivedState.prop1).toEqual('state reset');
       expect(receivedState.prop2).toBe(null);
-      sub.unsubscribe();
-    });
-
-    // deprecated
-    // we will skip 1 to account for the initial BehaviorSubject<T> value
-    it('should receive state notification when includeStateChangesOnSubscribe set [deprecated]', () => {
-      let mockStore = new MockStore({ includeStateChangesOnSubscribe: true });
-      let receivedData;
-      const sub = mockStore.stateChanged.pipe(skip(1)).subscribe(stateWithChanges => receivedData = stateWithChanges);
-
-      mockStore.updateProp1('test');
-
-      expect(receivedData.state.prop1).toEqual('test');
-      expect(receivedData.stateChanges.prop1).toEqual('test');
       sub.unsubscribe();
     });
 
@@ -401,6 +388,353 @@ describe('Observable Store', () => {
       userStore.updateUser(user);
       expect(userStore.stateHistory.length).toEqual(0);
     });
+  });
+
+  describe('destroy', () => {
+
+    it('should remove service from allStoreServices when destroyed', () => {
+      const servicesBefore = ObservableStore.allStoreServices.length;
+      const tempStore = new MockStore({});
+      expect(ObservableStore.allStoreServices.length).toEqual(servicesBefore + 1);
+
+      tempStore.destroy();
+      expect(ObservableStore.allStoreServices.length).toEqual(servicesBefore);
+    });
+
+    it('should complete state dispatchers on destroy', () => {
+      const tempStore = new MockStore({});
+      let completed = false;
+      tempStore.stateChanged.subscribe({
+        complete: () => { completed = true; }
+      });
+
+      tempStore.destroy();
+      expect(completed).toBe(true);
+    });
+
+    it('should complete stateWithPropertyChanges on destroy', () => {
+      const tempStore = new MockStore({});
+      let completed = false;
+      tempStore.stateWithPropertyChanges.subscribe({
+        complete: () => { completed = true; }
+      });
+
+      tempStore.destroy();
+      expect(completed).toBe(true);
+    });
+
+    it('should handle double destroy without error', () => {
+      const tempStore = new MockStore({});
+      tempStore.destroy();
+      // Second destroy should not throw
+      expect(() => tempStore.destroy()).not.toThrow();
+    });
+
+    it('should not remove other services when one is destroyed', () => {
+      const servicesBefore = ObservableStore.allStoreServices.length;
+      const store1 = new MockStore({});
+      const store2 = new MockStore({});
+      expect(ObservableStore.allStoreServices.length).toEqual(servicesBefore + 2);
+
+      store1.destroy();
+      expect(ObservableStore.allStoreServices.length).toEqual(servicesBefore + 1);
+      expect(ObservableStore.allStoreServices).toContain(store2);
+
+      store2.destroy();
+    });
+
+  });
+
+  describe('dispatchState', () => {
+
+    it('should NOT dispatch to subscribers when dispatchState is false on setState', () => {
+      let receivedCount = 0;
+      const sub = mockStore.stateChanged.pipe(skip(1)).subscribe(() => receivedCount++);
+
+      mockStore.updateProp1WithDispatch('test', false);
+
+      expect(receivedCount).toEqual(0);
+      // But state should still be updated
+      expect(mockStore.currentState.prop1).toEqual('test');
+      sub.unsubscribe();
+    });
+
+    it('should NOT dispatch global state when dispatchGlobalState is false', () => {
+      let globalReceived = 0;
+      let localReceived = 0;
+      const globalSub = mockStore.globalStateChanged.pipe(skip(1)).subscribe(() => globalReceived++);
+      const localSub = mockStore.stateChanged.pipe(skip(1)).subscribe(() => localReceived++);
+
+      // Dispatch locally but not globally
+      mockStore.updateProp1('test');
+      mockStore.dispatch({ prop1: 'dispatched' }, false);
+
+      // Local should get the dispatch, global should only get the setState one
+      expect(localReceived).toBeGreaterThanOrEqual(1);
+      expect(globalReceived).toEqual(1); // Only from the setState, not the manual dispatch
+      globalSub.unsubscribe();
+      localSub.unsubscribe();
+    });
+
+  });
+
+  describe('logStateAction', () => {
+
+    it('should add custom action to state history', () => {
+      const historyBefore = mockStore.stateHistory.length;
+      mockStore.updateProp1('test');
+      mockStore.logAction({ custom: 'data' }, 'Custom_Action');
+
+      const lastEntry = mockStore.stateHistory[mockStore.stateHistory.length - 1];
+      expect(mockStore.stateHistory.length).toEqual(historyBefore + 2); // setState + logAction
+      expect(lastEntry.action).toEqual('Custom_Action');
+    });
+
+    it('should not add to history when trackStateHistory is false', () => {
+      const noTrackStore = new MockStore({ trackStateHistory: false });
+      noTrackStore.logAction({ data: 'test' }, 'Action');
+      // stateHistory is global, so check it didn't add
+      const hasAction = mockStore.stateHistory.some(h => h.action === 'Action');
+      expect(hasAction).toBe(false);
+      noTrackStore.destroy();
+    });
+
+    it('should deep clone the state in the logged action', () => {
+      const data = { nested: { value: 'original' } };
+      mockStore.logAction(data, 'Clone_Test');
+      data.nested.value = 'mutated';
+
+      const lastEntry = mockStore.stateHistory[mockStore.stateHistory.length - 1];
+      expect(lastEntry.endState.nested.value).toEqual('original');
+    });
+
+  });
+
+  describe('resetStateHistory', () => {
+
+    it('should clear all state history entries', () => {
+      mockStore.updateProp1('test1');
+      mockStore.updateProp1('test2');
+      expect(mockStore.stateHistory.length).toBeGreaterThan(0);
+
+      mockStore.clearHistory();
+      expect(mockStore.stateHistory.length).toEqual(0);
+    });
+
+    it('should allow new history entries after reset', () => {
+      mockStore.updateProp1('test1');
+      mockStore.clearHistory();
+      mockStore.updateProp1('test2');
+      expect(mockStore.stateHistory.length).toEqual(1);
+      expect(mockStore.stateHistory[0].action).toEqual('Update_Prop1');
+    });
+
+  });
+
+  describe('logStateChanges', () => {
+
+    it('should log state changes to console when enabled', () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logStore = new MockStore({ logStateChanges: true });
+
+      logStore.updateProp1('logged');
+
+      expect(consoleSpy).toHaveBeenCalledTimes(1);
+      // console.log('%cSTATE CHANGED', 'font-weight: bold', '\r\nAction: ', action, caller, '\r\nState: ', state)
+      const args = consoleSpy.mock.calls[0];
+      expect(args[0]).toEqual('%cSTATE CHANGED');
+      expect(args[1]).toEqual('font-weight: bold');
+      expect(args).toContain('Update_Prop1');
+      consoleSpy.mockRestore();
+      logStore.destroy();
+    });
+
+    it('should NOT log state changes to console when disabled', () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const noLogStore = new MockStore({ logStateChanges: false });
+
+      noLogStore.updateProp1('not-logged');
+
+      expect(consoleSpy).not.toHaveBeenCalled();
+      consoleSpy.mockRestore();
+      noLogStore.destroy();
+    });
+
+  });
+
+  describe('Extensions', () => {
+
+    it('should call init() when extension is added', () => {
+      const mockExtension = { init: vi.fn() };
+      ObservableStore.addExtension(mockExtension);
+      expect(mockExtension.init).toHaveBeenCalledTimes(1);
+    });
+
+    it('should track all store services via allStoreServices', () => {
+      const servicesBefore = ObservableStore.allStoreServices.length;
+      const store1 = new MockStore({});
+      const store2 = new MockStore({});
+
+      expect(ObservableStore.allStoreServices.length).toEqual(servicesBefore + 2);
+      expect(ObservableStore.allStoreServices).toContain(store1);
+      expect(ObservableStore.allStoreServices).toContain(store2);
+
+      store1.destroy();
+      store2.destroy();
+    });
+
+  });
+
+  describe('Multiple services sharing state', () => {
+
+    it('should notify Service B via globalStateChanged when Service A sets state', () => {
+      let receivedState = null;
+      const storeA = new MockStore({});
+      const storeB = new MockStore({});
+
+      const sub = storeB.globalStateChanged.pipe(skip(1)).subscribe(state => {
+        receivedState = state;
+      });
+
+      storeA.updateProp1('from-A');
+
+      expect(receivedState).not.toBeNull();
+      expect(receivedState.prop1).toEqual('from-A');
+
+      sub.unsubscribe();
+      storeA.destroy();
+      storeB.destroy();
+    });
+
+    it('should give different views via stateSliceSelector on different services', () => {
+      const userSliceStore = new UserStore({
+        stateSliceSelector: state => {
+          if (state) return { user: state.user };
+          return null;
+        }
+      });
+
+      // Set both prop1 and user
+      mockStore.updateProp1('test');
+      userSliceStore.updateUser({ name: 'Dan', address: { city: 'Phoenix', state: 'AZ', zip: 85349 } });
+
+      // mockStore sees everything
+      expect(mockStore.currentState.prop1).toEqual('test');
+      expect(mockStore.currentState.user.name).toEqual('Dan');
+
+      // userSliceStore only sees user slice
+      const sliceState = userSliceStore.currentState;
+      expect(sliceState.user.name).toEqual('Dan');
+      expect(sliceState.prop1).toBeUndefined();
+
+      userSliceStore.destroy();
+    });
+
+  });
+
+  describe('getStateProperty edge cases', () => {
+
+    it('should return null for non-existent property name', () => {
+      userStore.updateUser(getUser());
+      const result = userStore.getProperty('nonExistentProp');
+      expect(result).toBeNull();
+    });
+
+    it('should return the property value without cloning when deepClone is false', () => {
+      const user = getUser();
+      userStore.updateUser(user, false);
+      const userRef1 = userStore.getProperty('user', false);
+      const userRef2 = userStore.getProperty('user', false);
+      // Without cloning, should be the same reference
+      expect(userRef1).toBe(userRef2);
+    });
+
+  });
+
+  describe('getStateSliceProperty', () => {
+
+    it('should return null when no stateSliceSelector is set', () => {
+      userStore.updateUser(getUser());
+      const result = userStore.getSliceProperty('name');
+      expect(result).toBeNull();
+    });
+
+    it('should return property from slice when stateSliceSelector is set', () => {
+      const sliceStore = new UserStore({
+        stateSliceSelector: state => {
+          if (state) return { ...state.user };
+          return null;
+        }
+      });
+      sliceStore.updateUser({ name: 'Dan', address: { city: 'Phoenix', state: 'AZ', zip: 85349 } });
+      const name = sliceStore.getSliceProperty('name');
+      expect(name).toEqual('Dan');
+      sliceStore.destroy();
+    });
+
+    it('should return null for non-existent property in slice', () => {
+      const sliceStore = new UserStore({
+        stateSliceSelector: state => {
+          if (state) return { ...state.user };
+          return null;
+        }
+      });
+      sliceStore.updateUser({ name: 'Dan', address: { city: 'Phoenix', state: 'AZ', zip: 85349 } });
+      const result = sliceStore.getSliceProperty('nonExistent');
+      expect(result).toBeNull();
+      sliceStore.destroy();
+    });
+
+  });
+
+  describe('setState error handling', () => {
+
+    it('should throw when setState is called with a string', () => {
+      expect(() => mockStore.setStateRaw('invalid')).toThrow(
+        'Pass an object or a function for the state parameter when calling setState().'
+      );
+    });
+
+    it('should throw when setState is called with a number', () => {
+      expect(() => mockStore.setStateRaw(42)).toThrow(
+        'Pass an object or a function for the state parameter when calling setState().'
+      );
+    });
+
+    it('should throw when setState is called with a boolean', () => {
+      expect(() => mockStore.setStateRaw(true)).toThrow(
+        'Pass an object or a function for the state parameter when calling setState().'
+      );
+    });
+
+  });
+
+  describe('State history correctness', () => {
+
+    it('should record beginState and endState correctly', () => {
+      mockStore.updateProp1('first');
+      mockStore.updateProp1('second');
+
+      const history = mockStore.stateHistory;
+      expect(history.length).toEqual(2);
+
+      // First entry: beginState is null/empty, endState has 'first'
+      expect(history[0].endState.prop1).toEqual('first');
+
+      // Second entry: beginState has 'first', endState has 'second'
+      expect(history[1].beginState.prop1).toEqual('first');
+      expect(history[1].endState.prop1).toEqual('second');
+    });
+
+    it('should deep clone beginState so mutations do not affect history', () => {
+      mockStore.updateProp1('original');
+      mockStore.updateProp1('changed');
+
+      // The beginState of the second entry should still be 'original'
+      const beginState = mockStore.stateHistory[1].beginState;
+      expect(beginState.prop1).toEqual('original');
+    });
+
   });
 
   describe('isInitialized', () => {

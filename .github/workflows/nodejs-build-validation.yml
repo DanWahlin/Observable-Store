@@ -1,59 +1,107 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Build
+name: Build & Test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
-    
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Run publish step (dry-run by default)'
+        type: boolean
+        default: true
+      dry_run:
+        description: 'Dry run (no actual publish)'
+        type: boolean
+        default: true
+
 jobs:
-  build-observable-store:
-
+  build-and-test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./modules/observable-store/
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [18.x, 20.x, 22.x]
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: ./modules/observable-store/package-lock.json
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      - uses: actions/checkout@v4
 
-  build-observable-store-extensions:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: |
+            modules/observable-store/package-lock.json
+            modules/observable-store-extensions/package-lock.json
 
+      - name: Build modules
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+  build-samples:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./modules/observable-store-extensions/
-
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    needs: build-and-test
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: ./modules/observable-store-extensions/package-lock.json
-    - run: npm ci
-    - run: npm run build --if-present
+      - uses: actions/checkout@v4
 
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+          cache-dependency-path: |
+            modules/observable-store/package-lock.json
+            modules/observable-store-extensions/package-lock.json
+
+      - name: Build modules
+        run: npm run build
+
+      - name: Build Angular Store sample
+        working-directory: samples/angular-store
+        run: npm install && npm run build
+
+      - name: Build React Store sample
+        working-directory: samples/react-store
+        run: npm install && npm run build
+
+      - name: Build JavaScript demo
+        working-directory: samples/javascript-demo
+        run: npm install && npm run build
+
+  publish:
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'release:')) ||
+      (github.event_name == 'workflow_dispatch' && inputs.publish)
+    needs: [build-and-test, build-samples]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          registry-url: https://registry.npmjs.org
+
+      - name: Ensure latest npm (OIDC publish support)
+        run: npm install -g npm@latest
+
+      - name: Build modules
+        run: npm run build
+
+      - name: Publish observable-store
+        working-directory: modules/observable-store
+        run: npm publish --provenance --access public ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
+
+      - name: Publish observable-store-extensions
+        working-directory: modules/observable-store-extensions
+        run: npm publish --provenance --access public ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}

@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Component, OnInit, Inject } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { RouterOutlet, RouterLink } from '@angular/router';
 
 import { CustomersService } from './customers/customers.service';
 import { UserSettingsService } from './core/user-settings.service';
@@ -10,23 +11,23 @@ import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
+  imports: [CommonModule, RouterOutlet, RouterLink],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   customersLength$: Observable<number> = new Observable<number>();
   userSettings$: Observable<UserSettings> = new Observable<UserSettings>();
 
-  constructor(@Inject(DOCUMENT) private document: HTMLDocument, 
+  constructor(@Inject(DOCUMENT) private document: Document,
     private customersService: CustomersService,
     private userSettingsService: UserSettingsService) { }
 
   ngOnInit() {
     this.userSettings$ = merge(
-      this.userSettingsService.getUserSettings(),     // Get initial data
-      this.userSettingsService.userSettingsChanged()  // Handle any changes
+      this.userSettingsService.getUserSettings(),
+      this.userSettingsService.userSettingsChanged()
         .pipe(
-          // tap(userSettings => console.log('userSettingsChanged: ', userSettings)),
           map(userSettings => this.updateTheme(userSettings as UserSettings))
         )
     );
@@ -42,9 +43,8 @@ export class AppComponent implements OnInit {
         );
   }
 
-  updateTheme(userSettings: UserSettings) {      
+  updateTheme(userSettings: UserSettings) {
       this.document.documentElement.className = (userSettings && userSettings.theme === Theme.Dark) ? 'dark-theme' : 'light-theme';
       return userSettings;
   }
-
 }

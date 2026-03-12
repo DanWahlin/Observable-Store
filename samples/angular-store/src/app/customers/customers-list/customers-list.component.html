@@ -9,24 +9,30 @@
             <th (click)="sort('orderTotal')">Order Total</th>
         </tr>
     </thead>
-    <tr *ngFor="let cust of filteredCustomers">
+    @for (cust of filteredCustomers; track cust.id) {
+    <tr>
         <td>
             <a [routerLink]="['/orders', cust.id]">
                 {{ cust.name | capitalize }}
             </a>
         </td>
         <td>{{ cust.city }}</td>
-        <td>{{ cust.orderTotal | currency:currencyCode:'symbol' }}
+        <td>{{ cust.orderTotal | currency:currencyCode:'symbol' }}</td>
     </tr>
-    <tr *ngIf="filteredCustomers && filteredCustomers.length">
+    }
+    @if (filteredCustomers && filteredCustomers.length) {
+    <tr>
         <td colspan="2">&nbsp;</td>
         <td>
             {{ customersOrderTotal | currency:currencyCode:'symbol' }}
         </td>
     </tr>
-    <tr *ngIf="!filteredCustomers || !filteredCustomers.length">
+    }
+    @if (!filteredCustomers || !filteredCustomers.length) {
+    <tr>
         <td colspan="4">No customers found</td>
     </tr>
+    }
 </table>
 Number of Customers: {{ filteredCustomers.length }}
 <br />

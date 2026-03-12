@@ -1,10 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 import { Customer } from '../../shared/interfaces';
 import { SorterService } from '../../core/sorter.service';
+import { CapitalizePipe } from '../../shared/capitalize.pipe';
+import { FilterTextboxComponent } from './filter-textbox.component';
 
 @Component({
     selector: 'app-customers-list',
+    imports: [CommonModule, RouterLink, CapitalizePipe, FilterTextboxComponent],
     templateUrl: './customers-list.component.html'
 })
 export class CustomersListComponent implements OnInit {
@@ -58,5 +63,4 @@ export class CustomersListComponent implements OnInit {
     customerTrackBy(index: number, customer: Customer) {
         return customer.id;
     }
-
 }
