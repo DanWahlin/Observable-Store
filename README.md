@@ -130,6 +130,7 @@ Open the `samples` folder available at the Github repo and follow the instructio
 * [Using Observable Store with React](#react)
 * [Using Observable Store with JavaScript](#javascript)
 
+
 ## <a name="angular"></a>Using Observable Store with Angular
 
 See the `samples` folder in the Github repo for examples of using Observable Store with Angular.
